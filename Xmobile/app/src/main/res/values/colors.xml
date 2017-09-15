@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="background_material_dark">#262626</color>
+    <color name="foreground_material_dark">#f1f1f1</color>
+    <color name="XobileStatusDark">#1b1b1b</color>
+    <color name="accent_material_dark">#73f1e2</color>
+    <color name="XobileDarkText">#d9d9d9</color>
 </resources>

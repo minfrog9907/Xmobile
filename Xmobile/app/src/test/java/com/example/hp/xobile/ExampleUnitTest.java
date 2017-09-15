@@ -1,4 +1,4 @@
-package com.example.hp.xmobile;
+package com.example.hp.xobile;
 
 import org.junit.Test;
 

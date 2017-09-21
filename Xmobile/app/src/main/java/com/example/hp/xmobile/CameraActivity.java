@@ -48,6 +48,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class CameraActivity extends BaseActivity {
+
     private static final String TAG = "MainActivity";
     Preview preview;
     Camera camera;
@@ -102,6 +103,9 @@ public class CameraActivity extends BaseActivity {
         }
     }
 
+
+
+
     public void startCamera() {
 
         if ( preview == null ) {
@@ -110,6 +114,17 @@ public class CameraActivity extends BaseActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT));
             ((FrameLayout) findViewById(R.id.camera_layout)).addView(preview);
             preview.setKeepScreenOn(true);
+            preview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    camera.autoFocus (new Camera.AutoFocusCallback() {
+                        public void onAutoFocus(boolean success, Camera camera) {
+
+                        }
+                    });
+                }
+            });
+
         }
 
         preview.setCamera(null);
@@ -124,7 +139,7 @@ public class CameraActivity extends BaseActivity {
 
                 camera = Camera.open(CAMERA_FACING);
                 // camera orientation
-                camera.enableShutterSound(true);
+                camera.enableShutterSound(false);
                 camera.setDisplayOrientation(setCameraDisplayOrientation(this, CAMERA_FACING,
                         camera));
                 // get Camera parameters
@@ -143,7 +158,6 @@ public class CameraActivity extends BaseActivity {
         preview.setCamera(camera);
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +170,7 @@ public class CameraActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-                startActivity(new Intent(getApplicationContext(),CameraResultActivity.class).putExtra("node",node));
+                Toast.makeText(getApplicationContext(),"잠시만 기다려 주세요",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -306,6 +320,9 @@ public class CameraActivity extends BaseActivity {
                         + outFile.getAbsolutePath());
 
                 refreshGallery(outFile);
+                Intent intent =new Intent(getApplicationContext(),CameraResultActivity.class);
+                intent.putExtra("node",node);
+                startActivity(intent);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -649,6 +666,7 @@ class Preview extends ViewGroup implements SurfaceHolder.Callback {
             // Important: Call startPreview() to start updating the preview surface.
             // Preview must be started before you can take a picture.
             mCamera.startPreview();
+
         }
 
     }

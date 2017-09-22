@@ -10,6 +10,25 @@
             android:id="@+id/camera_surface"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <LinearLayout
+            android:id="@+id/camera_autofocus"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="90dp">
+
+        </LinearLayout>
+        <AbsoluteLayout
+            android:id="@+id/camera_absolute"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/camera_focus"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/focusdot"
+                android:visibility="invisible"/>
+        </AbsoluteLayout>
 
         <LinearLayout
             android:id="@+id/camera_take"

@@ -28,16 +28,34 @@
         android:layout_height="0dp"
         android:layout_weight="8.1"
         android:orientation="vertical"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:weightSum="10">
-        <ImageView
-            android:id="@+id/cameraResult_Image"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8.5"
-            android:scaleType="fitCenter"
-            />
+            android:orientation="vertical"
+            android:weightSum="10"
+            >
+            <ImageView
+                android:id="@+id/cameraResult_Image"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="10"
+                android:scaleType="fitCenter"
+                />
+            <LinearLayout
+                android:id="@+id/cameraResult_thumnail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+            </LinearLayout>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/cameraResult_Tag"
             android:layout_width="match_parent"

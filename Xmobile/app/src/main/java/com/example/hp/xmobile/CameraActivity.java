@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,22 +39,32 @@ import android.hardware.Camera.Size;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsoluteLayout;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class CameraActivity extends BaseActivity {
-
+    private static final int FOCUSE_SIZE = 300;
     private static final String TAG = "MainActivity";
     Preview preview;
     Camera camera;
     Context ctx;
     String node;
+    LinearLayout autofocus;
+    ImageView focus;
+    AbsoluteLayout absoluteLayout;
+    float x;
+    float y;
     private final static int PERMISSIONS_REQUEST_CODE = 100;
     // Camera.CameraInfo.CAMERA_FACING_FRONT or Camera.CameraInfo.CAMERA_FACING_BACK
     private final static int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -114,14 +125,26 @@ public class CameraActivity extends BaseActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT));
             ((FrameLayout) findViewById(R.id.camera_layout)).addView(preview);
             preview.setKeepScreenOn(true);
-            preview.setOnClickListener(new View.OnClickListener() {
+            autofocus.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View v) {
+                public boolean onTouch(View v,MotionEvent event) {
+                    focus.setVisibility(View.VISIBLE);
+                    absoluteLayout.removeAllViews();
+                    absoluteLayout.addView(focus, new AbsoluteLayout.LayoutParams(FOCUSE_SIZE,FOCUSE_SIZE,(int)event.getX()-(FOCUSE_SIZE/2),(int)event.getY()-(FOCUSE_SIZE/2)));
                     camera.autoFocus (new Camera.AutoFocusCallback() {
                         public void onAutoFocus(boolean success, Camera camera) {
+                            Animation alphaAnim = AnimationUtils.loadAnimation(ctx, R.anim.alpha);
+                            focus.startAnimation(alphaAnim);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    absoluteLayout.removeAllViews();
+                                }
+                            }, 700);
 
                         }
                     });
+                    return  true;
                 }
             });
 
@@ -173,6 +196,9 @@ public class CameraActivity extends BaseActivity {
                 Toast.makeText(getApplicationContext(),"잠시만 기다려 주세요",Toast.LENGTH_LONG).show();
             }
         });
+        autofocus = (LinearLayout)findViewById(R.id.camera_autofocus);
+        focus =(ImageView) findViewById(R.id.camera_focus);
+        absoluteLayout =(AbsoluteLayout)findViewById(R.id.camera_absolute);
 
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -322,6 +348,8 @@ public class CameraActivity extends BaseActivity {
                 refreshGallery(outFile);
                 Intent intent =new Intent(getApplicationContext(),CameraResultActivity.class);
                 intent.putExtra("node",node);
+                intent.putExtra("dir",(String)sdCard.getAbsolutePath() + "/Xmobile");
+                intent.putExtra("filename",fileName.replace(".jpg",""));
                 startActivity(intent);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

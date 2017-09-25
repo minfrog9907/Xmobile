@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ import java.io.OutputStream;
  */
 
 public class BillsTracingActivity extends ActionBarActivity {
-    Bitmap image[];
+    Bitmap image[] = new Bitmap[5];
     String uri[];
     int cnt;
     private TessBaseAPI mTess;
@@ -50,10 +51,9 @@ public class BillsTracingActivity extends ActionBarActivity {
         View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_camera, null);
         actionBar.setCustomView(mCustomView);
 
-        getIntent().getIntExtra("cnt",cnt);
+        cnt=getIntent().getIntExtra("cnt",0);
         uri = getIntent().getStringArrayExtra("uri");
         for(int i=0; i<cnt;++i ){
-            Log.e("uri",uri[i]+"\n");
             try {
                 image[i]= MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri[i]));
             } catch (IOException e) {
@@ -70,6 +70,14 @@ public class BillsTracingActivity extends ActionBarActivity {
         mTess = new TessBaseAPI();
         mTess.init(datapath, lang);
 
+
+        Button test  = (Button)findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                processImage();
+            }
+        });
 
     }
 
@@ -122,7 +130,7 @@ public class BillsTracingActivity extends ActionBarActivity {
             String OCRresult = null;
             mTess.setImage(image[i]);
             OCRresult = mTess.getUTF8Text();
-            Log.e("trans",OCRresult+"");
+           Toast.makeText(getApplicationContext(),""+OCRresult,Toast.LENGTH_SHORT).show();
         }
     }
 

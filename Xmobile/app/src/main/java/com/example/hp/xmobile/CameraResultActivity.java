@@ -33,7 +33,8 @@ public class CameraResultActivity extends ActionBarActivity {
     public LinearLayout thumnail;
     ImageView preview;
     public ImageView[] thumnailImages = new ImageView[5];
-    public int cnt=0;
+    public int cnt = 0;
+    public String[] uri = new String[5];
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,21 +42,34 @@ public class CameraResultActivity extends ActionBarActivity {
         setContentView(R.layout.activity_camera_result);
         ActionBar actionBar = getSupportActionBar();
 
-        thumnail = (LinearLayout)findViewById(R.id.cameraResult_thumnail);
+        thumnail = (LinearLayout) findViewById(R.id.cameraResult_thumnail);
+        preview = (ImageView) findViewById(R.id.cameraResult_Image);
 
         actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(false);			//액션바 아이콘을 업 네비게이션 형태로 표시합니다.
-        actionBar.setDisplayShowTitleEnabled(false);		//액션바에 표시되는 제목의 표시유무를 설정합니다.
+        actionBar.setDisplayHomeAsUpEnabled(false);            //액션바 아이콘을 업 네비게이션 형태로 표시합니다.
+        actionBar.setDisplayShowTitleEnabled(false);        //액션바에 표시되는 제목의 표시유무를 설정합니다.
         actionBar.setDisplayShowHomeEnabled(false);
         View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_camera, null);
         actionBar.setCustomView(mCustomView);
 
-        preview  = (ImageView)findViewById(R.id.cameraResult_Image);
-
-
         Glide.with(this).load(getIntent().getStringExtra("node")).into(preview);
 
-        LinearLayout edit = (LinearLayout)findViewById(R.id.cameraResult_ChangeNode);
+        LinearLayout edit = (LinearLayout) findViewById(R.id.cameraResult_ChangeNode);
+        LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
+        LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
+        LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
+        LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CameraResultActivity.this, BillsTracingActivity.class);
+                intent.putExtra("cnt", cnt);
+                intent.putExtra("uri", uri);
+                startActivity(intent);
+            }
+        });
+
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +85,7 @@ public class CameraResultActivity extends ActionBarActivity {
                 options.useSourceImageAspectRatio();
                 options.setLogoColor(Color.parseColor("#73F1E2"));
 
-                UCrop.of(Uri.fromFile(new File(getIntent().getStringExtra("node"))),Uri.fromFile(new File(getIntent().getStringExtra("dir")+"/cuts/"+getIntent().getStringExtra("filename")+cnt+".jpg")))
+                UCrop.of(Uri.fromFile(new File(getIntent().getStringExtra("node"))), Uri.fromFile(new File(getIntent().getStringExtra("dir") + getIntent().getStringExtra("filename") + cnt + ".jpg")))
                         .withOptions(options)
                         .start(CameraResultActivity.this);
 
@@ -91,23 +105,23 @@ public class CameraResultActivity extends ActionBarActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            final Uri resultUri = UCrop.getOutput(data);
-            thumnailImages[cnt] = new ImageView(getApplicationContext());
-            LinearLayout.LayoutParams params =new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,1);
-            params.rightMargin= 20;
-            thumnailImages[cnt].setLayoutParams(params);
-            Glide.with(getApplicationContext()).load(resultUri).into(thumnailImages[cnt]);
 
-            thumnail.addView(thumnailImages[cnt++]);
+        final Uri resultUri = UCrop.getOutput(data);
+        uri[cnt] = resultUri.toString();
 
-            if(cnt==1){
-                preview.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,8));
-                thumnail.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,2));
-            }
+        thumnailImages[cnt] = new ImageView(getApplicationContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+        params.rightMargin = 20;
+        thumnailImages[cnt].setLayoutParams(params);
+        Glide.with(getApplicationContext()).load(resultUri).into(thumnailImages[cnt]);
 
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
+        thumnail.addView(thumnailImages[cnt++]);
+
+        if (cnt == 1) {
+            preview.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 8));
+            thumnail.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2));
         }
+
     }
+
 }

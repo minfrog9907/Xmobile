@@ -22,11 +22,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+<<<<<<< HEAD
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
     }
+=======
+>>>>>>> 2ca8cc4ba4a2a9ae48617fac0fc058c19f98a3a4
 }
 
 dependencies {
@@ -44,5 +47,4 @@ dependencies {
     compile 'com.tsengvn:typekit:1.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     testCompile 'junit:junit:4.12'
-    compile 'me.tankery.lib:circularSeekBar:1.1.4'
 }

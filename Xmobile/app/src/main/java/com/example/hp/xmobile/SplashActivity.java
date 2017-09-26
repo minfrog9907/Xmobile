@@ -18,6 +18,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -105,7 +106,7 @@ public class SplashActivity extends BaseActivity {
     private void moveIntent(){
         finish();
         SharedPreferences autoLogin = getSharedPreferences("autoLogin",0);
-        if(autoLogin.equals(true)){
+        if(autoLogin.getBoolean("autoLogin",false)){
             startActivity(new Intent(getApplicationContext(), MainActivity.class));// 액티비티 종료
         }else{
             startActivity(new Intent(getApplicationContext(), loginActivity.class));// 액티비티 종료

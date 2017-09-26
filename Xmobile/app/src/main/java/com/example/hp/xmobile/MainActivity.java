@@ -19,34 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startActivity(new Intent(getApplicationContext(),SplashActivity.class));
-
         doubleCloseHandler = new DoubleCloseHandler(this);
 
-        mWebView = (WebView) findViewById(R.id.main_webView);
-        mWebView.loadUrl("http://www.google.com");
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent event) {
-                //This is the filter
-                if (event.getAction()!=KeyEvent.ACTION_DOWN)
-                    return true;
-
-
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (mWebView.canGoBack()) {
-                        mWebView.goBack();
-                    }else{
-                        MainActivity.this.onBackPressed();
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-
-        });
     }
 
     @Override

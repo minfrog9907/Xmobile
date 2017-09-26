@@ -53,12 +53,6 @@ public class BillsTracingActivity extends ActionBarActivity {
 
         cnt=getIntent().getIntExtra("cnt",0);
         uri = getIntent().getStringArrayExtra("uri");
-        ImageView img = (ImageView)findViewById(R.id.textImage);
-        try {
-            img.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri[0])));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         for(int i=0; i<cnt;++i ){
             try {
                 image[i]= MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri[i]));
@@ -81,7 +75,6 @@ public class BillsTracingActivity extends ActionBarActivity {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("pr","start");
                 processImage();
             }
         });
@@ -137,8 +130,7 @@ public class BillsTracingActivity extends ActionBarActivity {
             String OCRresult = null;
             mTess.setImage(image[i]);
             OCRresult = mTess.getUTF8Text();
-            Log.e("pr",""+OCRresult);
-
+           Toast.makeText(getApplicationContext(),""+OCRresult,Toast.LENGTH_SHORT).show();
         }
     }
 

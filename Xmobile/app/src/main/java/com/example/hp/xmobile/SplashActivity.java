@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,9 +56,7 @@ public class SplashActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    finish();
-                    startActivity(new Intent(getApplicationContext(), CameraActivity.class));// 액티비티 종료
-                    //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
+                moveIntent();
                 }
             }, SPLASH_DISPLAY_LENGTH);
 
@@ -77,9 +76,7 @@ public class SplashActivity extends BaseActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            finish();
-                            startActivity(new Intent(getApplicationContext(), CameraActivity.class));// 액티비티 종료
-                            //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
+                        moveIntent();
                         }
                     }, SPLASH_DISPLAY_LENGTH);
                 } else {
@@ -103,5 +100,17 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
+    }
+
+    private void moveIntent(){
+        finish();
+        SharedPreferences autoLogin = getSharedPreferences("autoLogin",0);
+        if(autoLogin.equals(true)){
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));// 액티비티 종료
+        }else{
+            startActivity(new Intent(getApplicationContext(), loginActivity.class));// 액티비티 종료
+        }
+        //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
+
     }
 }

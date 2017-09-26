@@ -6,9 +6,405 @@
     android:orientation="vertical"
     tools:context="com.example.hp.xmobile.MainActivity">
 
-    <WebView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/main_webView"></WebView>
+        android:layout_height="wrap_content"
+        android:background="@color/XobileStatusDark"
+        android:padding="10dp">
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Welcome"
+            android:textSize="30dp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="퇴근"
+                android:textSize="20dp" />
+
+            <ProgressBar
+                android:id="@+id/offWorkGraph"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4" />
+
+            <TextView
+                android:id="@+id/offWorkTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="05:00"
+                android:textSize="25dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:weightSum="3">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.26"
+                android:gravity="center"
+                android:text="즐겨찾기"
+                android:textSize="20dp" />
+
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2.74">
+
+                <LinearLayout
+                    android:id="@+id/historyList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/folder_light" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="내 컴퓨터" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/folder_light" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="고졸 취업자" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/folder_light" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="직박구리" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/file" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="사무실에서 단둘이.hwp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/file" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="사무실에서 단셋이.hwp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/file" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="사무실에서 단넷이.hwp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/file" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2.5"
+                            android:text="사무실에서 단다섯이.hwp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/fileManagerBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/folder"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="15dp"
+                    android:text="파일 매니저"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.8"
+                    android:background="#8073F1E2"
+                    ></LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/messageBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/history"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="15dp"
+                    android:text="히스토리"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:gravity="center"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:background="#8073F1E2"
+                    ></LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:gravity="center"
+                android:layout_weight="1">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.8"
+                    android:background="#8073F1E2">
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/photocarmeraBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/photocarmera_light"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="15dp"
+                    android:text="카메라"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:weightSum="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.8"
+                    android:background="#8073F1E2"
+                    ></LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/settingBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/settings"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="15dp"
+                    android:text="설정"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 </LinearLayout>

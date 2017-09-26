@@ -18,6 +18,10 @@
 
     <style name="AppTheme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
+    <style name="AppTheme.Dark.Login" parent="AppTheme.Dark.NoActionBar">
+        <item name="colorControlNormal">#1B1B1B</item>
+    </style>
+
     <style name="AppTheme.White" parent="Theme.AppCompat.Light" />
 
 </resources>

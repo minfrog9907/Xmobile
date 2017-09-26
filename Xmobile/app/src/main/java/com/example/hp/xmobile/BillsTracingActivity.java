@@ -53,7 +53,12 @@ public class BillsTracingActivity extends ActionBarActivity {
 
         cnt=getIntent().getIntExtra("cnt",0);
         uri = getIntent().getStringArrayExtra("uri");
-        Toast.makeText(getApplicationContext(),cnt+"",Toast.LENGTH_LONG).show();
+        ImageView img = (ImageView)findViewById(R.id.textImage);
+        try {
+            img.setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri[0])));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for(int i=0; i<cnt;++i ){
             try {
                 image[i]= MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(uri[i]));

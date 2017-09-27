@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activity.SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,18 +22,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CheerPopUp"
+            android:name=".Activity.CheerPopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
         <activity
-            android:name=".CameraActivity"
+            android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".BillsTracingActivity" />
+        <activity android:name=".Activity.BillsTracingActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".CameraResultActivity" />
-        <activity android:name=".loginActivity"
+        <activity android:name=".Activity.CameraResultActivity" >
+
+        </activity>
+        <activity android:name=".Activity.loginActivity"
             android:theme="@style/AppTheme.Dark.Login"/>
     </application>
 

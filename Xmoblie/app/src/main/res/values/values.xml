@@ -32,5 +32,10 @@
         <attr name="cs_start_angle" format="float"/>
         <attr name="cs_end_angle" format="float"/>
     </declare-styleable>
+    <declare-styleable name="SideStick_BTN">
+        <attr name="symbol" format="reference|integer" />
+        <attr name="text" format="reference|string" />
+        <attr name="stick" format="reference|boolean"/>
+    </declare-styleable>
 
 </resources>

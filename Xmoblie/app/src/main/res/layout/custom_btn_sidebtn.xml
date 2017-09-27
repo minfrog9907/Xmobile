@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/img_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            />
+
+        <TextView
+            android:id="@+id/img_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="경로 변경"
+            android:textSize="8dp" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_alignParentRight="true"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/img_stick"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:orientation="vertical"
+            android:background="#8073F1E2"></LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

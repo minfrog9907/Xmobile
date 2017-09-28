@@ -15,11 +15,7 @@
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activity.CheerPopUp"
@@ -37,6 +33,13 @@
         </activity>
         <activity android:name=".Activity.loginActivity"
             android:theme="@style/AppTheme.Dark.Login"/>
+        <activity android:name=".Activity.ImageGrayScaleActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

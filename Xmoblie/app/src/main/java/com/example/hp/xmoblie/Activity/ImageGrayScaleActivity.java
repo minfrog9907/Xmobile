@@ -161,10 +161,7 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
     private void imageprocess_and_showResult() {
 
         imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr());
-
-        Bitmap bitmapInput = Bitmap.createBitmap(img_input.cols(), img_input.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(img_input, bitmapInput);
-        imageVIewInput.setImageBitmap(bitmapInput);
+        
 
         Bitmap bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(img_output, bitmapOutput);

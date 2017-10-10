@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.example.hp.xmoblie.Activity.MainActivity">
 
@@ -32,22 +33,20 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical"
             android:weightSum="5">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:text="퇴근"
-                android:textSize="20dp" />
-
-            <ProgressBar
-                android:id="@+id/offWorkGraph"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4" />
+            <com.github.lzyzsd.circleprogress.ArcProgress
+                android:id="@+id/offWorkProgress"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                app:arc_bottom_text="퇴근"
+                app:arc_bottom_text_size="20dp"
+                app:arc_text_color="#D9D9D9"
+                app:arc_unfinished_color="#1B1B1B"
+                app:arc_finished_color="#73F1E2"
+                app:arc_stroke_width="10dp"/>
 
             <TextView
                 android:id="@+id/offWorkTime"
@@ -260,29 +259,31 @@
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/folder"/>
+                    android:src="@drawable/folder" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:textSize="15dp"
-                    android:text="파일 매니저"/>
+                    android:text="파일 매니저"
+                    android:textSize="15dp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:weightSum="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.8"
-                    android:background="#8073F1E2"
-                    ></LinearLayout>
+                    android:background="#8073F1E2"></LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/messageBtn"
                 android:layout_width="0dp"
@@ -294,14 +295,14 @@
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/history"/>
+                    android:src="@drawable/history" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:textSize="15dp"
-                    android:text="히스토리"/>
+                    android:text="히스토리"
+                    android:textSize="15dp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -314,29 +315,29 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:weightSum="1"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.8"
-                    android:background="#8073F1E2"
-                    ></LinearLayout>
+                    android:background="#8073F1E2"></LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:weightSum="1"
+                android:layout_weight="1"
                 android:gravity="center"
-                android:layout_weight="1">
+                android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.8"
-                    android:background="#8073F1E2">
-                </LinearLayout>
+                    android:background="#8073F1E2"></LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
@@ -358,29 +359,31 @@
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/photocarmera_light"/>
+                    android:src="@drawable/photocarmera_light" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:textSize="15dp"
-                    android:text="카메라"/>
+                    android:text="카메라"
+                    android:textSize="15dp" />
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:weightSum="1"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="1">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.8"
-                    android:background="#8073F1E2"
-                    ></LinearLayout>
+                    android:background="#8073F1E2"></LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/settingBtn"
                 android:layout_width="0dp"
@@ -392,14 +395,14 @@
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/settings"/>
+                    android:src="@drawable/settings" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:textSize="15dp"
-                    android:text="설정"/>
+                    android:text="설정"
+                    android:textSize="15dp" />
             </LinearLayout>
 
 

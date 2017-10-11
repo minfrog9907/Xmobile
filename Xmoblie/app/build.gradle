@@ -34,8 +34,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile project(':openCVLibrary330')
     compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.github.ctodobom:OpenCV-3.1.0-Android:-SNAPSHOT'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.github.yalantis:ucrop:2.2.1-native'
     compile 'com.rmtheis:tess-two:6.2.0'
@@ -43,6 +43,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'me.tankery.lib:circularSeekBar:1.1.4'
     compile 'com.github.lzyzsd:circleprogress:1.2.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
-    compile project(':openCVLibrary330')
 }

@@ -4,29 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     tools:context="com.example.hp.xmoblie.Activity.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/XobileStatusDark"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="Welcome"
-            android:textSize="30dp" />
-
-    </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -35,10 +20,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingTop="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:weightSum="5">
 
             <com.github.lzyzsd.circleprogress.ArcProgress
@@ -50,7 +34,7 @@
                 app:arc_text_color="#D9D9D9"
                 app:arc_unfinished_color="#1B1B1B"
                 app:arc_finished_color="#73F1E2"
-                android:layout_weight="4.5"
+                android:layout_weight="2.5"
                 app:arc_stroke_width="10dp"/>
 
             <TextView
@@ -242,9 +226,9 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <LinearLayout

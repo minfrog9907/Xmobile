@@ -2,48 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hp.xmoblie">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".Activity.MainActivity"
-            android:theme="@style/AppTheme.Dark.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Activity.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-
-        </activity>
-        <activity
-            android:name=".Activity.CheerPopUp"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
-        <activity
-            android:name=".Activity.CameraActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".Activity.BillsTracingActivity" />
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".Activity.CameraResultActivity" >
-
-        </activity>
-        <activity android:name=".Activity.loginActivity"
-            android:theme="@style/AppTheme.Dark.Login"/>
-        <activity android:name=".Activity.ImageGrayScaleActivity">
-
-        </activity>
-    </application>
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.camera2" />
@@ -55,4 +13,44 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".Activity.MainActivity"
+            android:theme="@style/AppTheme.Dark.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activity.SplashActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity
+            android:name=".Activity.CheerPopUp"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+        <activity
+            android:name=".Activity.CameraActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".Activity.BillsTracingActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".Activity.CameraResultActivity"></activity>
+        <activity
+            android:name=".Activity.loginActivity"
+            android:theme="@style/AppTheme.Dark.Login" />
+        <activity android:name=".Activity.ImageGrayScaleActivity"></activity>
+        <activity android:name=".Activity.SettingActivity" />
+        <activity android:name=".Activity.FileManagerActivity"></activity>
+    </application>
+
 </manifest>

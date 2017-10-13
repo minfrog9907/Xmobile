@@ -33,7 +33,8 @@
         </activity>
         <activity android:name=".Activity.loginActivity"
             android:theme="@style/AppTheme.Dark.Login"/>
-        <activity android:name=".Activity.ImageGrayScaleActivity">
+        <activity android:name=".Activity.ImageGrayScaleActivity"
+            android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

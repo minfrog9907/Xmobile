@@ -88,11 +88,8 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
 
     private void imageprocess_and_showResult() {
 
-        imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr());
-
-        Bitmap bitmapInput = Bitmap.createBitmap(img_input.cols(), img_input.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(img_input, bitmapInput);
-        imageVIewInput.setImageBitmap(bitmapInput);
+        getBlobImage( img_output.getNativeObjAddr(),0);
+        
 
         Bitmap bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(img_output, bitmapOutput);
@@ -105,7 +102,7 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
         img_input = new Mat();
         img_output = new Mat();
 
-        loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
+        setParam("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr(),2);
     }
 
 
@@ -115,4 +112,6 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
      */
     public native void loadImage(String imageFileName, long img);
     public native void imageprocessing(long inputImage, long outputImage);
+    public native void setParam(String imageFileName, long img, int nThreshold);
+    public native void getBlobImage(long outputImage, int nLabel);
 }

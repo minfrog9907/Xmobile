@@ -39,6 +39,30 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
     private Mat img_output;
 
     private static final String TAG = "opencv";
+    static final int PERMISSION_REQUEST_CODE = 1;
+    String[] PERMISSIONS  = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    private boolean hasPermissions(String[] permissions) {
+        int ret = 0;
+        //스트링 배열에 있는 퍼미션들의 허가 상태 여부 확인
+        for (String perms : permissions){
+            ret = checkCallingOrSelfPermission(perms);
+            if (!(ret == PackageManager.PERMISSION_GRANTED)){
+                //퍼미션 허가 안된 경우
+                return false;
+            }
+
+        }
+        //모든 퍼미션이 허가된 경우
+        return true;
+    }
+
+    private void requestNecessaryPermissions(String[] permissions) {
+        //마시멜로( API 23 )이상에서 런타임 퍼미션(Runtime Permission) 요청
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PERMISSION_REQUEST_CODE);
+        }
+    }
 
     private void copyFile(String filename) {
         String baseDir = Environment.getExternalStorageDirectory().getPath();
@@ -70,7 +94,52 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults){
+        switch(permsRequestCode){
 
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+                    boolean writeAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+                        if (!writeAccepted )
+                        {
+                            showDialogforPermission("앱을 실행하려면 퍼미션을 허가하셔야합니다.");
+                            return;
+                        }else
+                        {
+                            read_image_file();
+                            imageprocess_and_showResult();
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showDialogforPermission(String msg) {
+
+        final AlertDialog.Builder myDialog = new AlertDialog.Builder(  ImageGrayScaleActivity.this);
+        myDialog.setTitle("알림");
+        myDialog.setMessage(msg);
+        myDialog.setCancelable(false);
+        myDialog.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(PERMISSIONS, PERMISSION_REQUEST_CODE);
+                }
+
+            }
+        });
+        myDialog.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                finish();
+            }
+        });
+        myDialog.show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +149,13 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
         imageVIewInput = (ImageView)findViewById(R.id.imageViewInput);
         imageVIewOuput = (ImageView)findViewById(R.id.imageViewOutput);
 
+        if (!hasPermissions(PERMISSIONS)) { //퍼미션 허가를 했었는지 여부를 확인
+            requestNecessaryPermissions(PERMISSIONS);//퍼미션 허가안되어 있다면 사용자에게 요청
+        } else {
             //이미 사용자에게 퍼미션 허가를 받음.
             read_image_file();
             imageprocess_and_showResult();
-
+        }
     }
 
     private void imageprocess_and_showResult() {
@@ -97,7 +169,7 @@ public class ImageGrayScaleActivity extends AppCompatActivity {
     }
 
     private void read_image_file() {
-        copyFile("Download/bills/asdfasdf.jpg");
+        copyFile("/Download/bills/asdfasdf.jpg");
 
         img_input = new Mat();
         img_output = new Mat();

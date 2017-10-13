@@ -44,7 +44,6 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-<<<<<<< HEAD
 
         <activity android:name=".Activity.CameraResultActivity" >
 
@@ -54,15 +53,8 @@
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.FileManagerActivity"></activity>
 
-=======
-        <activity android:name=".Activity.CameraResultActivity" />
-        <activity
-            android:name=".Activity.loginActivity"
-            android:theme="@style/AppTheme.Dark.Login" />
-        <activity android:name=".Activity.ImageGrayScaleActivity" />
-        <activity android:name=".Activity.SettingActivity" />
-        <activity android:name=".Activity.FileManagerActivity"></activity>
->>>>>>> 02e3645b46d0124b23c6f03eb0255d0b6781ca34
+
+
     </application>
 
 </manifest>

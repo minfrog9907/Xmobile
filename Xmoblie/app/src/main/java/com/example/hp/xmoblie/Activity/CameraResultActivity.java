@@ -160,4 +160,3 @@ public class CameraResultActivity extends ActionBarActivity {
     public native void loadImage(String imageFileName, long img);
     public native String imageprocessing(long inputImage, long outputImage );
 }
-

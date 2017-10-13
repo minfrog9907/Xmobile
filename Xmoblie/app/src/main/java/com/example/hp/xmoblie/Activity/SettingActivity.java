@@ -6,6 +6,7 @@ package com.example.hp.xmoblie.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
@@ -31,9 +32,12 @@ import java.lang.*;
 
 import me.tankery.lib.circularseekbar.CircularSeekBar;
 
+import static android.R.attr.start;
+import static android.R.attr.value;
 import static java.util.Calendar.HOUR;
 
 public class SettingActivity extends Activity {
+
 
     TextView tvHour, tvMinute, tvStartHour, tvStartMinute, tvSelectDeta;
     Croller detaSeekBar;
@@ -80,7 +84,10 @@ public class SettingActivity extends Activity {
         ThursdayCheerText = (EditText) findViewById(R.id.Thursday);
         FridayCheerText = (EditText) findViewById(R.id.FridayCheerText);
         detaSeekBar = (Croller) findViewById(R.id.detaSeekBar);
-        tvSelectDeta = (TextView) findViewById(R.id.tvSelectDeta);
+        //tvSelectDeta = (TextView) findViewById(R.id.tvSelectDeta);
+
+
+
 
         // 출 퇴근 시간 설정
 

@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -117,6 +118,7 @@ public class CameraActivity extends BaseActivity {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void startCamera() {
 
         if ( preview == null ) {
@@ -238,6 +240,7 @@ public class CameraActivity extends BaseActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onResume() {
         super.onResume();
@@ -263,6 +266,7 @@ public class CameraActivity extends BaseActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void resetCam() {
         startCamera();
     }
@@ -288,6 +292,7 @@ public class CameraActivity extends BaseActivity {
 
     //참고 : http://stackoverflow.com/q/37135675
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
         public void onPictureTaken(byte[] data, Camera camera) {
 
             //이미지의 너비와 높이 결정

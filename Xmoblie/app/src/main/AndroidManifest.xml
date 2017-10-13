@@ -53,6 +53,7 @@
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.FileManagerActivity"></activity>
 
+<<<<<<< HEAD
         <activity android:name=".Activity.CameraResultActivity" />
         <activity
             android:name=".Activity.LoginActivity"
@@ -61,6 +62,10 @@
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.FileManagerActivity"></activity>
 >>>>>>> 02e3645b46d0124b23c6f03eb0255d0b6781ca34
+=======
+
+
+>>>>>>> f20a6a6b1b5f8e04592231a19d8e6303c2de4d18
     </application>
 
 </manifest>

@@ -121,7 +121,7 @@ public class CameraResultActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         final Uri resultUri = UCrop.getOutput(data);
         uri[cnt] = resultUri.toString();

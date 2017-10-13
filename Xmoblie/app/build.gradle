@@ -15,6 +15,7 @@ android {
                 cppFlags "-frtti -fexceptions"
             }
         }
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -46,5 +47,6 @@ dependencies {
     compile 'com.github.lzyzsd:circleprogress:1.2.1'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:multidex:1.0.0'
     testCompile 'junit:junit:4.12'
 }

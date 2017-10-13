@@ -7,10 +7,46 @@
     tools:context="com.example.hp.xmoblie.Activity.FileManagerActivity">
 
     <com.example.hp.xmoblie.Custom.CustomActionbar
+        android:id="@+id/actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:catitle="파일 매니저"
         app:caicon="@drawable/folder"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/actionbar"
+        android:orientation="vertical"
+        android:weightSum="10">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:weightSum="10"
+            android:layout_weight="9"
+            android:padding="5dp">
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/search"/>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:background="@null"/>
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/arrow_light"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#73F1E2"/>
+    </LinearLayout>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/material_design_android_floating_action_menu"

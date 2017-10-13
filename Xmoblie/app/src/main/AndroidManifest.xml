@@ -32,7 +32,7 @@
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
             android:name=".Activity.CheerPopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
@@ -44,11 +44,11 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".Activity.CameraResultActivity"></activity>
+        <activity android:name=".Activity.CameraResultActivity" />
         <activity
             android:name=".Activity.loginActivity"
             android:theme="@style/AppTheme.Dark.Login" />
-        <activity android:name=".Activity.ImageGrayScaleActivity"></activity>
+        <activity android:name=".Activity.ImageGrayScaleActivity" />
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.FileManagerActivity"></activity>
     </application>

@@ -41,4 +41,11 @@
         <attr name="msymbol" format="reference|integer" />
         <attr name="mtext" format="reference|string" />
     </declare-styleable>
+    <declare-styleable name="CustomActionbar">
+        <attr name="caicon" format="reference|integer" />
+        <attr name="catitle" format="reference|string" />
+        <attr name="showcabtn" format="boolean" />
+        <attr name="cabtn" format="reference|integer" />
+        <attr name="cabtnrotation" format="reference|integer" />
+    </declare-styleable>
 </resources>

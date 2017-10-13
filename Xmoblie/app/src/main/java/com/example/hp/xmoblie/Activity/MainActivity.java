@@ -1,20 +1,15 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.content.Intent;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
 import com.github.lzyzsd.circleprogress.ArcProgress;
-
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
@@ -41,8 +36,14 @@ public class MainActivity extends AppCompatActivity {
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+            }
+        });
+
+        fileManagerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, FileManagerActivity.class));
             }
         });
 

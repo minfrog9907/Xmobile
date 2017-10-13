@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#1B1B1B"
+    android:orientation="horizontal"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+    <ImageView
+        android:id="@+id/actionbar_icon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:id="@+id/actionbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textSize="15dp"
+        android:layout_marginLeft="35dp"
+        android:text="카메라" />
+
+    <LinearLayout
+        android:id="@+id/actionbar_btn"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:gravity="right|center"
+        android:layout_alignParentRight="true"
+        android:visibility="invisible">
+        <ImageView
+            android:id="@+id/actionbar_btn_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

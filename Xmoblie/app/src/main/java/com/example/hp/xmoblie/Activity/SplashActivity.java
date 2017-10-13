@@ -104,7 +104,7 @@ public class SplashActivity extends BaseActivity {
         if(autoLogin.getBoolean("autoLogin",false)){
             startActivity(new Intent(getApplicationContext(), MainActivity.class));// 액티비티 종료
         }else{
-            startActivity(new Intent(getApplicationContext(), loginActivity.class));// 액티비티 종료
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));// 액티비티 종료
         }
         //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
 

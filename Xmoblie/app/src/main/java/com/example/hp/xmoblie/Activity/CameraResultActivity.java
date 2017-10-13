@@ -1,12 +1,16 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +22,13 @@ import com.example.hp.xmoblie.Custom.SideStick_BTN;
 import com.example.hp.xmoblie.R;
 import com.yalantis.ucrop.UCrop;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 /**
@@ -31,6 +41,16 @@ public class CameraResultActivity extends ActionBarActivity {
     public ImageView[] thumnailImages = new ImageView[5];
     public int cnt = 0;
     public String[] uri = new String[5];
+    private Mat img_input;
+    private Mat img_output;
+    String node;
+
+    private static final String TAG = "opencv";
+
+    static {
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("native-lib");
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +68,8 @@ public class CameraResultActivity extends ActionBarActivity {
         View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_camera, null);
         actionBar.setCustomView(mCustomView);
 
-        Glide.with(this).load(getIntent().getStringExtra("node")).into(preview);
+        read_image_file();
+        imageprocess_and_showResult();
 
         SideStick_BTN edit = (SideStick_BTN) findViewById(R.id.cameraResult_ChangeNode);
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
@@ -81,7 +102,7 @@ public class CameraResultActivity extends ActionBarActivity {
                 options.useSourceImageAspectRatio();
                 options.setLogoColor(Color.parseColor("#73F1E2"));
 
-                UCrop.of(Uri.fromFile(new File(getIntent().getStringExtra("node"))), Uri.fromFile(new File(getIntent().getStringExtra("dir") + getIntent().getStringExtra("filename") + cnt + ".jpg")))
+                UCrop.of(Uri.fromFile(new File(node)), Uri.fromFile(new File(getIntent().getStringExtra("dir") + getIntent().getStringExtra("filename") + cnt + ".jpg")))
                         .withOptions(options)
                         .start(CameraResultActivity.this);
 
@@ -120,4 +141,23 @@ public class CameraResultActivity extends ActionBarActivity {
 
     }
 
+    private void imageprocess_and_showResult() {
+
+        node = imageprocessing( img_input.getNativeObjAddr(),img_output.getNativeObjAddr());
+
+
+        Bitmap bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(img_output, bitmapOutput);
+        preview.setImageBitmap(bitmapOutput);
+    }
+    private void read_image_file() {
+
+        img_input = new Mat();
+        img_output = new Mat();
+
+        loadImage(getIntent().getStringExtra("node"), img_input.getNativeObjAddr());
+    }
+    public native void loadImage(String imageFileName, long img);
+    public native String imageprocessing(long inputImage, long outputImage );
 }
+

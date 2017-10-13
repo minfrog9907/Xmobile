@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
 
-public class loginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

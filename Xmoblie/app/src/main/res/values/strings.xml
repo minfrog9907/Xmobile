@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Xmoblie</string>
+    <string name="title_activity_file_manager">FileManagerActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

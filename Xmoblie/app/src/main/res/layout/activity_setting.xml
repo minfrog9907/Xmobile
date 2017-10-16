@@ -254,8 +254,14 @@
                 android:layout_height="match_parent">
 
                 <com.sdsmdg.harjot.crollerTest.Croller
+                    android:id="@+id/detaSeekBar"
                     android:layout_width="200dp"
-                    android:layout_height="200dp" />
+                    android:layout_height="200dp"
+                    android:layout_gravity="center"
+                    app:min="0"
+                    app:max="1024"
+                    app:progress="200"
+                    app:start_offset="20"/>
 
                 <TextView
                     android:id="@+id/tvSeekBarDetaView"

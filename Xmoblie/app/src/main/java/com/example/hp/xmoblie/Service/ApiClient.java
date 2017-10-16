@@ -4,6 +4,7 @@ package com.example.hp.xmoblie.Service;
  * Created by HP on 2017-10-16.
  */
 
+import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 
 import java.util.List;
@@ -35,6 +36,12 @@ public interface ApiClient {
             , @Field("password") String password
             , @Field("deviceid") String deviceid
 
+    );
+
+    @GET("/file")
+    Call<List<FileItem>>repoFileNodes(
+            @Field("token") String token
+            , @Field("path") String path
     );
 }
 

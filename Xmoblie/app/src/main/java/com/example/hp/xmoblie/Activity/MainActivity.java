@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         fileManagerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, FileManagerActivity.class));
+                startActivity(new Intent(MainActivity.this, FileManagerActivity.class).putExtra("token",getIntent().getStringExtra("token")));
             }
         });
 

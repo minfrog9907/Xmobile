@@ -6,8 +6,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 
-set(pathOPENCV F:/ProgramFile/opencv/opencv-3.3.0-android-sdk/OpenCV-android-sdk)
-set(pathPROJECT C:/Users/HP/Desktop/Xmoblie/Xmoblie)
+set(pathOPENCV D:/OpenCV-android-sdk)
+set(pathPROJECT "C:/Users/Kim doyeon/Desktop/git_android/Xmoblie")
 set(pathLIBOPENCV_JAVA ${pathPROJECT}/app/src/main/JniLibs/${ANDROID_ABI}/libopencv_java3.so)
 
 set(CMAKE_VERBOSE_MAKEFILE on)

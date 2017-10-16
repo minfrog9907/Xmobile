@@ -64,7 +64,6 @@ public class SplashActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                moveIntent();
                 }
             }, SPLASH_DISPLAY_LENGTH);
 
@@ -84,7 +83,6 @@ public class SplashActivity extends BaseActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                        moveIntent();
                         }
                     }, SPLASH_DISPLAY_LENGTH);
                 } else {
@@ -110,55 +108,5 @@ public class SplashActivity extends BaseActivity {
         super.attachBaseContext(newBase);
     }
 
-    private void moveIntent(){
-        finish();
-        SharedPreferences autoLogin = getSharedPreferences("autoLogin",0);
-        if(autoLogin.getBoolean("autoLogin",false)){
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));// 액티비티 종료
-        }else{
-            TelephonyManager mgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
-            ApiClient apiClient = ApiClient.service;
-
-            String deviceid = "testDevice";//mgr.getDeviceId();
-            String userid="",password="";
-            autoLogin.getString("id",userid);
-            autoLogin.getString("password",password);
-            Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
-            call.enqueue(new Callback<LoginItem>() {
-                @Override
-                public void onResponse(Call<LoginItem> call,
-                                       Response<LoginItem> response) {
-                    switch (response.body().getStatus()) {
-                        case 0:
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.putExtra("username", response.body().getUsername());
-                            intent.putExtra("token", response.body().getToken());
-                            intent.putExtra("privilege", response.body().getPrivilege());
-                            startActivity(intent);
-                            break;
-                        case 1:
-                            Toast.makeText(getApplicationContext(), "잘못된 아이디 또는 비밀번호입니다.", Toast.LENGTH_LONG).show();
-                            break;
-                        case 2:
-                            Toast.makeText(getApplicationContext(), "잠긴 계정입니다.", Toast.LENGTH_LONG).show();
-                            break;
-                        default:
-                            Toast.makeText(getApplicationContext(), "알 수 없는 오류  " + response.body().getStatus(), Toast.LENGTH_LONG).show();
-                            break;
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginItem> call, Throwable t) {
-                    Log.e("jsonResponse", "빼애애앵ㄱ");
-
-                }
-
-
-            });
-        }
-        //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
-
-    }
 }

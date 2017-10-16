@@ -27,7 +27,8 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
     EditText idEditText, pwEditText;
-    String userid, password;
+    String id, pw;
+    SharedPreferences autoLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +40,26 @@ public class LoginActivity extends AppCompatActivity {
         submitLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userid = idEditText.getText().toString();
-                password = pwEditText.getText().toString();
-                loginSystem();
+                id = idEditText.getText().toString();
+                pw = pwEditText.getText().toString();
+                loginSystem(id,pw);
                 //  loginProcess(id, pw);
             }
         });
 
+        autoLogin = getSharedPreferences("autoLogin",MODE_PRIVATE);
+        boolean auto=false;
+        auto =autoLogin.getBoolean("autoLogin",false);
+        Log.e("autoLogin",auto+"");
+        if (auto){
+            id =autoLogin.getString("id","");
+            pw =autoLogin.getString("password","");
+            Toast.makeText(getApplicationContext(),"자동로그인되었습니다.",Toast.LENGTH_LONG).show();
+            loginSystem(id,pw);
+        }
     }
 
     private void loginProcess(String id, String pw) {
-
-        SharedPreferences autoLogin = getSharedPreferences("autoLogin", 0);
         SharedPreferences.Editor editor = autoLogin.edit();
         editor.putBoolean("autoLogin", true);
         editor.putString("id",id);
@@ -59,13 +68,13 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void loginSystem() {
+    private void loginSystem(final String userid, final String password) {
         TelephonyManager mgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
         ApiClient apiClient = ApiClient.service;
 
         String deviceid = "testDevice";//mgr.getDeviceId();
-        Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
+        final Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
         call.enqueue(new Callback<LoginItem>() {
             @Override
             public void onResponse(Call<LoginItem> call,
@@ -78,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("privilege", response.body().getPrivilege());
                         loginProcess(userid,password);
                         startActivity(intent);
+                        finish();
                         break;
                     case 1:
                         Toast.makeText(getApplicationContext(), "잘못된 아이디 또는 비밀번호입니다.", Toast.LENGTH_LONG).show();

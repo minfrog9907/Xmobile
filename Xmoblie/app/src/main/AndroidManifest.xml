@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hp.xmoblie">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.camera2" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -11,7 +13,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -23,7 +24,10 @@
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
+<<<<<<< HEAD
 
+=======
+>>>>>>> cb56167649d4363e4a33fbb265b3d60f31bbfdb0
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
@@ -33,7 +37,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+<<<<<<< HEAD
 
+=======
+>>>>>>> cb56167649d4363e4a33fbb265b3d60f31bbfdb0
         </activity>
         <activity
             android:name=".Activity.CheerPopUp"

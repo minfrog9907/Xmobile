@@ -18,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
 import com.sdsmdg.harjot.crollerTest.Croller;
@@ -32,29 +33,31 @@ import java.lang.*;
 
 import me.tankery.lib.circularseekbar.CircularSeekBar;
 
+import static android.R.attr.editorExtras;
+import static android.R.attr.maxLength;
 import static android.R.attr.start;
 import static android.R.attr.value;
 import static java.util.Calendar.HOUR;
 
 public class SettingActivity extends Activity {
 
-
-    TextView tvHour, tvMinute, tvStartHour, tvStartMinute, tvSelectDeta;
+    TextView tvHour;
+    TextView tvMinute;
+    TextView tvStartHour;
+    TextView tvStartMinute;
     Croller detaSeekBar;
     Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
     EditText MondayCheerText, TuesdayCheerText, WednesdayCheerText, ThursdayCheerText, FridayCheerText;
 
-
-    // 출 퇴근
-
-    int hour;
-    int minute;
-    int startHour;
-    int startMinute;
-
-    int progress;
-
     boolean editOff = true;
+
+    int startHour;
+    int endHour;
+    int startMinute;
+    int endMinute;
+    int pg;
+
+    String strSH, strEH, strSM, strEM;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,27 +87,28 @@ public class SettingActivity extends Activity {
         ThursdayCheerText = (EditText) findViewById(R.id.Thursday);
         FridayCheerText = (EditText) findViewById(R.id.FridayCheerText);
         detaSeekBar = (Croller) findViewById(R.id.detaSeekBar);
-        //tvSelectDeta = (TextView) findViewById(R.id.tvSelectDeta);
 
+        strSH = tvStartHour.getText().toString();
+        strEH = tvHour.getText().toString();
+        strSM = tvStartMinute.getText().toString();
+        strEM = tvMinute.getText().toString();
 
-
-
-        // 출 퇴근 시간 설정
-
-        hour = Integer.parseInt(tvHour.getText().toString());
-        minute = Integer.parseInt(tvMinute.getText().toString());
-
-        startHour = Integer.parseInt(tvStartHour.getText().toString());
-        startMinute = Integer.parseInt(tvMinute.getText().toString());
-
-        progress = detaSeekBar.getProgress();
+        setPREF(false);
 
         detaSeekBar.setOnCrollerChangeListener(new OnCrollerChangeListener() {
             @Override
             public void onProgressChanged(Croller croller, int progress) {
                 detaSeekBar.setProgress(progress);
+                if (progress == 0) {
+                    detaSeekBar.setLabel("0 MB");
+                } else if (progress < 1024) {
+                    detaSeekBar.setLabel(String.valueOf(progress) + " MB");
+                } else {
+                    detaSeekBar.setLabel("1 GB");
+                }
 
-                setDeta(progress);
+                pg = detaSeekBar.getProgress();
+
             }
 
             @Override
@@ -122,7 +126,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                timeSetting(true, true);
+                setTime(false, true, true);
 
             }
         });
@@ -131,7 +135,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                timeSetting(true, false);
+                setTime(false, true, false);
 
             }
         });
@@ -140,7 +144,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                timeSetting(false, true);
+                setTime(false, false, true);
 
             }
         });
@@ -149,7 +153,7 @@ public class SettingActivity extends Activity {
            @Override
            public void onClick(View v) {
 
-            timeSetting(false, false);
+               setTime(false, false, false);
 
            }
        });
@@ -158,7 +162,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                startTimeSetting(true, true);
+                setTime(true, true, true);
 
             }
         });
@@ -167,7 +171,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                startTimeSetting(true, false);
+                setTime(true, true, false);
 
             }
         });
@@ -176,7 +180,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                startTimeSetting(false, true);
+                setTime(true, false, true);
 
             }
         });
@@ -185,7 +189,7 @@ public class SettingActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                startTimeSetting(false, false);
+                setTime(true, false, false);
 
             }
         });
@@ -225,180 +229,171 @@ public class SettingActivity extends Activity {
 
     }
 
-    public void timeSetting(boolean setHour, boolean setIncrease) {
+    public void setTime(boolean start, boolean hour, boolean increase) {
 
-        if (setHour && setIncrease == true) {
-
-            if (hour < 9) {
-
-                hour = hour + 1;
-                tvHour.setText("0" + hour);
-
-            } else if (hour >= 9 && hour <= 22) {
-
-                hour = hour + 1;
-                tvHour.setText("" + hour);
-
+        if (start && hour == true) {
+            if (increase == true) {
+                if(startHour < 9) {
+                    startHour += 1;
+                    tvStartHour.setText("0" + startHour);
+                } else if (startHour >= 9 && startHour < 23) {
+                    startHour += 1;
+                    tvStartHour.setText("" + startHour);
+                } else {
+                    startHour = 0;
+                    tvStartHour.setText("0" + startHour);
+                }
             } else {
-
-                hour = 0;
-                tvHour.setText("0" + hour);
-
+                if (startHour < 1) {
+                    startHour = 23;
+                    tvStartHour.setText("" + startHour);
+                }
+                else if (startHour <= 10) {
+                    startHour -= 1;
+                    tvStartHour.setText("0" + startHour);
+                } else {
+                    startHour -= 1;
+                    tvStartHour.setText("" + startHour);
+                }
             }
-
-        } else if (setHour == true && setIncrease == false) {
-
-            if (hour == 0) {
-
-                hour = 23;
-                tvHour.setText("" + hour);
-
-            } else if (hour <= 10) {
-
-                hour = hour - 1;
-                tvHour.setText("0" + hour);
-
+        } else if (start == false && hour == true) {
+            if (increase == true) {
+                if(endHour < 9) {
+                    endHour += 1;
+                    tvHour.setText("0" + endHour);
+                } else if (endHour >= 9 && endHour < 23) {
+                    endHour += 1;
+                    tvHour.setText("" + endHour);
+                } else {
+                    endHour = 0;
+                    tvHour.setText("0" + endHour);
+                }
             } else {
-
-                hour = hour - 1;
-                tvHour.setText("" + hour);
-
+                if (endHour < 1) {
+                    endHour = 23;
+                    tvHour.setText("" + endHour);
+                }
+                else if (endHour <= 10) {
+                    endHour -= 1;
+                    tvHour.setText("0" + endHour);
+                } else {
+                    endHour -= 1;
+                    tvHour.setText("" + endHour);
+                }
             }
-
-        } else if (setHour == false && setIncrease == true) {
-
-            if (minute < 9) {
-
-                minute = minute + 1;
-                tvMinute.setText("0" + minute);
-
-            } else if (minute >= 9 && minute <= 58) {
-
-                minute = minute + 1;
-                tvMinute.setText("" + minute);
-
+        } else if (start == true && hour == false) {
+            if (increase == true) {
+                if(startMinute < 9) {
+                    startMinute += 1;
+                    tvStartMinute.setText("0" + startMinute);
+                } else if (startMinute >= 9 && startMinute < 59) {
+                    startMinute += 1;
+                    tvStartMinute.setText("" + startMinute);
+                } else {
+                    startMinute = 0;
+                    tvStartMinute.setText("0" + startMinute);
+                }
             } else {
-
-                minute = 0;
-                tvMinute.setText("0" + minute);
-
+                if (startMinute < 1) {
+                    startMinute = 59;
+                    tvStartMinute.setText("" + startMinute);
+                }
+                else if (startMinute <= 10) {
+                    startMinute -= 1;
+                    tvStartMinute.setText("0" + startMinute);
+                } else {
+                    startMinute -= 1;
+                    tvStartMinute.setText("" + startMinute);
+                }
             }
+        } else {
+            if (increase == true) {
+                if(endMinute < 9) {
+                    endMinute += 1;
+                    tvMinute.setText("0" + endMinute);
+                } else if (endMinute >= 9 && endMinute < 59) {
+                    endMinute += 1;
+                    tvMinute.setText("" + endMinute);
+                } else {
+                    endMinute = 0;
+                    tvMinute.setText("0" + endMinute);
+                }
+            } else {
+                if (endMinute < 1) {
+                    endMinute = 59;
+                    tvMinute.setText("" + endMinute);
+                }
+                else if (endMinute <= 10) {
+                    endMinute -= 1;
+                    tvMinute.setText("0" + endMinute);
+                } else {
+                    endMinute -= 1;
+                    tvMinute.setText("" + endMinute);
+                }
+            }
+        }
+    }
 
+    public void setPREF(boolean set){
+
+        if (set == true) {
+
+            SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+            SharedPreferences.Editor editor = setting.edit();
+            editor.putInt("startHour", startHour);
+            editor.putInt("endHour", endHour);
+            editor.putInt("startMinute", startMinute);
+            editor.putInt("endMinute", endMinute);
+            editor.putInt("dProgress", pg);
+            editor.commit();
         } else {
 
-            if (minute == 0) {
-
-                minute = 59;
-                tvMinute.setText("" + minute);
-
-            } else if (minute <= 10) {
-
-                minute = minute - 1;
-                tvMinute.setText("0" + minute);
-
+            SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+            int SH = setting.getInt("startHour", 0);
+            this.startHour = SH;
+            if (this.startHour < 10) {
+                tvStartHour.setText("0" + SH);
             } else {
-
-                minute = minute - 1;
-                tvMinute.setText("" + minute);
-
+                tvStartHour.setText("" + SH);
             }
+            int EH = setting.getInt("endHour", 0);
+            this.endHour = EH;
+            if (this.endHour < 10) {
+                tvHour.setText("0" + EH);
+            } else {
+                tvHour.setText("" + EH);
+            }
+            int SM = setting.getInt("startMinute", 0);
+            this.startMinute = SM;
+            if (this.startMinute < 10) {
+                tvStartMinute.setText("0" + SM);
+            } else {
+                tvStartMinute.setText("" + SM);
+            }
+            int EM = setting.getInt("endMinute", 0);
+            this.endMinute = EM;
+            if (this.endMinute < 10) {
+                tvMinute.setText("0" + EM);
+            } else {
+                tvMinute.setText("" + EM);
+            }
+            int prog = setting.getInt("dProgress", pg);
+            this.pg = prog;
+            detaSeekBar.setProgress(pg);
 
         }
 
     }
 
-    public void startTimeSetting(boolean setHour, boolean setIncrease) {
-
-        if (setHour && setIncrease == true) {
-
-            if (startHour < 9) {
-
-                startHour = startHour + 1;
-                tvStartHour.setText("0" + startHour);
-
-            } else if (startHour >= 9 && startHour <= 22) {
-
-                startHour = startHour + 1;
-                tvStartHour.setText("" + startHour);
-
-            } else {
-
-                startHour = 0;
-                tvStartHour.setText("0" + startHour);
-
-            }
-
-        } else if (setHour == true && setIncrease == false) {
-
-            if (startHour == 0) {
-
-                startHour = 23;
-                tvStartHour.setText("" + startHour);
-
-            } else if (startHour <= 10) {
-
-                startHour = startHour - 1;
-                tvStartHour.setText("0" + startHour);
-
-            } else {
-
-                startHour = startHour - 1;
-                tvStartHour.setText("" + startHour);
-
-            }
-
-        } else if (setHour == false && setIncrease == true ) {
-
-            if (startMinute < 9) {
-
-                startMinute = startMinute + 1;
-                tvStartMinute.setText("0" + startMinute);
-
-            } else if (startMinute >= 9 && startMinute <= 58) {
-
-                startMinute = startMinute + 1;
-                tvStartMinute.setText("" + startMinute);
-
-            } else {
-
-                startMinute = 0;
-                tvStartMinute.setText("0" + startMinute);
-
-            }
-
-        } else {
-
-            if (startMinute == 0) {
-
-                startMinute = 59;
-                tvStartMinute.setText("" + startMinute);
-
-            } else if (startMinute <= 10) {
-
-                startMinute = startMinute - 1;
-                tvStartMinute.setText("0" + startMinute);
-
-            } else {
-
-                startMinute = startMinute - 1;
-                tvStartMinute.setText("" + startMinute);
-
-            }
-
-        }
+    public void theme(boolean dark) {
 
     }
 
-    public void setDeta(float progress){
+    @Override
+    protected void onStop() {
+        super.onStop();
 
-        if(progress == 0) {
-            tvSelectDeta.setText("0 MB");
-        } else if (progress < 1024) {
-            tvSelectDeta.setText(progress + " MB");
-        } else {
-            tvSelectDeta.setText("1.0 GB");
-        }
+        setPREF(true);
 
     }
-
 }

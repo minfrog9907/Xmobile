@@ -6,31 +6,27 @@
     android:layout_height="match_parent"
     tools:context="com.example.hp.xmoblie.Activity.FileManagerActivity">
 
-    <com.example.hp.xmoblie.Custom.CustomActionbar
-        android:id="@+id/actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:catitle="파일 매니저"
-        app:caicon="@drawable/folder"/>
-
     <LinearLayout
+        android:id="@+id/searchForm"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_below="@id/actionbar"
         android:orientation="vertical"
-        android:weightSum="10">
+        android:weightSum="10"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_marginTop="15dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:weightSum="10"
-            android:layout_weight="9"
-            android:padding="5dp">
+            android:layout_weight="9.7"
+            android:paddingBottom="10dp">
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/search"/>
-            <EditText
+            <AutoCompleteTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
@@ -41,12 +37,58 @@
                 android:layout_weight="1"
                 android:src="@drawable/arrow_light"/>
         </LinearLayout>
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="0.3"
             android:background="#73F1E2"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchForm"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:id="@+id/sortForm">
+        <LinearLayout
+            android:id="@+id/spinnerList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:gravity="right">
+            <Spinner
+                android:id="@+id/spinnerSort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+            <Spinner
+                android:id="@+id/spinnerOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/showSortWay"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@drawable/double_arrow"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/sortForm"
+        android:fillViewport="true">
+        <ExpandableListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fileList"
+            android:groupIndicator="@null"/>
+    </ScrollView>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/material_design_android_floating_action_menu"
@@ -85,5 +127,7 @@
             app:fabSize="normal" />
 
     </com.github.clans.fab.FloatingActionMenu>
+
+
 
 </RelativeLayout>

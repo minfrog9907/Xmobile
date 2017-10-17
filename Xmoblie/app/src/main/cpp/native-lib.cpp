@@ -3,7 +3,6 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 
-int _DEF_MAX_BLOBS=10000;
 using namespace cv;
 using namespace std;
 
@@ -39,14 +38,15 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
 
     const char *nativeFileNameString = env->GetStringUTFChars(imageFileName, JNI_FALSE);
 
-    string baseDir(nativeFileNameString);
+    string baseDir("/storage/emulated/0/");
+    baseDir.append(nativeFileNameString);
     const char *pathDir = baseDir.c_str();
 
     img_input = imread(pathDir, IMREAD_COLOR);
 
 }
 
-JNIEXPORT String JNICALL
+JNIEXPORT void JNICALL
 Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
         JNIEnv *env,
         jobject,
@@ -90,10 +90,6 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
     Mat croppedImage =  Mat(img_input, rectCrop);
     img_output = croppedImage;
 
-    string node = "/storage/emulated/0/cropedBills/"+CurrentDateTime()+".jpg";
-    imwrite(node, img_output);
-
-    return node;
 }
 }
 JNIEXPORT void JNICALL
@@ -162,10 +158,9 @@ PointSize(Point a, Point b, Point c, Point d) {
     y2 = b.y;
     y3 = c.y;
     y4 = d.y;
-    return abs((x1 * y2 + x2 * y4 + x4 * y1) - (x2 * y1 + x4 * y2 + x1 * y4)) +
+    return abs((x1 * y2 + x2 * y4 + x4 * y1) - (x2 * y1 + x4 * y2+ x1 * y4)) +
            abs((x1 * y4 + x4 * y3 + x3 * y1) - (x4 * y1 + x3 * y4 + x1 * y3)) +
            abs((x4 * y2 + x2 * y3 + x3 * y4) - (x2 * y4 + x3 * y2 + x4 * y3));
-
 }
 JNIEXPORT Mat JNICALL
 RotateImage(const Mat src, double degree, Point base)

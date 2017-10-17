@@ -63,6 +63,7 @@
                 android:paddingBottom="20dp"
                 android:textColorHint="#73F1E2"
                 android:hint="비밀번호"
+                android:inputType="textPassword"
                 android:id="@+id/pwEditText"/>
 
         </LinearLayout>

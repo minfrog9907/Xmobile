@@ -1,5 +1,6 @@
 package com.example.hp.xmoblie.Activity;
 
+<<<<<<< HEAD
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +19,20 @@ import android.widget.Spinner;
 
 import com.example.hp.xmoblie.Adapter.BaseExpandableAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
-import com.example.hp.xmoblie.R;
+=======
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.LoginItem;
+>>>>>>> 05f724e1ddb17546c774c799fef9ecae2d2c5152
+import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ApiClient;
+
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +46,21 @@ public class FileManagerActivity extends ActionBarActivity {
     private ExpandableListView expListView;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
+=======
+import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+>>>>>>> 05f724e1ddb17546c774c799fef9ecae2d2c5152
+
+public class FileManagerActivity extends AppCompatActivity {
+    ApiClient apiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
+<<<<<<< HEAD
 
         //ActionBar 설정
         ActionBar actionBar = getSupportActionBar();
@@ -112,6 +135,31 @@ public class FileManagerActivity extends ActionBarActivity {
             }
             listDataChild.put(listDataHeader.get(0), childList); // Header, Child data
         }
+=======
+        apiClient = ApiClient.service;
+
+>>>>>>> 05f724e1ddb17546c774c799fef9ecae2d2c5152
 
     }
+    private void fileProtocal(String path){
+        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"),path);
+        call.enqueue(new Callback<List<FileItem>>() {
+            @Override
+            public void onResponse(Call<List<FileItem>> call,
+                                   Response<List<FileItem>> response) {
+                for(int i =0; i<response.body().size(); ++i){
+                    //fileitem.java 파일 확인해서 사용 ㄱ
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FileItem>> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
+
+            }
+
+
+        });
+    }
+
 }

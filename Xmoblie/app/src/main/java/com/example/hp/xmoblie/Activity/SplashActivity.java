@@ -14,8 +14,17 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ApiClient;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by triti on 2017-07-13.
@@ -24,7 +33,7 @@ import com.example.hp.xmoblie.R;
 public class SplashActivity extends BaseActivity {
     private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1000;
     private final int SPLASH_DISPLAY_LENGTH = 1500;
-    String[] permissions = new String[3];
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -33,13 +42,15 @@ public class SplashActivity extends BaseActivity {
         int internetPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         int storagePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int cameraPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int readStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
 
 
         if (internetPermissionCheck == PackageManager.PERMISSION_DENIED
                 ||storagePermissionCheck == PackageManager.PERMISSION_DENIED
-                ||cameraPermissionCheck == PackageManager.PERMISSION_DENIED) {
+                ||cameraPermissionCheck == PackageManager.PERMISSION_DENIED
+                ||readStatePermissionCheck ==PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET},
+                    new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.READ_PHONE_STATE},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
         }
@@ -48,11 +59,13 @@ public class SplashActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_DENIED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED) {
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_DENIED) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                moveIntent();
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    finish();
                 }
             }, SPLASH_DISPLAY_LENGTH);
 
@@ -72,7 +85,8 @@ public class SplashActivity extends BaseActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                        moveIntent();
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            finish();
                         }
                     }, SPLASH_DISPLAY_LENGTH);
                 } else {
@@ -98,15 +112,5 @@ public class SplashActivity extends BaseActivity {
         super.attachBaseContext(newBase);
     }
 
-    private void moveIntent(){
-        finish();
-        SharedPreferences autoLogin = getSharedPreferences("autoLogin",0);
-        if(autoLogin.getBoolean("autoLogin",false)){
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));// 액티비티 종료
-        }else{
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));// 액티비티 종료
-        }
-        //startActivity(new Intent(getApplicationContext(), CheerPopUp.class));// 액티비티 종료
 
-    }
 }

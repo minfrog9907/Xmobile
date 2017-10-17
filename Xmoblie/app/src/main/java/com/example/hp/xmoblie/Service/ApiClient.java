@@ -43,6 +43,9 @@ public interface ApiClient {
             @Field("token") String token
             , @Field("path") String path
     );
+    @GET("/file_list.json")
+    Call<List<FileItem>>test();
+
 }
 
 

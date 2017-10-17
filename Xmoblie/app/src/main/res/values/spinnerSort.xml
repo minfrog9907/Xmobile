@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerSort">
+        <item>이름 순</item>
+        <item></item>
+    </string-array>
+</resources>

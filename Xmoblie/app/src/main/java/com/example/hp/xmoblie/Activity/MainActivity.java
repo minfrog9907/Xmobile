@@ -1,6 +1,7 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         offWorkTimeTxt = (TextView)findViewById(R.id.offWorkTime);
         fileManagerBtn = (Main_BTN)findViewById(R.id.fileManagerBtn);
         settingBtn = (Main_BTN)findViewById(R.id.settingBtn);
+        cameraBtn =(Main_BTN)findViewById(R.id.cameraBtn);
 
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +45,14 @@ public class MainActivity extends AppCompatActivity {
         fileManagerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, FileManagerActivity.class));
+                startActivity(new Intent(MainActivity.this, FileManagerActivity.class).putExtra("token",getIntent().getStringExtra("token")));
+            }
+        });
+
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
             }
         });
 
@@ -51,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void offWorkProgressClass(){
+
         final Handler handler = new Handler();
 
         final int onWorkTime = 32400;

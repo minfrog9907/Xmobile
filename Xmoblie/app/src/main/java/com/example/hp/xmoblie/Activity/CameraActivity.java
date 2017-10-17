@@ -339,7 +339,7 @@ public class CameraActivity extends BaseActivity {
                 dir.mkdirs();
 
                 String fileName = String.format("%d.jpg", System.currentTimeMillis());
-                node = dir+"/"+fileName;
+                node = "/Xmobile/"+fileName;
                 File outFile = new File(dir, fileName);
 
                 outStream = new FileOutputStream(outFile);

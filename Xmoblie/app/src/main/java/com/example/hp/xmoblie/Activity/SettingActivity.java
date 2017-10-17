@@ -227,6 +227,9 @@ public class SettingActivity extends Activity {
             }
         });
 
+        Intent intent = new Intent(this, MainActivity.class);
+
+
     }
 
     public void setTime(boolean start, boolean hour, boolean increase) {
@@ -387,6 +390,18 @@ public class SettingActivity extends Activity {
 
     public void theme(boolean dark) {
 
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setPREF(false);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setPREF(true);
     }
 
     @Override

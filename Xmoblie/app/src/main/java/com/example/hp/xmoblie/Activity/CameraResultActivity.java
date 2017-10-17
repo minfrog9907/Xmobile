@@ -71,6 +71,8 @@ public class CameraResultActivity extends ActionBarActivity {
         read_image_file();
         imageprocess_and_showResult();
 
+        Glide.with(this).load(Uri.parse("/storage/emulated/0/Download/bills/asdfasdf.jpg")).into(preview);
+
         SideStick_BTN edit = (SideStick_BTN) findViewById(R.id.cameraResult_ChangeNode);
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
@@ -121,7 +123,7 @@ public class CameraResultActivity extends ActionBarActivity {
     }
 
     @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         final Uri resultUri = UCrop.getOutput(data);
         uri[cnt] = resultUri.toString();
@@ -143,20 +145,55 @@ public class CameraResultActivity extends ActionBarActivity {
 
     private void imageprocess_and_showResult() {
 
-        node = imageprocessing( img_input.getNativeObjAddr(),img_output.getNativeObjAddr());
-
+        node = imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr());
+        Log.e("node", node);
 
         Bitmap bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(img_output, bitmapOutput);
         preview.setImageBitmap(bitmapOutput);
     }
-    private void read_image_file() {
 
+    private void read_image_file() {
+        copyFile("Download/bills/asdfasdf.jpg");
         img_input = new Mat();
         img_output = new Mat();
 
-        loadImage(getIntent().getStringExtra("node"), img_input.getNativeObjAddr());
+        loadImage("Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());//getIntent().getStringExtra("node")
+
     }
+
+    private void copyFile(String filename) {
+        String baseDir = Environment.getExternalStorageDirectory().getPath();
+        String pathDir = baseDir + File.separator + filename;
+
+        AssetManager assetManager = this.getAssets();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            Log.d(TAG, "copyFile :: 다음 경로로 파일복사 " + pathDir);
+            inputStream = assetManager.open(filename);
+            outputStream = new FileOutputStream(pathDir);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            inputStream.close();
+            inputStream = null;
+            outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+        } catch (Exception e) {
+            Log.d(TAG, "copyFile :: 파일 복사 중 예외 발생 " + e.toString());
+        }
+
+    }
+
+
     public native void loadImage(String imageFileName, long img);
-    public native String imageprocessing(long inputImage, long outputImage );
+
+    public native String imageprocessing(long inputImage, long outputImage);
 }

@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         offWorkTimeTxt = (TextView)findViewById(R.id.offWorkTime);
         fileManagerBtn = (Main_BTN)findViewById(R.id.fileManagerBtn);
         settingBtn = (Main_BTN)findViewById(R.id.settingBtn);
+        cameraBtn =(Main_BTN)findViewById(R.id.cameraBtn);
 
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, FileManagerActivity.class).putExtra("token",getIntent().getStringExtra("token")));
+            }
+        });
+
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, CameraActivity.class));
             }
         });
 

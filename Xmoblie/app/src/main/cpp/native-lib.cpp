@@ -39,7 +39,8 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
 
     const char *nativeFileNameString = env->GetStringUTFChars(imageFileName, JNI_FALSE);
 
-    string baseDir(nativeFileNameString);
+    string baseDir("/storage/emulated/0/");
+    baseDir.append(nativeFileNameString);
     const char *pathDir = baseDir.c_str();
 
     img_input = imread(pathDir, IMREAD_COLOR);
@@ -91,7 +92,7 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
     img_output = croppedImage;
 
     string node = "/storage/emulated/0/cropedBills/"+CurrentDateTime()+".jpg";
-    imwrite(node, img_output);
+    //imwrite(node, img_output);
 
     return node;
 }

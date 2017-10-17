@@ -228,7 +228,13 @@ public class SettingActivity extends Activity {
         });
 
         Intent intent = new Intent(this, MainActivity.class);
-
+        intent.putExtra("startHour", startHour);
+        intent.putExtra("nndHour", endHour);
+        intent.putExtra("startMinute", startMinute);
+        intent.putExtra("endMinute", endMinute);
+        intent.putExtra("progress", pg);
+        startActivity(intent);
+        finish();
 
     }
 
@@ -385,10 +391,6 @@ public class SettingActivity extends Activity {
             detaSeekBar.setProgress(pg);
 
         }
-
-    }
-
-    public void theme(boolean dark) {
 
     }
 

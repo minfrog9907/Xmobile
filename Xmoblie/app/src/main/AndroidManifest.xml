@@ -23,7 +23,6 @@
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
-<<<<<<< HEAD
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
@@ -34,22 +33,21 @@
 
 
         </activity>
-=======
 
-        </activity>
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activity.CheerPopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
+
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
         <activity
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />

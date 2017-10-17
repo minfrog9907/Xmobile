@@ -82,11 +82,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sortForm"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:fillViewport="true">
         <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fileList"
+            android:divider="#1f1f1f"
+            android:dividerHeight="1dp"
+            android:childDivider="#1f1f1f"
             android:groupIndicator="@null"/>
     </ScrollView>
 

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.R;
@@ -62,7 +63,11 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.childFileName);
+        LinearLayout childLine = (LinearLayout) convertView.findViewById(R.id.childLine);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.childFileIcon);
 
+        imageView.setImageResource(R.drawable.file);
+        childLine.setVisibility(View.VISIBLE);
         txtListChild.setText(childText);
         return convertView;
     }
@@ -100,8 +105,10 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
 
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.fileName);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.fileIcon);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
+        imageView.setImageResource(R.drawable.file);
 
         return convertView;
     }

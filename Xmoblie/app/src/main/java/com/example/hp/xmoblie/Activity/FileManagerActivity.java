@@ -68,6 +68,8 @@ public class FileManagerActivity extends ActionBarActivity {
         spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
         showSortWay = (ImageView) findViewById(R.id.showSortWay);
 
+        fileProtocal("\\");
+
         showSortWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

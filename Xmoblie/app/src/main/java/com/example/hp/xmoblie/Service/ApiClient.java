@@ -5,16 +5,20 @@ package com.example.hp.xmoblie.Service;
  */
 
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 
+import java.io.File;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -23,7 +27,7 @@ import retrofit2.http.Path;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://xmobile2.lfconfig.xyz")
+            .baseUrl("http://lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -37,14 +41,28 @@ public interface ApiClient {
             , @Field("deviceid") String deviceid
 
     );
-
+    @FormUrlEncoded
     @GET("/file")
     Call<List<FileItem>>repoFileNodes(
-            @Field("token") String token
+            @Header("token") String token
             , @Field("path") String path
     );
     @GET("/file_list.json")
     Call<List<FileItem>>test();
+    @FormUrlEncoded
+    @POST("/file")
+    Call<JustRequestItem>repoUpload(
+            @Header("token") String token,
+            @Field("file")File file,
+            @Field("path")String path
+    );
+
+    @FormUrlEncoded
+    @DELETE("/file")
+    Call<List<FileItem>>repoDelete(
+            @Header("token") String token,
+            @Field("list")List<FileItem> list
+    );
 
 }
 

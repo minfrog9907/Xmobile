@@ -24,23 +24,11 @@
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
-<<<<<<< HEAD
 
-=======
->>>>>>> cb56167649d4363e4a33fbb265b3d60f31bbfdb0
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-<<<<<<< HEAD
-
-=======
->>>>>>> cb56167649d4363e4a33fbb265b3d60f31bbfdb0
         </activity>
         <activity
             android:name=".Activity.CheerPopUp"
@@ -61,7 +49,14 @@
             android:theme="@style/AppTheme.Dark.Login"/>
         <activity android:name=".Activity.SettingActivity" />
         <activity android:name=".Activity.FileManagerActivity"></activity>
+        <activity android:name=".Activity.ImageGrayScaleActivity"
+            android:hardwareAccelerated="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 

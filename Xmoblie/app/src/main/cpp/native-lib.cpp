@@ -3,7 +3,6 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 
-int _DEF_MAX_BLOBS=10000;
 using namespace cv;
 using namespace std;
 
@@ -25,11 +24,9 @@ JNIEXPORT Mat JNICALL
 RotateImage(const Mat src, double degree, Point base);
 JNIEXPORT double JNICALL
 GetAngle(Point a, Point b, Point c);
-JNIEXPORT string JNICALL
-CurrentDateTime();
 
 JNIEXPORT void JNICALL
-Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
+Java_com_example_hp_xmoblie_Activity_ImageGrayScaleActivity_loadImage(
         JNIEnv *env,
         jobject,
         jstring imageFileName,
@@ -47,8 +44,8 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
 
 }
 
-JNIEXPORT String JNICALL
-Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
+JNIEXPORT void JNICALL
+Java_com_example_hp_xmoblie_Activity_ImageGrayScaleActivity_imageprocessing(
         JNIEnv *env,
         jobject,
         jlong addrInputImage,
@@ -91,10 +88,6 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
     Mat croppedImage =  Mat(img_input, rectCrop);
     img_output = croppedImage;
 
-    string node = "/storage/emulated/0/cropedBills/"+CurrentDateTime()+".jpg";
-    //imwrite(node, img_output);
-
-    return node;
 }
 }
 JNIEXPORT void JNICALL
@@ -163,10 +156,9 @@ PointSize(Point a, Point b, Point c, Point d) {
     y2 = b.y;
     y3 = c.y;
     y4 = d.y;
-    return abs((x1 * y2 + x2 * y4 + x4 * y1) - (x2 * y1 + x4 * y2 + x1 * y4)) +
+    return abs((x1 * y2 + x2 * y4 + x4 * y1) - (x2 * y1 + x4 * y2+ x1 * y4)) +
            abs((x1 * y4 + x4 * y3 + x3 * y1) - (x4 * y1 + x3 * y4 + x1 * y3)) +
            abs((x4 * y2 + x2 * y3 + x3 * y4) - (x2 * y4 + x3 * y2 + x4 * y3));
-
 }
 JNIEXPORT Mat JNICALL
 RotateImage(const Mat src, double degree, Point base)
@@ -187,18 +179,6 @@ GetAngle(Point a, Point b, Point c){
 
     return  temp*(90/3.14);
 
-}
-JNIEXPORT string JNICALL
-CurrentDateTime() {
-    time_t     now = time(0);
-    struct tm  tstruct;
-    char       buf[80];
-    tstruct = *localtime(&now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
-    strftime(buf, sizeof(buf), "%Y%m%d.%X", &tstruct);
-
-    return buf;
 }
 /*
  *

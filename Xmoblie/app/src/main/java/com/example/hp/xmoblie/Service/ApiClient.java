@@ -14,6 +14,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -21,13 +22,14 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by jungjune on 2016-07-22.
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://lfconfig.xyz")
+            .baseUrl("http://xmobile2.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -41,11 +43,11 @@ public interface ApiClient {
             , @Field("deviceid") String deviceid
 
     );
-    @FormUrlEncoded
+
     @GET("/file")
     Call<List<FileItem>>repoFileNodes(
             @Header("token") String token
-            , @Field("path") String path
+            , @Query("dir") String dir
     );
     @GET("/file_list.json")
     Call<List<FileItem>>test();

@@ -1,10 +1,5 @@
 package com.example.hp.xmoblie.Activity;
 
-<<<<<<< HEAD
-
-=======
-import android.support.v7.app.ActionBarActivity;
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -24,20 +19,9 @@ import android.widget.Spinner;
 
 import com.example.hp.xmoblie.Adapter.BaseExpandableAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
-<<<<<<< HEAD
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.LoginItem;
-=======
-
-import com.example.hp.xmoblie.Items.FileItem;
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 
@@ -46,19 +30,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-<<<<<<< HEAD
-import java.util.List;
 
-=======
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
 public class FileManagerActivity extends ActionBarActivity {
 
     private Spinner spinnerOrder, spinnerSort;
@@ -69,16 +45,14 @@ public class FileManagerActivity extends ActionBarActivity {
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
 
-<<<<<<< HEAD
     private ApiClient apiClient;
-=======
-    ApiClient apiClient;
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
 
+        apiClient = ApiClient.service;
 
         //ActionBar 설정
         ActionBar actionBar = getSupportActionBar();
@@ -147,7 +121,7 @@ public class FileManagerActivity extends ActionBarActivity {
         listDataChild = new HashMap<String, List<String>>();
 
 
-<<<<<<< HEAD
+
         fileProtocal("\\");
 
 //        for(int i = 0; i<5; i++){
@@ -159,8 +133,7 @@ public class FileManagerActivity extends ActionBarActivity {
 //            listDataChild.put(listDataHeader.get(i), childList); // Header, Child data
 //        }
 
-        apiClient = ApiClient.service;
-=======
+
         for(int i = 0; i<5; i++){
             listDataHeader.add(String.valueOf(i));
             List<String> childList = new ArrayList<String>();
@@ -170,9 +143,7 @@ public class FileManagerActivity extends ActionBarActivity {
             listDataChild.put(listDataHeader.get(0), childList); // Header, Child data
         }
 
-        apiClient = ApiClient.service;
 
->>>>>>> 0b6ca1f5de8989e657bd8e5bf4ffa466d8121fcc
 
     }
     private void fileProtocal(String path){
@@ -182,7 +153,7 @@ public class FileManagerActivity extends ActionBarActivity {
             public void onResponse(Call<List<FileItem>> call,
                                    Response<List<FileItem>> response) {
                 for(int i =0; i<response.body().size(); ++i){
-                    System.out.println(response.body().get(i));
+                    System.out.println(response.body().get(i).getFilename());
                     //fileitem.java 파일 확인해서 사용 ㄱ
                 }
             }

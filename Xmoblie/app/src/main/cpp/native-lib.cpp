@@ -24,9 +24,11 @@ JNIEXPORT Mat JNICALL
 RotateImage(const Mat src, double degree, Point base);
 JNIEXPORT double JNICALL
 GetAngle(Point a, Point b, Point c);
+JNIEXPORT string JNICALL
+CurrentDateTime();
 
 JNIEXPORT void JNICALL
-Java_com_example_hp_xmoblie_Activity_ImageGrayScaleActivity_loadImage(
+Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
         JNIEnv *env,
         jobject,
         jstring imageFileName,
@@ -45,7 +47,7 @@ Java_com_example_hp_xmoblie_Activity_ImageGrayScaleActivity_loadImage(
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_hp_xmoblie_Activity_ImageGrayScaleActivity_imageprocessing(
+Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
         JNIEnv *env,
         jobject,
         jlong addrInputImage,
@@ -179,6 +181,18 @@ GetAngle(Point a, Point b, Point c){
 
     return  temp*(90/3.14);
 
+}
+JNIEXPORT string JNICALL
+CurrentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y%m%d.%X", &tstruct);
+
+    return buf;
 }
 /*
  *

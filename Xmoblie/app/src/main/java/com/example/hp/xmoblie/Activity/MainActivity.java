@@ -1,6 +1,9 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -60,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void offWorkProgressClass(){
+
+        SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+
+        int startHour = setting.getInt("startHour", 0);
+        int endHour = setting.getInt("endHour", 0);
+        int startMinute = setting.getInt("startMinute", 0);
+        int endMinute = setting.getInt("endMinute", 0);
+
         final Handler handler = new Handler();
 
         final int onWorkTime = 32400;
@@ -100,11 +111,11 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(runnable, 0);
     }
 
-
-
     @Override
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
     }
+
+
 }
 

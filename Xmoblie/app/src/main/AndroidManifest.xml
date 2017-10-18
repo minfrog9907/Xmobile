@@ -23,20 +23,37 @@
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
-
+<<<<<<< HEAD
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name=".Activity.CheerPopUp">
+            <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+=======
+>>>>>>> 049bb13931d36131f5b942d8c05cd0136ed78157
+
+        </activity>
+
+        <activity
+            android:name=".Activity.SplashActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
             android:name=".Activity.CheerPopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+
+<<<<<<< HEAD
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
+=======
+>>>>>>> 049bb13931d36131f5b942d8c05cd0136ed78157
         <activity
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
@@ -48,7 +65,10 @@
 
         <activity android:name=".Activity.LoginActivity"
             android:theme="@style/AppTheme.Dark.Login"/>
-        <activity android:name=".Activity.SettingActivity" />
+        <activity android:name=".Activity.SettingActivity" >
+
+
+        </activity>
         <activity android:name=".Activity.FileManagerActivity"></activity>
         <activity android:name=".Activity.CameraResultActivity"
             android:hardwareAccelerated="false">

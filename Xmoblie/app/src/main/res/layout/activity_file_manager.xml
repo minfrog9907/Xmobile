@@ -85,7 +85,7 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:fillViewport="true">
-        <ExpandableListView
+        <com.example.hp.xmoblie.Animation.AnimatedExpandableListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fileList"

@@ -7,6 +7,7 @@ package com.example.hp.xmoblie.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.hp.xmoblie.Animation.AnimatedExpandableListView;
+import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpandableListAdapter;
+import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 
 import java.util.ArrayList;
@@ -24,22 +28,22 @@ import java.util.List;
 /**
  * Created by ium on 14. 2. 26.
  */
-public class BaseExpandableAdapter extends BaseExpandableListAdapter {
+public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
 
     private Context _context;
-    private List<String> _listDataHeader; // header titles
+    private List<FileItem> _listDataHeader; // header titles
     // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private HashMap<FileItem, List<FileItem>> _listDataChild;
 
-    public BaseExpandableAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+    public BaseExpandableAdapter(Context context, List<FileItem> listDataHeader,
+                                 HashMap<FileItem, List<FileItem>> listChildData) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listChildData;
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosititon) {
+    public FileItem getChild(int groupPosition, int childPosititon) {
         return this._listDataChild.get(this._listDataHeader.get(groupPosition))
                 .get(childPosititon);
     }
@@ -50,10 +54,9 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition,
-                             boolean isLastChild, View convertView, ViewGroup parent) {
-
-        final String childText = (String) getChild(groupPosition, childPosition);
+    public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        final String childText = (String) getChild(groupPosition, childPosition).getFilename();
+        int type = (int) getChild(groupPosition, childPosition).getType();
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
@@ -65,6 +68,16 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
                 .findViewById(R.id.childFileName);
         LinearLayout childLine = (LinearLayout) convertView.findViewById(R.id.childLine);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.childFileIcon);
+        LinearLayout showMoreMenu = (LinearLayout) convertView.findViewById(R.id.showMoreMenu);
+
+        if(type == 128){
+            showMoreMenu.setVisibility(View.INVISIBLE);
+            imageView.setImageResource(R.drawable.file);
+            imageView.setTag("file");
+        }else{
+            imageView.setImageResource(R.drawable.folder);
+            imageView.setTag("folder");
+        }
 
         imageView.setImageResource(R.drawable.file);
         childLine.setVisibility(View.VISIBLE);
@@ -73,13 +86,12 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .size();
+    public int getRealChildrenCount(int groupPosition) {
+        return this._listDataChild.get(this._listDataHeader.get(groupPosition)).size();
     }
 
     @Override
-    public Object getGroup(int groupPosition) {
+    public FileItem getGroup(int groupPosition) {
         return this._listDataHeader.get(groupPosition);
     }
 
@@ -96,19 +108,27 @@ public class BaseExpandableAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String headerTitle = (String) getGroup(groupPosition);
+        String headerTitle = (String) getGroup(groupPosition).getFilename();
+        int type = (int) getGroup(groupPosition).getType();
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.file_list_row, null);
         }
 
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.fileName);
+        TextView lblListHeader = (TextView) convertView.findViewById(R.id.fileName);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.fileIcon);
+        LinearLayout showMoreMenu = (LinearLayout) convertView.findViewById(R.id.showMoreMenu);
+        if(type == 128){
+            showMoreMenu.setVisibility(View.INVISIBLE);
+            imageView.setImageResource(R.drawable.file);
+            imageView.setTag("file");
+        }else{
+            imageView.setImageResource(R.drawable.folder);
+            imageView.setTag("folder");
+        }
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
-        imageView.setImageResource(R.drawable.file);
 
         return convertView;
     }

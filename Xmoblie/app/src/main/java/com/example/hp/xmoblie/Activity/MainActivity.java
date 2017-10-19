@@ -1,5 +1,7 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -8,12 +10,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +39,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        doubleCloseHandler = new DoubleCloseHandler(this);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 0);
+        Date date1 = calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        String date1AsString = dateFormat.format(date1);
+
+        calendar = Calendar.getInstance();
+        Date date2 = calendar.getTime();
+
+        String date2AsString = dateFormat.format(date2);
+
+        SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = date.edit();
+        editor.putString("today", date1AsString);
+        editor.commit();
+
+        String todayDate = date.getString("today", "");
+
+        if (date2AsString.equals(todayDate)) {
+            Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+            startActivity(intent);
+        } else {
+            editor.putString("today", date2AsString);
+            editor.commit();
+
+            Toast.makeText(this, "open", Toast.LENGTH_SHORT).show();
+        }
+
         offWorkProgress = (ArcProgress)findViewById(R.id.offWorkProgress);
         offWorkTimeTxt = (TextView)findViewById(R.id.offWorkTime);
         fileManagerBtn = (Main_BTN)findViewById(R.id.fileManagerBtn);
@@ -61,6 +99,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void offWorkProgressClass(){
+
+        SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+
+        int startHour = setting.getInt("startHour", 0);
+        int endHour = setting.getInt("endHour", 0);
+        int startMinute = setting.getInt("startMinute", 0);
+        int endMinute = setting.getInt("endMinute", 0);
 
         final Handler handler = new Handler();
 
@@ -102,11 +147,12 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(runnable, 0);
     }
 
-
-
     @Override
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
     }
+
+
+
 }
 

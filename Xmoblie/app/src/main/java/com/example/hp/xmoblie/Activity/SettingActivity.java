@@ -46,7 +46,7 @@ public class SettingActivity extends Activity {
     TextView tvStartHour;
     TextView tvStartMinute;
     Croller detaSeekBar;
-    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
+    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn,  startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
     EditText MondayCheerText, TuesdayCheerText, WednesdayCheerText, ThursdayCheerText, FridayCheerText;
 
     boolean editOff = true;
@@ -79,8 +79,6 @@ public class SettingActivity extends Activity {
         minuteUpButton = (Button) findViewById(R.id.minuteUpButton);
         minuteDownBtn = (Button) findViewById(R.id.minuteDownBtn);
         dailyCheerEditBtn = (Button) findViewById(R.id.dailyCheerEditBtn);
-        nightThemeBtn = (Button) findViewById(R.id.nightThemeBtn);
-        lightThemeBtn = (Button) findViewById(R.id.lightThemeBtn);
         MondayCheerText = (EditText) findViewById(R.id.MondayCheerText);
         TuesdayCheerText = (EditText) findViewById(R.id.TuesCheerText);
         WednesdayCheerText = (EditText) findViewById(R.id.WednesdayCheerText);

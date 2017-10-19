@@ -2,6 +2,6 @@
 <resources>
     <string-array name="spinnerSort">
         <item>이름 순</item>
-        <item></item>
+        <item>날짜 순</item>
     </string-array>
 </resources>

@@ -78,8 +78,6 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
             imageView.setImageResource(R.drawable.folder);
             imageView.setTag("folder");
         }
-
-        imageView.setImageResource(R.drawable.file);
         childLine.setVisibility(View.VISIBLE);
         txtListChild.setText(childText);
         return convertView;

@@ -46,7 +46,7 @@ public class SettingActivity extends Activity {
     TextView tvStartHour;
     TextView tvStartMinute;
     Croller detaSeekBar;
-    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn,  startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
+    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
     EditText MondayCheerText, TuesdayCheerText, WednesdayCheerText, ThursdayCheerText, FridayCheerText;
 
     boolean editOff = true;
@@ -58,6 +58,17 @@ public class SettingActivity extends Activity {
     int pg;
 
     String strSH, strEH, strSM, strEM;
+
+    static String monT;
+    static String tueT;
+    static String wedT;
+    static String thuT;
+    static String friT;
+    static String newMon;
+    static String newTue;
+    static String newWed;
+    static String newThu;
+    static String newFri;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,6 +90,8 @@ public class SettingActivity extends Activity {
         minuteUpButton = (Button) findViewById(R.id.minuteUpButton);
         minuteDownBtn = (Button) findViewById(R.id.minuteDownBtn);
         dailyCheerEditBtn = (Button) findViewById(R.id.dailyCheerEditBtn);
+        nightThemeBtn = (Button) findViewById(R.id.nightThemeBtn);
+        lightThemeBtn = (Button) findViewById(R.id.lightThemeBtn);
         MondayCheerText = (EditText) findViewById(R.id.MondayCheerText);
         TuesdayCheerText = (EditText) findViewById(R.id.TuesCheerText);
         WednesdayCheerText = (EditText) findViewById(R.id.WednesdayCheerText);
@@ -92,6 +105,23 @@ public class SettingActivity extends Activity {
         strEM = tvMinute.getText().toString();
 
         setPREF(false);
+
+        SharedPreferences saveText = getSharedPreferences("saveText", MODE_PRIVATE);
+        SharedPreferences.Editor editor = saveText.edit();
+        this.monT = MondayCheerText.getText().toString();
+        this.tueT = TuesdayCheerText.getText().toString();
+        this.wedT = WednesdayCheerText.getText().toString();
+        this.thuT = ThursdayCheerText.getText().toString();
+        this.friT = FridayCheerText.getText().toString();
+
+        editor.putString("mon", this.monT);
+        editor.putString("tue", this.tueT);
+        editor.putString("wed", this.wedT);
+        editor.putString("thuT", this.tueT);
+        editor.putString("friT", this.friT);
+        editor.commit();
+        editor.apply();
+
 
         detaSeekBar.setOnCrollerChangeListener(new OnCrollerChangeListener() {
             @Override
@@ -220,19 +250,34 @@ public class SettingActivity extends Activity {
 
                     editOff = true;
 
+                    newMon = MondayCheerText.getText().toString();
+                    newThu = TuesdayCheerText.getText().toString();
+                    newWed = WednesdayCheerText.getText().toString();
+                    newThu = ThursdayCheerText.getText().toString();
+                    newFri = FridayCheerText.getText().toString();
+
+                    SharedPreferences saveText = getSharedPreferences("saveText", MODE_PRIVATE);
+
                 }
+
+                SharedPreferences saveText = getSharedPreferences("saveText", MODE_PRIVATE);
+                SharedPreferences.Editor editor = saveText.edit();
+                editor.putString("Nmon", newMon);
+                editor.putString("Ntue", TuesdayCheerText.getText().toString());
+                editor.putString("Nwed", WednesdayCheerText.getText().toString());
+                editor.putString("Nthu", TuesdayCheerText.getText().toString());
+                editor.putString("Nfri", FridayCheerText.getText().toString());
+                editor.commit();
+                editor.apply();
+
+                monT = saveText.getString("mon", "");
+                tueT = saveText.getString("tue", "");
+                wedT = saveText.getString("wed", "");
+                thuT = saveText.getString("thu", "");
+                friT = saveText.getString("fri", "");
 
             }
         });
-
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("startHour", startHour);
-        intent.putExtra("nndHour", endHour);
-        intent.putExtra("startMinute", startMinute);
-        intent.putExtra("endMinute", endMinute);
-        intent.putExtra("progress", pg);
-        startActivity(intent);
-        finish();
 
     }
 
@@ -390,18 +435,6 @@ public class SettingActivity extends Activity {
 
         }
 
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setPREF(false);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        setPREF(true);
     }
 
     @Override

@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.example.hp.xmoblie.Activity.FileManagerActivity">
 
     <LinearLayout
@@ -77,7 +79,26 @@
             android:layout_gravity="center"
             android:src="@drawable/double_arrow"/>
     </LinearLayout>
+<<<<<<< HEAD
 
+=======
+    <LinearLayout
+        android:id="@+id/noFIleTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sortForm"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center"
+        android:visibility="invisible">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:text="No Files"/>
+    </LinearLayout>
+>>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

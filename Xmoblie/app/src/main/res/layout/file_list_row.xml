@@ -49,5 +49,20 @@
             android:layout_marginRight="10dp"
             android:background="@drawable/arrow_light"/>
     </LinearLayout>
+<<<<<<< HEAD
 
+=======
+    <LinearLayout
+        android:id="@+id/checkboxLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:visibility="invisible"
+        android:layout_alignParentRight="true">
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+>>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 </RelativeLayout>

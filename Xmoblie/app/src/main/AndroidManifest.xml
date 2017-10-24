@@ -30,6 +30,7 @@
             android:name=".Activity.MainActivity"
 <<<<<<< HEAD
             android:theme="@style/AppTheme.Dark.NoActionBar">
+<<<<<<< HEAD
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,10 +42,14 @@
         <activity
             android:name=".Activity.CheerPopUp">
             <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
+=======
+<<<<<<< HEAD
+>>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 
         </activity>
 =======
             android:theme="@style/AppTheme.Dark.NoActionBar"></activity>
+>>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
@@ -53,6 +58,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+<<<<<<< HEAD
+=======
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
+        </activity>
+        <activity android:name=".Activity.CheerPopUp">
+            <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
+        </activity>
+        <activity
+<<<<<<< HEAD
+=======
+            android:name=".Activity.CheerPopUp"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+=======
         </activity>
 
         <activity android:name=".Activity.CheerPopUp">
@@ -61,7 +79,9 @@
         </activity>
 >>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
 
+>>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
         <activity
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".Activity.BillsTracingActivity" />
@@ -76,7 +96,15 @@
         <activity android:name=".Activity.SettingActivity">
 
         </activity>
+<<<<<<< HEAD
+        <activity android:name=".Activity.FileManagerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+=======
         <activity android:name=".Activity.FileManagerActivity"></activity>
+>>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
         <activity
             android:name=".Activity.CameraResultActivity"
             android:hardwareAccelerated="false">

@@ -8,16 +8,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
+<<<<<<< HEAD
+import java.util.Calendar;
+=======
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
+=======
         dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         calendar = Calendar.getInstance();
@@ -96,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /*doubleCloseHandler = new DoubleCloseHandler(this);*/
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
         doubleCloseHandler = new DoubleCloseHandler(this);
         offWorkProgress = (ArcProgress)findViewById(R.id.offWorkProgress);
         offWorkTimeTxt = (TextView)findViewById(R.id.offWorkTime);
@@ -114,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, FileManagerActivity.class).putExtra("token",getIntent().getStringExtra("token")));
+                Log.d("check","move FileManager");
             }
         });
 
@@ -175,5 +182,10 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
     }
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
 }
 

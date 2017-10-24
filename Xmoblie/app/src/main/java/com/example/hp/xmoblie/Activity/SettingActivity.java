@@ -46,7 +46,7 @@ public class SettingActivity extends Activity {
     TextView tvStartHour;
     TextView tvStartMinute;
     Croller detaSeekBar;
-    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn,  startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
+    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
     EditText MondayCheerText, TuesdayCheerText, WednesdayCheerText, ThursdayCheerText, FridayCheerText;
 
     boolean editOff = true;

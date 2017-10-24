@@ -1,13 +1,11 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,7 +13,14 @@ import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
+<<<<<<< HEAD
 import java.util.Calendar;
+=======
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,12 +30,78 @@ public class MainActivity extends AppCompatActivity {
     private TextView offWorkTimeTxt;
     private DoubleCloseHandler doubleCloseHandler;
     private Main_BTN fileManagerBtn, historyBtn, cameraBtn, settingBtn;
+    Calendar calendar;
+    static String date1AsString;
+    static String date2AsString;
+    static String todayDate;
+    DateFormat dateFormat;
+    Date date1, date2;
+
+    static boolean isOpen = true;
+    static boolean isFirst = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
+=======
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        calendar = Calendar.getInstance();
+        date2 = calendar.getTime();
+
+        date2AsString = dateFormat.format(date2);
+
+        SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = date.edit();
+        editor.putBoolean("first", this.isFirst);
+
+        boolean first = date.getBoolean("first", this.isFirst);
+        boolean open = date.getBoolean("open", this.isOpen);
+
+        if (first == true) {
+            editor.putBoolean("first", this.isFirst);
+
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, 0);
+            date1 = calendar.getTime();
+            this.date1AsString = dateFormat.format(date1);
+
+            this.isOpen = false;
+            this.isFirst = false;
+
+            editor.putString("today", this.date1AsString);
+            editor.putBoolean("first", this.isFirst);
+            editor.putBoolean("open", this.isOpen);
+            editor.commit();
+
+            Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+            startActivity(intent);
+
+        } else {
+            this.todayDate = date.getString("today", "");
+            if (this.todayDate.equals(this.date2AsString)) {
+                if (this.isOpen == true) {
+                    Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+                    startActivity(intent);
+
+                    this.isOpen = false;
+                    this.isFirst = false;
+                }
+            } else {
+                editor.remove("today");
+                editor.putString("today", this.date2AsString);
+                editor.commit();
+
+                Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+                startActivity(intent);
+            }
+        }
+
+        /*doubleCloseHandler = new DoubleCloseHandler(this);*/
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
         doubleCloseHandler = new DoubleCloseHandler(this);
         offWorkProgress = (ArcProgress)findViewById(R.id.offWorkProgress);
         offWorkTimeTxt = (TextView)findViewById(R.id.offWorkTime);
@@ -61,17 +132,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         offWorkProgressClass();
+
     }
 
     public void offWorkProgressClass(){
-
-        SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
-
-        int startHour = setting.getInt("startHour", 0);
-        int endHour = setting.getInt("endHour", 0);
-        int startMinute = setting.getInt("startMinute", 0);
-        int endMinute = setting.getInt("endMinute", 0);
-
         final Handler handler = new Handler();
 
         final int onWorkTime = 32400;
@@ -112,11 +176,16 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(runnable, 0);
     }
 
+
+
     @Override
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
     }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
 }
 

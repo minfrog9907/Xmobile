@@ -23,6 +23,7 @@
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
+<<<<<<< HEAD
 
         </activity>
         <activity
@@ -33,11 +34,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+=======
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
         </activity>
         <activity android:name=".Activity.CheerPopUp">
             <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
         </activity>
         <activity
+<<<<<<< HEAD
+=======
+            android:name=".Activity.CheerPopUp"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+        <activity
+>>>>>>> 9b8198d1fa2d56221def42214f94fb79533e7a4f
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".Activity.BillsTracingActivity" />

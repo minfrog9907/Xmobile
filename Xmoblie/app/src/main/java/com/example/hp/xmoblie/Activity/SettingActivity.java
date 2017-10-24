@@ -90,6 +90,8 @@ public class SettingActivity extends Activity {
         minuteUpButton = (Button) findViewById(R.id.minuteUpButton);
         minuteDownBtn = (Button) findViewById(R.id.minuteDownBtn);
         dailyCheerEditBtn = (Button) findViewById(R.id.dailyCheerEditBtn);
+        nightThemeBtn = (Button) findViewById(R.id.nightThemeBtn);
+        lightThemeBtn = (Button) findViewById(R.id.lightThemeBtn);
         MondayCheerText = (EditText) findViewById(R.id.MondayCheerText);
         TuesdayCheerText = (EditText) findViewById(R.id.TuesCheerText);
         WednesdayCheerText = (EditText) findViewById(R.id.WednesdayCheerText);

@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -22,16 +22,22 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activity.MainActivity"
-            android:theme="@style/AppTheme.Dark.NoActionBar">
-        </activity>
-
+            android:theme="@style/AppTheme.Dark.NoActionBar"></activity>
         <activity
             android:name=".Activity.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".Activity.CheerPopUp"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
+
+        <activity android:name=".Activity.CheerPopUp">
+            <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
+
+        </activity>
+
         <activity
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
@@ -41,14 +47,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <activity android:name=".Activity.LoginActivity"
-            android:theme="@style/AppTheme.Dark.Login"/>
-        <activity android:name=".Activity.SettingActivity" >
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:theme="@style/AppTheme.Dark.Login" />
+        <activity android:name=".Activity.SettingActivity">
 
 
         </activity>
         <activity android:name=".Activity.FileManagerActivity"></activity>
-        <activity android:name=".Activity.CameraResultActivity"
+        <activity
+            android:name=".Activity.CameraResultActivity"
             android:hardwareAccelerated="false">
 
         </activity>

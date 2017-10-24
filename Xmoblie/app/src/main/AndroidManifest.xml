@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hp.xmoblie">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.camera2" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -11,7 +13,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -20,10 +21,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">
-<<<<<<< HEAD
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Activity.SplashActivity"
@@ -32,28 +37,8 @@
             android:name=".Activity.CheerPopUp">
             <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
 
-=======
->>>>>>> 049bb13931d36131f5b942d8c05cd0136ed78157
-
         </activity>
 
-        <activity
-            android:name=".Activity.SplashActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
-        <activity
-            android:name=".Activity.CheerPopUp"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" />
-
-<<<<<<< HEAD
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-
-=======
->>>>>>> 049bb13931d36131f5b942d8c05cd0136ed78157
         <activity
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
@@ -67,14 +52,11 @@
             android:theme="@style/AppTheme.Dark.Login"/>
         <activity android:name=".Activity.SettingActivity" >
 
-
         </activity>
         <activity android:name=".Activity.FileManagerActivity"></activity>
         <activity android:name=".Activity.CameraResultActivity"
             android:hardwareAccelerated="false">
 
         </activity>
-
     </application>
-
 </manifest>

@@ -10,6 +10,7 @@
         android:padding="10dp">
 
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -256,21 +257,21 @@
                     android:id="@+id/detaSeekBar"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
-                    android:layout_centerInParent="true"
                     android:layout_gravity="center"
+                    app:min="0"
+                    app:max="1024"
+                    android:layout_centerInParent="true"
                     app:back_circle_color="#EDEDED"
                     app:indicator_color="#73F1E2"
                     app:indicator_width="10"
                     app:is_continuous="true"
-                    app:label="0MB"
                     app:label_color="#73F1E2"
-                    app:label_size="50"
                     app:main_circle_color="#FFFFFF"
-                    app:max="1024"
-                    app:min="0"
                     app:progress_primary_color="#73F1E2"
                     app:progress_secondary_color="#BEBEBE"
-                    app:start_offset="45" />
+                    app:start_offset="45"
+                    app:label_size="50"
+                    app:label="0MB"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -285,8 +286,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginLeft="80dp"
+                    android:layout_marginBottom="20dp"
                     android:text="1GB"
                     android:textSize="12dp" />
 
@@ -317,8 +318,9 @@
                     android:id="@+id/dailyCheerEditBtn"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
+                    android:background="@drawable/upload"
                     android:layout_alignParentRight="true"
-                    android:background="@drawable/upload" />
+                    />
             </RelativeLayout>
 
             <LinearLayout
@@ -328,124 +330,176 @@
                 android:layout_marginTop="10dp"
                 android:background="#8073F1E2"></LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="월요일"
-                        android:textColor="#73F1E2"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/MondayCheerText"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:text="오늘은 월요일입니다." />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:text="월요일"
+                            android:textColor="#73F1E2"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:id="@+id/MondayCheerText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="오늘은 월요일입니다."/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:text="화요일"
+                            android:textColor="#73F1E2"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/TuesCheerText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="오늘은 화요일입니다."/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:text="수요일"
+                            android:textColor="#73F1E2"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:id="@+id/WednesdayCheerText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="오늘은 수요일입니다."/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:text="목요일"
+                            android:textColor="#73F1E2"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:id="@+id/Thursday"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="오늘은 목요일입니다."/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14dp"
+                            android:text="금요일"
+                            android:textColor="#73F1E2"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:id="@+id/FridayCheerText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:text="오늘은 금요일입니다."/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#8073F1E2">
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="테마"
+                    android:textColor="#73F1E2"
+                    android:textSize="15dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="화요일"
-                        android:textColor="#73F1E2"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/TuesCheerText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:text="오늘은 화요일입니다." />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#8073F1E2">
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal"
+                    >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="수요일"
-                        android:textColor="#73F1E2"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/nightThemeBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/darknight_light"
+                        android:layout_marginRight="20dp" />
 
-                    <EditText
-                        android:id="@+id/WednesdayCheerText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:text="오늘은 수요일입니다." />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="목요일"
-                        android:textColor="#73F1E2"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/Thursday"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:text="오늘은 목요일입니다." />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="금요일"
-                        android:textColor="#73F1E2"
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/FridayCheerText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:text="오늘은 금요일입니다." />
+                    <Button
+                        android:id="@+id/lightThemeBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/sun_light"
+                        android:layout_marginLeft="20dp" />
 
                 </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
 
     </ScrollView>
 

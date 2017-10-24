@@ -5,23 +5,18 @@ package com.example.hp.xmoblie.Service;
  */
 
 import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 
-import java.io.File;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
+import retrofit2.http.Path;
 
 /**
  * Created by jungjune on 2016-07-22.
@@ -45,28 +40,11 @@ public interface ApiClient {
 
     @GET("/file")
     Call<List<FileItem>>repoFileNodes(
-            @Header("token") String token
-            , @Query("dir") String dir
-        );  
-
+            @Field("token") String token
+            , @Field("path") String path
+    );
     @GET("/file_list.json")
     Call<List<FileItem>>test();
-
-
-    @FormUrlEncoded
-    @POST("/file")
-    Call<JustRequestItem>repoUpload(
-            @Header("token") String token,
-            @Field("file")File file,
-            @Field("path")String path
-    );
-
-    @FormUrlEncoded
-    @DELETE("/file")
-    Call<List<FileItem>>repoDelete(
-            @Header("token") String token,
-            @Field("list")List<FileItem> list
-    );
 
 }
 

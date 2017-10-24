@@ -1,46 +1,34 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.CompletionInfo;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hp.xmoblie.Adapter.BaseExpandableAdapter;
-import com.example.hp.xmoblie.Animation.AnimatedExpandableListView;
-import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
-
 
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 
 
-import org.w3c.dom.Text;
-
-import java.text.Collator;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,44 +37,19 @@ import retrofit2.Response;
 public class FileManagerActivity extends ActionBarActivity {
 
     private Spinner spinnerOrder, spinnerSort;
-    private LinearLayout spinnerList, searchBtn;
+    private LinearLayout spinnerList;
     private ImageView showSortWay;
-    private AutoCompleteTextView searchEdit;
-    private AnimatedExpandableListAdapter listAdapter;
-    private AnimatedExpandableListView expListView;
-    private List<FileItem> listDataHeader;
-    private HashMap<FileItem, List<FileItem>> listDataChild;
-    private int orderData = 0, sortData = 0;
-    private String searchData = "\\";
+    private ExpandableListAdapter listAdapter;
+    private ExpandableListView expListView;
+    private List<String> listDataHeader;
+    private HashMap<String, List<String>> listDataChild;
 
-    private ApiClient apiClient;
-
-    private final static Comparator<FileItem> comparator = new Comparator<FileItem>() {
-        private final Collator collator = Collator.getInstance();
-
-        @Override
-        public int compare(FileItem o, FileItem t1) {
-            return collator.compare(o.getFilename(), t1.getFilename());
-        }
-
-    };
-
-
+    ApiClient apiClient;
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
-        spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
-        spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
-        spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
-        searchBtn = (LinearLayout) findViewById(R.id.searchBtn);
-        showSortWay = (ImageView) findViewById(R.id.showSortWay);
-        searchEdit = (AutoCompleteTextView) findViewById(R.id.searchEdit);
-        expListView = (AnimatedExpandableListView) findViewById(R.id.fileList);
-        apiClient = ApiClient.service;
 
-        fileProtocal(searchData);
-        spinnerArray();
 
         //ActionBar 설정
         ActionBar actionBar = getSupportActionBar();
@@ -100,6 +63,11 @@ public class FileManagerActivity extends ActionBarActivity {
 
 
         //정렬기준 설정
+        spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
+        spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
+        spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
+        showSortWay = (ImageView) findViewById(R.id.showSortWay);
+
         showSortWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,85 +87,18 @@ public class FileManagerActivity extends ActionBarActivity {
             }
         });
 
-        //ExpandableList onClickListener
-        expListView.setOnGroupClickListener(new AnimatedExpandableListView.OnGroupClickListener() {
+        //list 설정
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.fileList);
 
-            @Override
-            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                ImageView fileIcon = (ImageView) view.findViewById(R.id.fileIcon);
+        // preparing list data
+        prepareListData();
 
-                if (fileIcon.getTag().equals("file")) {
-                    Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else {
-                    ImageView imageView = (ImageView) view.findViewById(R.id.showMoreMenuimg);
-                    if(imageView.getRotation() == 180){
-                        imageView.setRotation(0);
-                    }else {
-                        imageView.setRotation(180);
-                    }
+        listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
 
-                    if (expListView.isGroupExpanded(i)) {
-                        expListView.collapseGroupWithAnimation(i);
-                    } else {
-                        expListView.expandGroupWithAnimation(i);
-                    }
-
-                    return true;
-                }
-            }
-        });
-
-        //ExpandableList onChildClickListener
-        expListView.setOnChildClickListener(new AnimatedExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                ImageView fileIcon = (ImageView) view.findViewById(R.id.childFileIcon);
-                if (fileIcon.getTag().equals("file")) {
-                    Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else {
-                    TextView textView = (TextView) view.findViewById(R.id.childFileName);
-                    searchData = searchData + "" + textView.getText();
-                    fileProtocal(searchData);
-                    return true;
-                }
-            }
-        });
-
-        spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                orderData = i;
-                fileProtocal(searchData);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        searchEdit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
-                    searchBtn.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchData = searchEdit.getText().toString();
-                Log.d("searchData",searchData);
-                fileProtocal(searchData);
-            }
-        });
-
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+        spinnerArray();
     }
 
     private void spinnerArray() {
@@ -210,25 +111,33 @@ public class FileManagerActivity extends ActionBarActivity {
         spinnerOrder.setAdapter(orderAdapter);
     }
 
-    private void fileProtocal(String path) {
-        searchEdit.setText(path);
-        searchEdit.setSelection(searchEdit.length());
-        listDataHeader = new ArrayList<>();
-        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
+    private void prepareListData() {
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+
+
+        for(int i = 0; i<5; i++){
+            listDataHeader.add(String.valueOf(i));
+            List<String> childList = new ArrayList<String>();
+            for(int j = 0; j<i; j++){
+                childList.add(i + " - " + j);
+            }
+            listDataChild.put(listDataHeader.get(0), childList); // Header, Child data
+        }
+
+        apiClient = ApiClient.service;
+
+
+    }
+    private void fileProtocal(String path){
+        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"),path);
         call.enqueue(new Callback<List<FileItem>>() {
             @Override
             public void onResponse(Call<List<FileItem>> call,
                                    Response<List<FileItem>> response) {
-                for (int i = 0; i < response.body().size(); ++i) {
-                    listDataHeader.add(response.body().get(i));
-                    if (response.body().get(i).getType() == 16) {
-                        childFileProtocal(response.body().get(i));
-                    }
-
+                for(int i =0; i<response.body().size(); ++i){
                     //fileitem.java 파일 확인해서 사용 ㄱ
                 }
-                sortData();
-                adaptList();
             }
 
             @Override
@@ -236,76 +145,9 @@ public class FileManagerActivity extends ActionBarActivity {
                 Log.e("jsonResponse", "빼애애앵ㄱ");
 
             }
+
+
         });
-    }
-
-    private void childFileProtocal(final FileItem parantsData) {
-
-        listDataChild = new HashMap<FileItem, List<FileItem>>();
-        String path = searchData + "" + parantsData.getFilename();
-        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
-        call.enqueue(new Callback<List<FileItem>>() {
-            @Override
-            public void onResponse(Call<List<FileItem>> call,
-                                   Response<List<FileItem>> response) {
-                List<FileItem> childList = new ArrayList<FileItem>();
-                for (int i = 0; i < response.body().size(); ++i) {
-
-                    childList.add(response.body().get(i));
-                    listDataChild.put(parantsData, sortChildData(childList)); // Header, Child data
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FileItem>> call, Throwable t) {
-                Log.e("jsonResponse", "빼애애앵ㄱ");
-
-            }
-        });
-    }
-
-    private void adaptList() {
-        listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
-
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
-    }
-
-    private void sortData() {
-        switch (orderData) {
-            case 0:
-                Collections.sort(listDataHeader, comparator);
-                System.out.println("sorting1");
-                break;
-            case 1:
-                Collections.sort(listDataHeader, comparator);
-                Collections.reverse(listDataHeader);
-                System.out.println("sorting2");
-                break;
-            default:
-                Collections.sort(listDataHeader, comparator);
-                System.out.println("sortingd");
-                break;
-        }
-    }
-
-    private List<FileItem> sortChildData(List<FileItem> childData){
-        switch (orderData) {
-            case 0:
-                Collections.sort(childData, comparator);
-                System.out.println("sorting1");
-                break;
-            case 1:
-                Collections.sort(childData, comparator);
-                Collections.reverse(childData);
-                System.out.println("sorting2");
-                break;
-            default:
-                Collections.sort(childData, comparator);
-                System.out.println("sortingd");
-                break;
-        }
-        return childData;
     }
 
 }

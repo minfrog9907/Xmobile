@@ -16,7 +16,6 @@
         android:paddingRight="15dp"
         android:layout_marginTop="15dp">
         <LinearLayout
-            android:id="@+id/searchBtn"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:weightSum="10"
@@ -27,14 +26,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:src="@drawable/search"/>
-
             <AutoCompleteTextView
-                android:id="@+id/searchEdit"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="8"
                 android:background="@null"/>
-
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -81,35 +77,16 @@
             android:layout_gravity="center"
             android:src="@drawable/double_arrow"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sortForm"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center"
-        android:visibility="invisible">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="20dp"
-            android:text="No Files"/>
-    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/sortForm"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
         android:fillViewport="true">
-        <com.example.hp.xmoblie.Animation.AnimatedExpandableListView
+        <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/fileList"
-            android:divider="#1f1f1f"
-            android:dividerHeight="1dp"
-            android:childDivider="#1f1f1f"
             android:groupIndicator="@null"/>
     </ScrollView>
 

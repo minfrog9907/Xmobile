@@ -1,59 +1,53 @@
 package com.example.hp.xmoblie.Activity;
 
-<<<<<<< HEAD
-import android.support.v7.app.ActionBarActivity;
-=======
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.inputmethod.CompletionInfo;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-<<<<<<< HEAD
-=======
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.Adapter.BaseExpandableAdapter;
+import com.example.hp.xmoblie.Animation.AnimatedExpandableListView;
+import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpandableListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
+
 
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 
 
-<<<<<<< HEAD
-import java.util.ArrayList;
-=======
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.File;
 import java.text.Collator;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 import java.util.HashMap;
 import java.util.List;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,14 +56,6 @@ import retrofit2.Response;
 public class FileManagerActivity extends ActionBarActivity {
 
     private Spinner spinnerOrder, spinnerSort;
-<<<<<<< HEAD
-    private LinearLayout spinnerList;
-    private ImageView showSortWay;
-    private ExpandableListAdapter listAdapter;
-    private ExpandableListView expListView;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listDataChild;
-=======
     private LinearLayout spinnerList, searchBtn, noFIleTxt;
     private ImageView showSortWay;
     private AutoCompleteTextView searchEdit;
@@ -104,16 +90,11 @@ public class FileManagerActivity extends ActionBarActivity {
 
     };
 
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 
-    ApiClient apiClient;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
-<<<<<<< HEAD
-
-=======
         spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
         spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
         spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
@@ -128,7 +109,6 @@ public class FileManagerActivity extends ActionBarActivity {
         getSearchHistroy();
         moveDir(searchData);
         spinnerArray();
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 
         //ActionBar 설정
         ActionBar actionBar = getSupportActionBar();
@@ -142,11 +122,6 @@ public class FileManagerActivity extends ActionBarActivity {
 
 
         //정렬기준 설정
-        spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
-        spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
-        spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
-        showSortWay = (ImageView) findViewById(R.id.showSortWay);
-
         showSortWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,16 +141,9 @@ public class FileManagerActivity extends ActionBarActivity {
             }
         });
 
-        //list 설정
-        // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.fileList);
+        //ExpandableList onClickListener
+        expListView.setOnGroupClickListener(new AnimatedExpandableListView.OnGroupClickListener() {
 
-<<<<<<< HEAD
-        // preparing list data
-        prepareListData();
-
-        listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
-=======
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
                 ImageView fileIcon = (ImageView) view.findViewById(R.id.fileIcon);
@@ -265,20 +233,11 @@ public class FileManagerActivity extends ActionBarActivity {
                 moveDir(searchEdit.getText().toString());
             }
         });
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
-        spinnerArray();
     }
 
     /* 경로 이동 및 파일 실행 */
 
-<<<<<<< HEAD
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-=======
     private void fileProtocal(String path) {
         listDataHeader = new ArrayList<>();
         final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
@@ -305,39 +264,25 @@ public class FileManagerActivity extends ActionBarActivity {
                 adaptList();
 
             }
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
 
+            @Override
+            public void onFailure(Call<List<FileItem>> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
 
-        for(int i = 0; i<5; i++){
-            listDataHeader.add(String.valueOf(i));
-            List<String> childList = new ArrayList<String>();
-            for(int j = 0; j<i; j++){
-                childList.add(i + " - " + j);
             }
-            listDataChild.put(listDataHeader.get(0), childList); // Header, Child data
-        }
-
-        apiClient = ApiClient.service;
-
-
-<<<<<<< HEAD
+        });
     }
-    private void fileProtocal(String path){
-        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"),path);
-=======
+
+    private void childFileProtocal(final FileItem parantsData) {
+
         listDataChild = new HashMap<FileItem, List<FileItem>>();
         String path = checkRoot() + "" + parantsData.getFilename();
 
         final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
         call.enqueue(new Callback<List<FileItem>>() {
             @Override
             public void onResponse(Call<List<FileItem>> call,
                                    Response<List<FileItem>> response) {
-<<<<<<< HEAD
-                for(int i =0; i<response.body().size(); ++i){
-                    //fileitem.java 파일 확인해서 사용 ㄱ
-=======
                 List<FileItem> childList = new ArrayList<FileItem>();
                 if (response.body().isEmpty()) {
                     listDataChild.put(parantsData, childList);
@@ -346,7 +291,6 @@ public class FileManagerActivity extends ActionBarActivity {
                         childList.add(response.body().get(i));
                         listDataChild.put(parantsData, sortChildData(childList)); // Header, Child data
                     }
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
                 }
             }
 
@@ -355,11 +299,9 @@ public class FileManagerActivity extends ActionBarActivity {
                 Log.e("jsonResponse", "빼애애앵ㄱ");
 
             }
-
-<<<<<<< HEAD
-
         });
-=======
+    }
+
     private void searchFile(String path) {
         searchData = path;
         if (searchData.isEmpty() || searchData.equals("")) {
@@ -430,7 +372,6 @@ public class FileManagerActivity extends ActionBarActivity {
                 break;
         }
         return childData;
->>>>>>> 31f5c0f546a7d806bb486ab62a62e218ad08a8c0
     }
 
     private String checkRoot() {

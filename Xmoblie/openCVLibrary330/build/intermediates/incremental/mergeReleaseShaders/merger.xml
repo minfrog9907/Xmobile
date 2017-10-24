@@ -1,6 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<merger version="3"><dataSet config="main"><source path="C:\Users\Kim doyeon\Desktop\git_project\Xmoblie\openCVLibrary330\src\main\shaders"/></dataSet><dataSet config="release"><source path="C:\Users\Kim doyeon\Desktop\git_project\Xmoblie\openCVLibrary330\src\release\shaders"/></dataSet></merger>
-=======
 <merger version="3"><dataSet config="main"><source path="C:\Users\HP\Desktop\Xmoblie\Xmoblie\openCVLibrary330\src\main\shaders"/></dataSet><dataSet config="release"><source path="C:\Users\HP\Desktop\Xmoblie\Xmoblie\openCVLibrary330\src\release\shaders"/></dataSet></merger>
->>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf

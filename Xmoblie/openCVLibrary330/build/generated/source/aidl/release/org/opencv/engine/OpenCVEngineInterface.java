@@ -1,10 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
-<<<<<<< HEAD
- * Original file: C:\\Users\\Kim doyeon\\Desktop\\git_project\\Xmoblie\\openCVLibrary330\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
-=======
  * Original file: C:\\Users\\HP\\Desktop\\Xmoblie\\Xmoblie\\openCVLibrary330\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
->>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
  */
 package org.opencv.engine;
 /**

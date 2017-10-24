@@ -15,8 +15,10 @@ import retrofit2.Retrofit;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by jungjune on 2016-07-22.
@@ -40,16 +42,11 @@ public interface ApiClient {
 
     @GET("/file")
     Call<List<FileItem>>repoFileNodes(
-<<<<<<< HEAD
-            @Field("token") String token
-            , @Field("path") String path
-    );
-=======
             @Header("token") String token
             , @Query("dir") String dir
-        );
+    );
 
->>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
+
     @GET("/file_list.json")
     Call<List<FileItem>>test();
 

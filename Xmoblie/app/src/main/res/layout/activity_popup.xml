@@ -22,11 +22,9 @@
         />
 
     <Button
-        android:id="@+id/closeBtn"
-        android:layout_width="wrap_content"
+        android:id="@+id/btnClose"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="닫기"
-        android:layout_marginTop="0dp"/>
-
-
+        android:layout_marginTop="50dp"/>
 </LinearLayout>

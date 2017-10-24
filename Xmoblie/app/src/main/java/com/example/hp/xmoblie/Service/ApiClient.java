@@ -47,7 +47,7 @@ public interface ApiClient {
     Call<List<FileItem>>repoFileNodes(
             @Header("token") String token
             , @Query("dir") String dir
-        );  
+        );
 
     @GET("/file_list.json")
     Call<List<FileItem>>test();

@@ -41,7 +41,6 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.text.Collator;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

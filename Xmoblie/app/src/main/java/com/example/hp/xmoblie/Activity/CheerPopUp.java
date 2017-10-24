@@ -31,7 +31,7 @@ public class CheerPopUp extends SettingActivity {
 
         TextView dialog_date = (TextView) findViewById(R.id.dialog_date);
         TextView dialog_cheer = (TextView) findViewById(R.id.dialog_cheer);
-        Button btnClose = (Button) findViewById(R.id.btnClose);
+        Button btnClose = (Button) findViewById(R.id.closeBtn);
 
         String[] weekDay = {"일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"};
         Calendar calendar = Calendar.getInstance();

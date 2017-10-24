@@ -40,9 +40,16 @@ public interface ApiClient {
 
     @GET("/file")
     Call<List<FileItem>>repoFileNodes(
+<<<<<<< HEAD
             @Field("token") String token
             , @Field("path") String path
     );
+=======
+            @Header("token") String token
+            , @Query("dir") String dir
+        );
+
+>>>>>>> 9f20ba36e07f7e67119ec6bedaa1754e18920adf
     @GET("/file_list.json")
     Call<List<FileItem>>test();
 

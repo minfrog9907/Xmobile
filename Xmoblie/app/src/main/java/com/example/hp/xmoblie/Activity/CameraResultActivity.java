@@ -7,12 +7,15 @@ package com.example.hp.xmoblie.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,35 +26,44 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
+import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.OCRDataItem;
+import com.example.hp.xmoblie.Items.OCRLineDataItem;
+import com.example.hp.xmoblie.Items.OCRWordDataItem;
+import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ApiClient;
 import com.yalantis.ucrop.UCrop;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CameraResultActivity extends AppCompatActivity {
+    int IMAGE_DATA = 1050;
+
     static {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
     }
-
-    public LinearLayout thumnail;
     ImageView preview;
-    public ImageView[] thumnailImages = new ImageView[5];
-    public int cnt = 0;
-    public String[] uri = new String[5];
 
     String node;
-
     private Mat img_input;
     private Mat img_output;
+    Bitmap bitmapOutput;
 
     private static final String TAG = "opencv";
 
@@ -92,7 +104,6 @@ public class CameraResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera_result);
         ActionBar actionBar = getSupportActionBar();
 
-        thumnail = (LinearLayout) findViewById(R.id.cameraResult_thumnail);
         preview = (ImageView) findViewById(R.id.cameraResult_Image);
 
         actionBar.setDisplayShowCustomEnabled(true);
@@ -116,32 +127,16 @@ public class CameraResultActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CameraResultActivity.this, BillsTracingActivity.class);
-                intent.putExtra("cnt", cnt);
-                intent.putExtra("uri", uri);
-                startActivity(intent);
+
             }
         });
 
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UCrop.Options options = new UCrop.Options();
-                options.setToolbarTitle("영수증 편집");
-                options.setStatusBarColor(Color.parseColor("#1b1b1b"));
-                options.setToolbarColor(Color.parseColor("#1f1f1f"));
-                options.setActiveWidgetColor(Color.parseColor("#73F1E2"));
-                options.setDimmedLayerColor(Color.parseColor("#262626"));
-                options.setRootViewBackgroundColor(Color.parseColor("#1b1b1b"));
-                options.setToolbarWidgetColor(Color.parseColor("#73F1E2"));
-                options.setFreeStyleCropEnabled(true);
-                options.useSourceImageAspectRatio();
-                options.setLogoColor(Color.parseColor("#73F1E2"));
-
-                UCrop.of(Uri.fromFile(new File(node)), Uri.fromFile(new File(getIntent().getStringExtra("dir") + getIntent().getStringExtra("filename") + cnt + ".jpg")))
-                        .withOptions(options)
-                        .start(CameraResultActivity.this);
-                Log.e("node",getIntent().getStringExtra("dir") + getIntent().getStringExtra("filename") + cnt + ".jpg");
+                startActivityForResult(new Intent(CameraResultActivity.this,ImageDataSetActivity.class)
+                        .putExtra("token",getIntent().getStringExtra("token"))
+                        .putExtra("node" , node),IMAGE_DATA);
             }
         });
         //Log.e("dir",getIntent().getStringExtra("node")+"   "+getIntent().getStringExtra("dir")+"/tmp/");
@@ -159,21 +154,22 @@ public class CameraResultActivity extends AppCompatActivity {
 
         imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr());
 
-        Bitmap bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
+        bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(img_output, bitmapOutput);
-        saveImage(bitmapOutput, String.format("%d.jpg", System.currentTimeMillis()));
+        saveImage(bitmapOutput, String.format("%d.png   ", System.currentTimeMillis()));
 
         preview.setImageBitmap(bitmapOutput);
     }
 
     private void read_image_file() {
-        node =getIntent().getStringExtra("node");
-        copyFile(node);
-
+        node = getIntent().getStringExtra("node");
+        //copyFile(node);
+        copyFile("/Download/bills/asdfasdf.jpg");
         img_input = new Mat();
         img_output = new Mat();
 
-        loadImage(node, img_input.getNativeObjAddr());
+        //loadImage(node, img_input.getNativeObjAddr());
+        loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
     }
 
     private void saveImage(Bitmap finalBitmap, String image_name) {
@@ -183,7 +179,7 @@ public class CameraResultActivity extends AppCompatActivity {
         Log.e("node", root + image_name);
         myDir.mkdirs();
         String fname = image_name;
-        node = root+image_name;
+        node = root + image_name;
         File file = new File(myDir, fname);
         if (file.exists()) file.delete();
         Log.i("LOAD", root + fname);
@@ -204,35 +200,20 @@ public class CameraResultActivity extends AppCompatActivity {
             return;
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-            final Uri resultUri = UCrop.getOutput(data);
-            uri[cnt] = resultUri.toString();
-
-            thumnailImages[cnt] = new ImageView(getApplicationContext());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
-            params.rightMargin = 20;
-            thumnailImages[cnt].setLayoutParams(params);
-            Glide.with(getApplicationContext()).load(resultUri).into(thumnailImages[cnt]);
-
-            thumnail.addView(thumnailImages[cnt++]);
-
-            if (cnt == 1) {
-                preview.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 8));
-                thumnail.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 2));
-            }
-        } else if (resultCode == UCrop.RESULT_ERROR) {
-            final Throwable cropError = UCrop.getError(data);
-        }
 
 
     }
+
     private void refreshGallery(File file) {
-        Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(Uri.fromFile(file));
         sendBroadcast(mediaScanIntent);
     }
+
+
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.

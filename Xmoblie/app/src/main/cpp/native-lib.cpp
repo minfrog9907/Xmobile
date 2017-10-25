@@ -3,6 +3,7 @@
 #include <android/asset_manager_jni.h>
 #include <android/log.h>
 
+
 using namespace cv;
 using namespace std;
 

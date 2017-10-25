@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         fileManagerBtn = (Main_BTN)findViewById(R.id.fileManagerBtn);
         settingBtn = (Main_BTN)findViewById(R.id.settingBtn);
         cameraBtn =(Main_BTN)findViewById(R.id.cameraBtn);
-
+        historyBtn =(Main_BTN)findViewById(R.id.historyBtn);
 
         historyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CameraActivity.class));
+                startActivity(new Intent(MainActivity.this, CameraActivity.class).putExtra("token",getIntent().getStringExtra("token")));
             }
         });
 

@@ -4,9 +4,11 @@ package com.example.hp.xmoblie.Service;
  * Created by HP on 2017-10-16.
  */
 
+import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
+import com.example.hp.xmoblie.Items.OCRDataItem;
 
 import java.io.File;
 import java.util.List;
@@ -21,6 +23,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 /**
@@ -63,10 +66,42 @@ public interface ApiClient {
 
     @FormUrlEncoded
     @DELETE("/file")
-    Call<List<FileItem>>repoDelete(
+    Call<List<DeleteItem>>repoDelete(
             @Header("token") String token,
-            @Field("list")List<FileItem> list
+            @Field("list")List<DeleteItem> list
     );
+
+    @FormUrlEncoded
+    @PUT("/file")
+    Call<JustRequestItem>repoRename(
+            @Header("token") String token,
+            @Field("originalName")String originalName,
+            @Field("path")String path,
+            @Field("newName")String newName);
+
+
+    @FormUrlEncoded
+    @POST("/file/move")
+    Call<JustRequestItem>repoMove(
+            @Header("token") String token,
+            @Field("filename")String filename,
+            @Field("path")String path,
+            @Field("targetPath")String targetPath);
+
+    @GET("/winfile/mkdir")
+    Call<JustRequestItem>repoMkDir(
+            @Header("token") String token
+            , @Query("dirname") String dirname
+            , @Query("path") String path
+    );
+
+    @FormUrlEncoded
+    @POST("/image")
+    Call<OCRDataItem>repoOCR(
+            @Header("token") String token,
+            @Field("data")String data
+    );
+
 
 }
 

@@ -449,6 +449,10 @@ public class ImageDataSetActivity extends AppCompatActivity {
             btnMode[mode] = 1;
             setSelectView(0, 0, 0, 0);
         }
+        else {
+            for (int i=1; i<4; ++i)
+                if(btnMode[i]==1)mode=i;
+        }
     }
 
     public void resetSymbol() {

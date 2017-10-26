@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -30,6 +31,8 @@ public class AreYouSurePopUp extends Activity {
 
         editText.setText("상호 : "+getIntent().getStringExtra("name")+"\n주소 : "+
         getIntent().getStringExtra("place")+"\n가격 : "+getIntent().getStringExtra("price"));
+
+        editText.setMovementMethod(new ScrollingMovementMethod());
 
         commit.setOnClickListener(new View.OnClickListener() {
             @Override

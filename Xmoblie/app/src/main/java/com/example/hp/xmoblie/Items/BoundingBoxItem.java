@@ -35,7 +35,7 @@ public class BoundingBoxItem {
         return right-left;
     }
     public int getHeight(){
-        return (bottom-top)*2;
+        return (bottom-top);
     }
     public void setBottom(int bottom) {
         this.bottom = bottom;
@@ -81,23 +81,23 @@ public class BoundingBoxItem {
 
     public void setBounding(String bounding, int i, int j, int z){
         StringTokenizer st = new StringTokenizer(bounding,",");
-        setLeft(Integer.parseInt(st.nextToken()));
-        setTop(Integer.parseInt(st.nextToken()));
-        setRight(getLeft()+Integer.parseInt(st.nextToken()));
-        setBottom(getTop()+Integer.parseInt(st.nextToken()));
+        setLeft((int)(Integer.parseInt(st.nextToken())*xScope));
+        setTop((int)(Integer.parseInt(st.nextToken())*yScope));
+        setRight(getLeft()+(int)(Integer.parseInt(st.nextToken())*xScope));
+        setBottom(getTop()+(int)(Integer.parseInt(st.nextToken())*yScope));
         setI(i);
         setJ(j);
         setZ(z);
-        Log.e("boundingdata",top+" "+left+" "+bottom+" "+right);
+        Log.e("boundingdata",top+" "+left+" "+bottom+" "+right+" ");
     }
     public boolean crushY(int y){
-        if(top-20<=y&&top+getHeight()*2>=y)
+        if(top<=y&&bottom>=y)
             return true;
         else
             return false;
     }
     public boolean crushX(int x){
-        if(left-20<=x&&right+20>=x)
+        if(left<=x&&right>=x)
             return true;
         else
             return false;

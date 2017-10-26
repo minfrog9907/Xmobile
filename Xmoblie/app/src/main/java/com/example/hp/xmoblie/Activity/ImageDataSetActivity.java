@@ -62,29 +62,35 @@ public class ImageDataSetActivity extends AppCompatActivity {
     private Mat img_input;
     private Mat img_output;
 
-    int mode=0;
-    int width,height;
+    int history=-1;
+    int mode = 0;
+    int imgWidth, imgHeight;
+    int width, height;
 
-    float xScope, yScope;
+    static float xScope, yScope;
 
     String node;
     String base64String;
 
-    int startX,startY,nowX,nowY;
+    int startX, startY, nowX, nowY;
 
     List<OCRLineDataItem> list;
     List<OCRWordsDataItem> words;
     List<OCRWordDataItem> word;
+
     ArrayList<BoundingBoxItem> bounding;
+    ArrayList<BoundingBoxItem> throwBound;
 
     SideStick_BTN nameBtn;
     SideStick_BTN priceBtn;
     SideStick_BTN locationBtn;
 
+    BoundingBoxItem startBound;
+
     TextView inform;
 
     ImageView imageView;
-    ImageView selectView[]= new ImageView[4];
+    ImageView selectView[] = new ImageView[4];
 
     AbsoluteLayout absoluteLayout;
 
@@ -102,7 +108,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
         actionBar.setCustomView(mCustomView);
 
         try {
-            Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse("file://"+getIntent().getStringExtra("node")));
+            Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse("file://" + getIntent().getStringExtra("node")));
             base64String = encodeTobase64(bm);
             width = bm.getWidth();
             height = bm.getHeight();
@@ -113,55 +119,63 @@ public class ImageDataSetActivity extends AppCompatActivity {
 
         apiClient = ApiClient.service;
         bounding = new ArrayList<BoundingBoxItem>();
+        throwBound = new ArrayList<BoundingBoxItem>();
 
-        OCR();
 
-        imageView  = (ImageView) findViewById(R.id.imagedata_imageview);
-        selectView[1] = (ImageView)findViewById(R.id.imagedataset_Name);
-        selectView[2] = (ImageView)findViewById(R.id.imagedataset_Price);
-        selectView[3]  =(ImageView)findViewById(R.id.imagedataset_location);
+        imageView = (ImageView) findViewById(R.id.imagedata_imageview);
+        selectView[1] = (ImageView) findViewById(R.id.imagedataset_Name);
+        selectView[2] = (ImageView) findViewById(R.id.imagedataset_Price);
+        selectView[3] = (ImageView) findViewById(R.id.imagedataset_location);
 
-        inform = (TextView)findViewById(R.id.imagedataset_inform);
+        inform = (TextView) findViewById(R.id.imagedataset_inform);
 
-        nameBtn=(SideStick_BTN)findViewById(R.id.imagedataset_NameBtn);
-        priceBtn=(SideStick_BTN)findViewById(R.id.imagedataset_PriceBtn);
-        locationBtn=(SideStick_BTN)findViewById(R.id.imagedataset_locationBtn);
+        nameBtn = (SideStick_BTN) findViewById(R.id.imagedataset_NameBtn);
+        priceBtn = (SideStick_BTN) findViewById(R.id.imagedataset_PriceBtn);
+        locationBtn = (SideStick_BTN) findViewById(R.id.imagedataset_locationBtn);
 
-        absoluteLayout = (AbsoluteLayout)findViewById(R.id.imagedataset_absolute);
+        absoluteLayout = (AbsoluteLayout) findViewById(R.id.imagedataset_absolute);
 
         Glide.with(this).load(getIntent().getStringExtra("node")).into(imageView);
+        onWindowFocusChanged(true);
 
-        xScope = (imageView.getRight() - imageView.getLeft())/width;
-        yScope = (imageView.getBottom() - imageView.getTop())/height;
+        //OCR();
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(mode!=0) {
+                if (mode != 0) {
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        int x = (int)motionEvent.getX()- imageView.getLeft();
-                        int y= (int)motionEvent.getY()-imageView.getTop();
-                        Log.e("point",x+" "+y);
-                        Log.e("size",bounding.size()+"");
-                        for(int i =0; i < bounding.size(); ++i ){
-                            if(bounding.get(i).crushX(x)&&bounding.get(i).crushY(y)){
-                                BoundingBoxItem bx = bounding.get(i);
-                                startX =bx.getLeft()+imageView.getLeft();
-                                startY = bx.getTop()+imageView.getTop();
-                                absoluteLayout.removeAllViews();
-                                absoluteLayout.addView(imageView);
-                                absoluteLayout.addView(selectView[mode],new AbsoluteLayout.LayoutParams(bx.getWidth(),bx.getHeight(),startX,startY));
-                                Log.e("selected Text",list.get(bx.getI()).getLines().get(bx.getJ()).getWords().get(bx.getZ()).getText());
+                        int x = (int) motionEvent.getX() - imageView.getLeft();
+                        int y = (int) motionEvent.getY() - imageView.getTop();
+                        for (int i = 0; i < bounding.size(); ++i) {
+                            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y)) {
+                                Log.e("point", x + " " + y+" "+"start");
+                                history = i;
+                                startBound = bounding.get(i);
+                                startX = startBound.getLeft() + imageView.getLeft();
+                                startY = startBound.getTop() + imageView.getTop();
+                                Log.e("text",list.get(startBound.getI()).getLines().get(startBound.getJ()).getWords().get(startBound.getZ()).getText()+"1 "+history);
+                                setSelectView(startBound.getWidth(), startBound.getHeight());
                                 break;
                             }
                         }
-
+                        return true;
                     }
-                    if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-
-                    }
-                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-
+                    else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                        int x = (int) motionEvent.getX();
+                        int y = (int) motionEvent.getY();
+                        Log.e("point", x + " " + y);
+                        for (int i = 0; i < bounding.size()/2; ++i) {
+                            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y)&& i != history) {
+                                history=i;
+                                throwBound.add(bounding.get(i));
+                                BoundingBoxItem bx = throwBound.get(throwBound.size() - 1);
+                                Log.e("text",list.get(bx.getI()).getLines().get(bx.getJ()).getWords().get(bx.getZ()).getText()+"2 "+history);
+                                setSelectView(bx.getRight()-startBound.getLeft(),bx.getBottom()-startBound.getTop());
+                                break;
+                            }
+                        }
+                        return true;
                     }
                 }
                 return false;
@@ -171,49 +185,55 @@ public class ImageDataSetActivity extends AppCompatActivity {
         nameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mode=1;
+                mode = 1;
                 setName();
             }
         });
         priceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mode=2;
+                mode = 2;
                 setPrice();
             }
         });
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mode=3;
+                mode = 3;
                 setLocation();
             }
         });
 
     }
-    private void setName(){
+
+    private void setName() {
         inform.setText("가게 이름을 드래그 해주세요");
     }
-    private void setPrice(){
+
+    private void setPrice() {
         inform.setText("가격을 드래그 해주세요");
     }
-    private void setLocation(){
+
+    private void setLocation() {
         inform.setText("가게 주소를 드래그 해주세요");
     }
-    private void OCR(){
+
+    private void OCR() {
         final Call<OCRDataItem> call = apiClient.repoOCR(getIntent().getStringExtra("token"), base64String);
         call.enqueue(new Callback<OCRDataItem>() {
             @Override
             public void onResponse(Call<OCRDataItem> call,
                                    Response<OCRDataItem> response) {
-               list = response.body().getRegions();
-                for(int i =0; i<list.size(); ++i){
-                   words = list.get(i).getLines();
-                    for(int j=0; j<words.size(); ++j){
+                list = response.body().getRegions();
+                for (int i = 0; i < list.size(); ++i) {
+                    words = list.get(i).getLines();
+                    for (int j = 0; j < words.size(); ++j) {
                         word = words.get(j).getWords();
-                        for(int z=0; z<word.size(); ++z){
+                        for (int z = 0; z < word.size(); ++z) {
                             BoundingBoxItem bx = new BoundingBoxItem();
-                            bx.setBounding(word.get(z).getBoundingBox(),i,j,z);
+                            bx.setScope(xScope, yScope);
+                            bx.setBounding(word.get(z).getBoundingBox(), i, j, z);
+                            Log.e("text1",list.get(bx.getI()).getLines().get(bx.getJ()).getWords().get(bx.getZ()).getText());
                             bounding.add(bx);
                         }
                     }
@@ -241,4 +261,27 @@ public class ImageDataSetActivity extends AppCompatActivity {
         return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        imgWidth = imageView.getWidth();
+        imgHeight = imageView.getHeight();
+
+        xScope = (float) imgWidth / (float) width;
+        yScope = (float) imgHeight / (float) height;
+
+        OCR();
+        // Log.e("scope",xScope+" "+yScope+" "+imgWidth+" "+imgHeight);
+    }
+
+    public void setSelectView(int width, int height) {
+        absoluteLayout.removeAllViews();
+        absoluteLayout.addView(imageView);
+        for (int i = 1; i < 4; ++i) {
+            if (mode != i)
+                absoluteLayout.addView(selectView[i]);
+            else
+                absoluteLayout.addView(selectView[mode], new AbsoluteLayout.LayoutParams(width, height, startX, startY));
+        }
+    }
 }

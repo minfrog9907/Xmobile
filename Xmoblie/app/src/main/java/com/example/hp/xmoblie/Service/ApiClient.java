@@ -37,6 +37,13 @@ public interface ApiClient {
 
     ApiClient service = retrofit.create(ApiClient.class);
 
+    Retrofit retrofitTest= new Retrofit.Builder()
+            .baseUrl("http://lfconfig.xyz")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
+    ApiClient serviceTest = retrofitTest.create(ApiClient.class);
+
     @FormUrlEncoded
     @POST("/login")
     Call<LoginItem> repoContributors(
@@ -103,6 +110,8 @@ public interface ApiClient {
     );
 
 
+    @GET("/xmobile/awef.json.txt")
+    Call<OCRDataItem>repoOCRT(    );
 }
 
 

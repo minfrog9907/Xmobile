@@ -106,4 +106,11 @@ public class BoundingBoxItem {
         xScope=x;
         yScope =y;
     }
+    public boolean insideX(int xy[][]){
+        if((left>=xy[0][0]-10&&right<=xy[0][1]+10)&&(top>=xy[1][0]-10&&bottom<=xy[1][1]+10))
+            return true;
+        else
+            return false;
+    }
+
 }

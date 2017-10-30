@@ -40,7 +40,6 @@
         <activity
             android:name=".Activity.CameraActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".Activity.BillsTracingActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

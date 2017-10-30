@@ -1,25 +1,36 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.Image;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +41,7 @@ import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpan
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
 
 
+import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -62,8 +74,13 @@ public class FileManagerActivity extends ActionBarActivity {
     private AnimatedExpandableListView expListView;
     private List<FileItem> listDataHeader;
     private HashMap<FileItem, List<FileItem>> listDataChild;
-    private int orderData = 0, sortData = 0;
+    private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
+    private boolean selectMode = false;
+    private CustomFilemanagerBtnGroup cfbg;
+    private int checkedItem = 0;
+    private BaseExpandableAdapter listAdapter;
+    private ScrollView fileListScroll;
 
     private ApiClient apiClient;
 
@@ -91,10 +108,12 @@ public class FileManagerActivity extends ActionBarActivity {
     };
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
+
         spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
         spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
         spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
@@ -104,6 +123,8 @@ public class FileManagerActivity extends ActionBarActivity {
         searchEdit = (AutoCompleteTextView) findViewById(R.id.searchEdit);
         expListView = (AnimatedExpandableListView) findViewById(R.id.fileList);
         apiClient = ApiClient.service;
+        cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
+        fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
 
         Toast.makeText(this, "뒤로가기 버튼을 꾹 누르면 파일 매니저가 종료됩니다.", Toast.LENGTH_SHORT).show();
         getSearchHistroy();
@@ -119,6 +140,8 @@ public class FileManagerActivity extends ActionBarActivity {
         actionBar.setDisplayShowHomeEnabled(false);
         View mCustomView = LayoutInflater.from(this).inflate(R.layout.actionbar_filemanager, null);
         actionBar.setCustomView(mCustomView);
+
+        //Bottom Navigation 설정
 
 
         //정렬기준 설정
@@ -146,27 +169,30 @@ public class FileManagerActivity extends ActionBarActivity {
 
             @Override
             public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-                ImageView fileIcon = (ImageView) view.findViewById(R.id.fileIcon);
 
-                if (fileIcon.getTag().equals("file")) {
-                    Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    return true;
+                if (!selectMode) {
+                    ImageView fileIcon = (ImageView) view.findViewById(R.id.fileIcon);
+
+                    if (fileIcon.getTag().equals("file")) {
+                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
+                    } else {
+                        ImageView imageView = (ImageView) view.findViewById(R.id.showMoreMenu);
+                        if (imageView.getRotation() == 180) {
+                            imageView.setRotation(0);
+                        } else {
+                            imageView.setRotation(180);
+                        }
+
+                        if (expListView.isGroupExpanded(i)) {
+                            expListView.collapseGroupWithAnimation(i);
+                        } else {
+                            expListView.expandGroupWithAnimation(i);
+                        }
+                    }
                 } else {
-                    ImageView imageView = (ImageView) view.findViewById(R.id.showMoreMenuimg);
-                    if (imageView.getRotation() == 180) {
-                        imageView.setRotation(0);
-                    } else {
-                        imageView.setRotation(180);
-                    }
 
-                    if (expListView.isGroupExpanded(i)) {
-                        expListView.collapseGroupWithAnimation(i);
-                    } else {
-                        expListView.expandGroupWithAnimation(i);
-                    }
-
-                    return true;
                 }
+                return true;
             }
         });
 
@@ -174,17 +200,21 @@ public class FileManagerActivity extends ActionBarActivity {
         expListView.setOnChildClickListener(new AnimatedExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                ImageView fileIcon = (ImageView) view.findViewById(R.id.childFileIcon);
-                if (fileIcon.getTag().equals("file")) {
-                    Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    return true;
+                if (!selectMode) {
+                    ImageView fileIcon = (ImageView) view.findViewById(R.id.childFileIcon);
+                    if (fileIcon.getTag().equals("file")) {
+                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
+                    } else {
+                        FileItem parants = (FileItem) expandableListView.getItemAtPosition(i);
+                        TextView textView = (TextView) view.findViewById(R.id.childFileName);
+                        searchData = checkRoot() + "" + parants.getFilename() + "\\" + textView.getText();
+                        moveDir(searchData);
+                    }
                 } else {
-                    FileItem parants = (FileItem) expandableListView.getItemAtPosition(i);
-                    TextView textView = (TextView) view.findViewById(R.id.childFileName);
-                    searchData = checkRoot() + "" + parants.getFilename() + "\\" + textView.getText();
-                    moveDir(searchData);
-                    return true;
+
+
                 }
+                return true;
             }
         });
 
@@ -192,20 +222,20 @@ public class FileManagerActivity extends ActionBarActivity {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                LinearLayout checkBoxs[] = null;
-
-
-                Log.d("onclick","LLLLLong");
-                return false;
+                changeSelectMode();
+                return true;
             }
         });
 
 
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                orderData = i;
-                moveDir(searchData);
+                if (++orderCheck > 1) {
+                    orderData = i;
+                    moveDirwithoutHistory(searchData);
+                }
             }
 
             @Override
@@ -234,6 +264,13 @@ public class FileManagerActivity extends ActionBarActivity {
             }
         });
 
+        fileListScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+                Log.d("asdf", "asdf");
+            }
+        });
+
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -245,24 +282,27 @@ public class FileManagerActivity extends ActionBarActivity {
             @Override
             public void onResponse(Call<List<FileItem>> call,
                                    Response<List<FileItem>> response) {
-                for (int i = 0; i < response.body().size(); ++i) {
-                    listDataHeader.add(response.body().get(i));
-                    if (response.body().get(i).getType() == 16) {
-                        childFileProtocal(response.body().get(i));
+                if (response.body() != null && response.errorBody() == null) {
+                    for (int i = 0; i < response.body().size(); ++i) {
+                        listDataHeader.add(response.body().get(i));
+                        if (response.body().get(i).getType() == 16) {
+                            childFileProtocal(response.body().get(i));
+                        }
+
+                        //fileitem.java 파일 확인해서 사용 ㄱ
                     }
 
-                    //fileitem.java 파일 확인해서 사용 ㄱ
-                }
+                    if (response.body().size() <= 0) {
+                        noFIleTxt.setVisibility(View.VISIBLE);
+                    } else {
+                        noFIleTxt.setVisibility(View.INVISIBLE);
+                    }
 
-                if (response.body().size() <= 0) {
-                    noFIleTxt.setVisibility(View.VISIBLE);
+                    sortData();
+                    adaptList();
                 } else {
-                    noFIleTxt.setVisibility(View.INVISIBLE);
+                    fileProtocal(searchData);
                 }
-
-                sortData();
-                adaptList();
-
             }
 
             @Override
@@ -271,6 +311,7 @@ public class FileManagerActivity extends ActionBarActivity {
 
             }
         });
+
     }
 
     private void childFileProtocal(final FileItem parantsData) {
@@ -316,17 +357,19 @@ public class FileManagerActivity extends ActionBarActivity {
         fileProtocal(searchData);
     }
 
-    private void moveDir(String path){
+    private void moveDir(String path) {
+        Log.d("moveDir", "moveDir");
         moveDirHistory.add(path);
         searchFile(path);
     }
 
-    private void movePreDir(String path){
+    private void moveDirwithoutHistory(String path) {
         searchFile(path);
     }
 
     private void adaptList() {
-        AnimatedExpandableListAdapter listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
+        listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
+
         // setting list adapter
         expListView.setAdapter(listAdapter);
     }
@@ -428,21 +471,56 @@ public class FileManagerActivity extends ActionBarActivity {
         setSearchAdapter();
     }
 
-    private void setSearchAdapter(){
+    private void setSearchAdapter() {
         searchEdit.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, searchHistory));
     }
 
+    /* 다중 선택 */
+
+    private void changeSelectMode() {
+        AnimatedExpandableListView l = expListView;
+        int count = l.getChildCount();
+        for (int i = 0; i < count; ++i) {
+
+            ViewGroup row = (ViewGroup) l.getChildAt(i);
+
+            System.out.println(row);
+
+//            CheckBox check = (CheckBox) row.findViewById(R.id.checkbox);
+//            ImageView imageView = (ImageView) row.findViewById(R.id.showMoreMenu);
+//            check.setVisibility(View.VISIBLE);
+//            imageView.setVisibility(View.INVISIBLE);
+
+        }
+
+        checkedItem = 0;
+    }
+
+    /* 버튼 클릭 이벤트 */
+
+
     @Override
     public void onBackPressed() {
-        moveDirHistory.remove(moveDirHistory.size() - 1);
-        if(!moveDirHistory.isEmpty() && moveDirHistory.get(moveDirHistory.size()-1).equals("\\")){Toast.makeText(this, "마지막 페이지 입니다 \n \'뒤로\'버튼 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();}
-        if(moveDirHistory.isEmpty()) {finish();return;}
-        movePreDir(moveDirHistory.get(moveDirHistory.size()-1));
+        if (!selectMode) {
+            moveDirHistory.remove(moveDirHistory.size() - 1);
+            if (!moveDirHistory.isEmpty() && moveDirHistory.get(moveDirHistory.size() - 1).equals("\\")) {
+                Toast.makeText(this, "마지막 페이지 입니다 \n \'뒤로\'버튼 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            }
+            if (moveDirHistory.isEmpty()) {
+                finish();
+                return;
+            }
+            moveDirwithoutHistory(moveDirHistory.get(moveDirHistory.size() - 1));
+        } else {
+
+        }
     }
 
     @Override
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if(keyCode == 4){finish();}
+        if (keyCode == 4) {
+            finish();
+        }
         return false;
     }
 }

@@ -7,19 +7,24 @@ package com.example.hp.xmoblie.Adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.Image;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Animation.AnimatedExpandableListView;
 import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpandableListAdapter;
+import com.example.hp.xmoblie.Holder.ParentsViewHolder;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
+import com.yalantis.ucrop.view.OverlayView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +39,7 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
     private List<FileItem> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<FileItem, List<FileItem>> _listDataChild;
+    private RecyclerView.ViewHolder viewHolder = null;
 
     public BaseExpandableAdapter(Context context, List<FileItem> listDataHeader,
                                  HashMap<FileItem, List<FileItem>> listChildData) {
@@ -68,16 +74,16 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
                 .findViewById(R.id.childFileName);
         LinearLayout childLine = (LinearLayout) convertView.findViewById(R.id.childLine);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.childFileIcon);
-        LinearLayout showMoreMenu = (LinearLayout) convertView.findViewById(R.id.showMoreMenu);
+        ImageView showMoreMenu = (ImageView) convertView.findViewById(R.id.showMoreMenu);
 
-        if(type == 128){
-            showMoreMenu.setVisibility(View.INVISIBLE);
+        if (type == 128) {
             imageView.setImageResource(R.drawable.file);
             imageView.setTag("file");
-        }else{
+        } else {
             imageView.setImageResource(R.drawable.folder);
             imageView.setTag("folder");
         }
+        showMoreMenu.setVisibility(View.INVISIBLE);
         childLine.setVisibility(View.VISIBLE);
         txtListChild.setText(childText);
         return convertView;
@@ -106,6 +112,7 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
+
         String headerTitle = (String) getGroup(groupPosition).getFilename();
         int type = (int) getGroup(groupPosition).getType();
         if (convertView == null) {
@@ -116,12 +123,14 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
 
         TextView lblListHeader = (TextView) convertView.findViewById(R.id.fileName);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.fileIcon);
-        LinearLayout showMoreMenu = (LinearLayout) convertView.findViewById(R.id.showMoreMenu);
-        if(type == 128){
+        ImageView showMoreMenu = (ImageView) convertView.findViewById(R.id.showMoreMenu);
+        if (type == 128) {
+            convertView.setTag("file");
             showMoreMenu.setVisibility(View.INVISIBLE);
             imageView.setImageResource(R.drawable.file);
             imageView.setTag("file");
-        }else{
+        } else {
+            convertView.setTag("folder");
             imageView.setImageResource(R.drawable.folder);
             imageView.setTag("folder");
         }
@@ -139,5 +148,39 @@ public class BaseExpandableAdapter extends AnimatedExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public void refresh(){
+        notifyDataSetChanged();
+    }
+
+    public void changeSelectMod(AnimatedExpandableListView expListView) {
+        AnimatedExpandableListView l = expListView;
+        int groupCount = l.getExpandableListAdapter().getGroupCount();
+        System.out.println(groupCount);
+        for (int i = 0; i < groupCount; i++) {
+            View row = (View) l.getExpandableListAdapter().getGroupView(i, false, l, null);
+            System.out.println(row);
+
+
+            CheckBox check = (CheckBox) row.findViewById(R.id.checkbox);
+            ImageView imageView = (ImageView) row.findViewById(R.id.showMoreMenu);
+            check.setVisibility(View.VISIBLE);
+            imageView.setVisibility(View.INVISIBLE);
+//
+//            if (row.getTag().equals("folder")) {
+//                int childCount = l.getExpandableListAdapter().getChildrenCount(i);
+//                for (int j = 0; j < childCount; j++) {
+//                    ViewGroup childRow = (ViewGroup) l.getExpandableListAdapter().getChildView(i,j,false,expListView,row);
+////                    groupPosition, childPosition, isLastChild, convertView, parent
+//
+//                    CheckBox childCheck = (CheckBox) childRow.findViewById(R.id.checkbox);
+//                    ImageView childImageView = (ImageView) childRow.findViewById(R.id.showMoreMenu);
+//                    childCheck.setVisibility(View.VISIBLE);
+//                    childImageView.setVisibility(View.INVISIBLE);
+//
+//                }
+//            }
+        }
     }
 }

@@ -48,4 +48,16 @@
         <attr name="cabtn" format="reference|integer" />
         <attr name="cabtnrotation" format="reference|integer" />
     </declare-styleable>
+    <declare-styleable name="CustomFilemanagerBtn">
+        <attr name="cfbIcon" format="reference|integer"/>
+        <attr name="cfbText" format="reference|string"/>
+        <attr name="cfbTop" format="boolean"/>
+        <attr name="cfbLeft" format="boolean"/>
+        <attr name="cfbRight" format="boolean"/>
+        <attr name="cfbBottom" format="boolean"/>
+        <attr name="cfbMulti" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="CustomFilemanagerBtnGroup">
+        <attr name="isMultiMod" format="boolean"/>
+    </declare-styleable>
 </resources>

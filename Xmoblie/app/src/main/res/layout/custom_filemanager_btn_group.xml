@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/CustomFilemanagerBtnGroup"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:background="#1B1B1B"
+    android:paddingTop="10dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:tag="cfbRow">
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/all"
+            app:cfbRight="true"
+            app:cfbText="전체 선택" />
+
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/share"
+            app:cfbText="공유" />
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/history"
+            app:cfbLeft="true"
+            app:cfbMulti="false"
+            app:cfbText="로그" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/hideable"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:tag="cfbRow">
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/edit"
+            app:cfbMulti="false"
+            app:cfbRight="true"
+            app:cfbText="이름변경" />
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/tag"
+            app:cfbMulti="false"
+            app:cfbText="태그 추가" />
+
+        <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cfbBottom="true"
+            app:cfbIcon="@drawable/inform"
+            app:cfbLeft="true"
+            app:cfbMulti="false"
+            app:cfbText="정보" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/deleteFileBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/trash" />
+    </LinearLayout>
+</LinearLayout>

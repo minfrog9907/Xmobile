@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         calendar = Calendar.getInstance();
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         fileManagerBtn = (Main_BTN)findViewById(R.id.fileManagerBtn);
         settingBtn = (Main_BTN)findViewById(R.id.settingBtn);
         cameraBtn =(Main_BTN)findViewById(R.id.cameraBtn);
-
+        historyBtn = (Main_BTN)findViewById(R.id.historyBtn);
 
         historyBtn.setOnClickListener(new View.OnClickListener() {
             @Override

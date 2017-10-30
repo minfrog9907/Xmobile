@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:weightSum="10">
+
+
+    <TextView
+        android:id="@+id/imagedataset_inform"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:text="이미지를 터치하여 위치를 설정해주세요"
+        android:textColor="#73F1E2"
+        android:textSize="11dp" />
+
+    <AbsoluteLayout
+        android:id="@+id/imagedataset_absolute"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_weight="8.5"
+        android:clickable="true"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/imagedata_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:id="@+id/imagedataset_Name"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selectbox_black" />
+
+        <ImageView
+            android:id="@+id/imagedataset_Price"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selectbox_red" />
+
+        <ImageView
+            android:id="@+id/imagedataset_location"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selectbox_blue" />
+
+    </AbsoluteLayout>
+
+    <LinearLayout
+        android:layout_weight="1.5"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        >
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/imagedataset_NameBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:symbol="@drawable/shop"
+            app:text="가게 이름">
+
+        </com.example.hp.xmoblie.Custom.SideStick_BTN>
+
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/imagedataset_PriceBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:symbol="@drawable/price_tag"
+            app:text="가격">
+
+        </com.example.hp.xmoblie.Custom.SideStick_BTN>
+
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/imagedataset_locationBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:symbol="@drawable/direction_signs"
+            app:text="가게 주소" />
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/imagedataset_commitBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:stick="false"
+            app:symbol="@drawable/checked_light"
+            app:text="확인" />
+    </LinearLayout>
+</LinearLayout>

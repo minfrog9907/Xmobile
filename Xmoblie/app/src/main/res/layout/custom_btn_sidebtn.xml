@@ -7,8 +7,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerInParent="true"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
         <ImageView
             android:id="@+id/img_icon"
             android:layout_width="20dp"
@@ -20,6 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:textColor="#73f1e2"
             android:text="경로 변경"
             android:textSize="8dp" />
     </LinearLayout>

@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CameraActivity.class));
+                startActivity(new Intent(MainActivity.this, CameraActivity.class).putExtra("token",getIntent().getStringExtra("token")));
             }
         });
 

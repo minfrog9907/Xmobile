@@ -355,6 +355,7 @@ public class CameraActivity extends BaseActivity {
                 intent.putExtra("node",node);
                 intent.putExtra("dir",(String)sdCard.getAbsolutePath() + "/Xmobile");
                 intent.putExtra("filename",fileName.replace(".jpg",""));
+                intent.putExtra("token",getIntent().getStringExtra("token"));
                 startActivity(intent);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

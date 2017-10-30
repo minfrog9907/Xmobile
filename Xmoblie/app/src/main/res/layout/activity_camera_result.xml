@@ -6,16 +6,19 @@
     android:layout_height="match_parent"
     android:weightSum="10"
     android:padding="15dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.7"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/cameraResult_node"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="저장경로: "/>
+            android:text="저장경로: " />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -38,7 +41,14 @@
             android:layout_weight="8.5"
             android:orientation="vertical"
             android:weightSum="10">
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이미지를 터치하여 위치를 설정해주세요"
+                android:textSize="11dp"
+                android:textColor="#73F1E2"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center"/>
             <ImageView
                 android:id="@+id/cameraResult_Image"
                 android:layout_width="match_parent"
@@ -46,14 +56,6 @@
                 android:layout_weight="10"
                 android:scaleType="fitCenter" />
 
-            <LinearLayout
-                android:id="@+id/cameraResult_thumnail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="5">
-
-            </LinearLayout>
 
         </LinearLayout>
 

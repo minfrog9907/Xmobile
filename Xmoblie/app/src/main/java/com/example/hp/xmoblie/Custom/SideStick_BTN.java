@@ -60,6 +60,7 @@ public class SideStick_BTN extends LinearLayout {
         text.setText(text_string);
         Boolean stick_bool = typedArray.getBoolean(R.styleable.SideStick_BTN_stick,true);
         setRightStick(stick_bool);
+
         typedArray.recycle();
     }
 
@@ -73,13 +74,13 @@ public class SideStick_BTN extends LinearLayout {
 
     }
 
-    void setSymbol(int symbol_resID) {
+    public void setSymbol(int symbol_resID) {
         symbol.setImageResource(symbol_resID);
     }
-    void setText(String text_string) {
+    public void setText(String text_string) {
         text.setText(text_string);
     }
-    void setText(int text_resID) {
+    public void setText(int text_resID) {
         text.setText(text_resID);
     }
 }

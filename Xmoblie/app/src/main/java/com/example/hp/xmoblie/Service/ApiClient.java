@@ -9,10 +9,12 @@ import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
+import com.example.hp.xmoblie.Items.StarItem;
 
 import java.io.File;
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
@@ -22,8 +24,10 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 /**
@@ -109,7 +113,23 @@ public interface ApiClient {
             @Field("data")String data
     );
 
+    @FormUrlEncoded
+    @Multipart
+    @POST("/image/re")
+    Call<JustRequestItem>repoUploadBills(
+            @Header("token") String token,
+            @Part("image") RequestBody image,
+            @Field("location")String location,
+            @Field("price")int price
+    );
 
+    @GET("/shortcut")
+    Call<List<StarItem>>repoStar(
+            @Header("token") String header,
+            @Query("offset")int offset,
+            @Query("limit")int limit
+
+    );
     @GET("/xmobile/awef.json.txt")
     Call<OCRDataItem>repoOCRT(    );
 }

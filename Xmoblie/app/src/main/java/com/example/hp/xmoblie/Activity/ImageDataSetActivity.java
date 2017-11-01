@@ -33,20 +33,14 @@ import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 
-import org.opencv.core.Mat;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+
 import java.util.List;
-import java.util.ListIterator;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,12 +51,7 @@ import retrofit2.Response;
  */
 
 public class ImageDataSetActivity extends AppCompatActivity {
-    private static final String TAG = "opencv";
-
     ApiClient apiClient;
-
-    private Mat img_input;
-    private Mat img_output;
 
     int history = -1;
     int mode = 0;
@@ -72,7 +61,6 @@ public class ImageDataSetActivity extends AppCompatActivity {
 
     static float xScope, yScope;
 
-    String node;
     String base64String;
     String fulldata[] = new String[4];
 
@@ -183,52 +171,17 @@ public class ImageDataSetActivity extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (mode != 0) {
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        int x = (int) motionEvent.getX() - imageView.getLeft();
-                        int y = (int) motionEvent.getY() - imageView.getTop();
-                        for (int i = 0; i < bounding.size() / 2; ++i) {
-                            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y)) {
-                                throwBound.clear();
-                                lastBound = null;
+                        int x = (int) motionEvent.getX();
+                        int y = (int) motionEvent.getY();
+                        setFirstTouch(x,y);
 
-                                history = i;
-                                fulldata[mode] = "";
-
-                                startBound = bounding.get(i);
-
-                                startX = startBound.getLeft() + imageView.getLeft();
-                                startY = startBound.getTop() + imageView.getTop();
-
-                                setSelectView(startBound.getWidth(), startBound.getHeight(), startX, startY);
-                                break;
-                            }
-                        }
                     } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE && startBound != null) {
                         int x = (int) motionEvent.getX();
                         int y = (int) motionEvent.getY();
-                        for (int i = 0; i < bounding.size() / 2; ++i) {
-                            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y) && i != history) {
-                                history = i;
+                        setDrag(x,y);
 
-                                lastBound = bounding.get(i);
-
-                                startX = startBound.getLeft() < lastBound.getLeft() ? startBound.getLeft() : lastBound.getLeft();
-                                startY = startBound.getTop() < lastBound.getTop() ? startBound.getTop() : lastBound.getTop();
-
-                                setSelectView(calculateWH(), startX, startY);
-                                break;
-                            }
-                        }
                     } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        if (startBound != null && lastBound == null) {
-                            throwBound.add(startBound);
-                        } else if (startBound != null && lastBound != null) {
-                            for (int i = 0; i < bounding.size() / 2; ++i) {
-                                if (bounding.get(i).insideX(sides())) {
-                                    throwBound.add(bounding.get(i));
-
-                                }
-                            }
-                        }
+                        setLastTouch();
                         return false;
                     }
                 }
@@ -238,6 +191,54 @@ public class ImageDataSetActivity extends AppCompatActivity {
 
     }
 
+    private void setFirstTouch(int x,int y){
+        for (int i = 0; i < bounding.size() / 2; ++i) {
+            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y)) {
+                throwBound.clear();
+                lastBound = null;
+
+                history = i;
+                fulldata[mode] = "";
+
+                startBound = bounding.get(i);
+
+                startX = startBound.getLeft() + imageView.getLeft();
+                startY = startBound.getTop() + imageView.getTop();
+
+                setSelectView(startBound.getWidth(), startBound.getHeight(), startX, startY);
+                break;
+            }
+        }
+    }
+
+    private void setDrag(int x,int y){
+        for (int i = 0; i < bounding.size() / 2; ++i) {
+            if (bounding.get(i).crushX(x) && bounding.get(i).crushY(y) && i != history) {
+                history = i;
+
+                lastBound = bounding.get(i);
+
+                startX = startBound.getLeft() < lastBound.getLeft() ? startBound.getLeft() : lastBound.getLeft();
+                startY = startBound.getTop() < lastBound.getTop() ? startBound.getTop() : lastBound.getTop();
+
+                setSelectView(calculateWH(), startX, startY);
+                break;
+            }
+        }
+    }
+
+    private void setLastTouch(){
+        if (startBound != null && lastBound == null) {
+            throwBound.add(startBound);
+        } else if (startBound != null && lastBound != null) {
+            for (int i = 0; i < bounding.size() / 2; ++i) {
+                if (bounding.get(i).insideX(sides())) {
+                    throwBound.add(bounding.get(i));
+
+                }
+            }
+        }
+    }
     private void setName() {
         mode = 1;
         if (btnMode[mode] == 0) {
@@ -448,10 +449,9 @@ public class ImageDataSetActivity extends AppCompatActivity {
             }
             btnMode[mode] = 1;
             setSelectView(0, 0, 0, 0);
-        }
-        else {
-            for (int i=1; i<4; ++i)
-                if(btnMode[i]==1)mode=i;
+        } else {
+            for (int i = 1; i < 4; ++i)
+                if (btnMode[i] == 1) mode = i;
         }
     }
 

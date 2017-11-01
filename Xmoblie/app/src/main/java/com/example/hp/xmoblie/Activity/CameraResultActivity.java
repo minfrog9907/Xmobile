@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.OCRLineDataItem;
 import com.example.hp.xmoblie.Items.OCRWordDataItem;
@@ -34,6 +35,7 @@ import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.util.FileUtils;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -47,25 +49,35 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraResultActivity extends AppCompatActivity {
-    int IMAGE_DATA = 1050;
+    private static final String TAG = "opencv";
 
     static {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
     }
+    int IMAGE_DATA = 1050;
+
     ImageView preview;
 
+    ApiClient apiClient;
+
     String node;
+    String name;
+    String price;
+
     private Mat img_input;
     private Mat img_output;
-    Bitmap bitmapOutput;
 
-    private static final String TAG = "opencv";
+    Bitmap bitmapOutput;
 
     private void copyFile(String filename) {
         String baseDir = Environment.getExternalStorageDirectory().getPath();
@@ -104,6 +116,7 @@ public class CameraResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera_result);
         ActionBar actionBar = getSupportActionBar();
 
+        apiClient = ApiClient.service;
         preview = (ImageView) findViewById(R.id.cameraResult_Image);
 
         actionBar.setDisplayShowCustomEnabled(true);
@@ -127,7 +140,7 @@ public class CameraResultActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Log.e("path",node);
             }
         });
 
@@ -203,7 +216,11 @@ public class CameraResultActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==200){
+            name = data.getStringExtra("name")+" ( "+data.getStringExtra("place")+")";
+            price = data.getStringExtra("price");
+        }
 
     }
 
@@ -214,10 +231,6 @@ public class CameraResultActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
     public native void loadImage(String imageFileName, long img);
 
     public native void imageprocessing(long inputImage, long outputImage);

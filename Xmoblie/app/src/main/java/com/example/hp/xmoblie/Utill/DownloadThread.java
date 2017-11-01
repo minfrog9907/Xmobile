@@ -50,13 +50,12 @@ public class DownloadThread extends Thread {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e("len",response.headers().get("Content-Length"));
                 try {
-                    dm.setResponseBody(response.body(),offset);
+                    dm.setResponseBody(response.body(),id);
+                    dm.reportDead(id);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                dm.reportDead(id);
                 if (this != null && isAlive())
                     stop();
             }

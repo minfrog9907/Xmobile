@@ -1,18 +1,19 @@
 package com.example.hp.xmoblie.Utill;
 
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.hp.xmoblie.Items.DownloadFileItem;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
 import okhttp3.ResponseBody;
+import okio.BufferedSource;
 
 /**
  * Created by HP on 2017-10-31.
@@ -21,8 +22,7 @@ import okhttp3.ResponseBody;
 public class DownLoadMotherThread extends Thread {
 
     ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
-    ArrayList<DownloadFileItem> repResponseBodies = new ArrayList<DownloadFileItem>();
-    ArrayList<DownloadFileItem> tmp = new ArrayList<DownloadFileItem>();
+    ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
     byte[] downloadFile;
     String filename;
     int left;
@@ -35,7 +35,6 @@ public class DownLoadMotherThread extends Thread {
         this.filename = filename;
         len = length;
         left = length;
-        downloadFile = new byte[length];
 
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
@@ -43,16 +42,34 @@ public class DownLoadMotherThread extends Thread {
             dt.dataSet(type, filename, path, token, 4096 * thCnt + offset, length, thCnt, this);
             downloadThreads.add(dt);
             left -= 4096;
-            Log.e("add", "add!" + thCnt);
+            repResponseBodies.add(new ResponseBody() {
+                @Nullable
+                @Override
+                public MediaType contentType() {
+                    return null;
+                }
+
+                @Override
+                public long contentLength() {
+                    return 0;
+                }
+
+                @Override
+                public BufferedSource source() {
+                    return null;
+                }
+            });
+           // Log.e("add", "add!" + thCnt);
             thCnt++;
         }
-        if (run < thCnt) {
-            for (int i = nowRunning; i < 2; ++i) {
-                if (run < thCnt) {
-                    downloadThreads.get(run++).run();
-                }
+
+        for (int i = nowRunning; i < 2; ++i) {
+            if (run < thCnt) {
+                downloadThreads.get(run++).run();
+                nowRunning++;
             }
         }
+
     }
 
     private void saveImage() {
@@ -65,54 +82,57 @@ public class DownLoadMotherThread extends Thread {
         Log.i("LOAD", root + fname);
         try {
             FileOutputStream out = new FileOutputStream(file);
+            Log.e("size", repResponseBodies.size() + "");
             for (int i = 0; i < repResponseBodies.size(); ++i) {
-                out.write(repResponseBodies.get(i).getResponseBody().bytes(), repResponseBodies.get(i).getOffset(), len);
+               // Log.e("running","now "+i);
+                out.write(repResponseBodies.get(i).bytes());
             }
             out.flush();
             out.close();
+            Log.e("finish","finish");
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e("IO","IOex");
             return;
         }
         if (this != null && this.isAlive())
             this.stop();
     }
 
-    public synchronized void setResponseBody(ResponseBody responseBody, long offset) throws IOException {
-        // Log.e("pakit",responseBody.bytes().length+"  "+offset);
-        repResponseBodies.add(new DownloadFileItem().setFile((int) offset, responseBody));
+    public synchronized void setResponseBody(ResponseBody responseBody,int id) throws IOException {
+     //  Log.e("pakit",id+" "+responseBody.bytes().length+"  "+offset);
+        repResponseBodies.set(id, responseBody);
     }
 
-    public synchronized void reportDead(int id) {
-        if (run == thCnt) {
+    public synchronized void reportDead(int id) throws IOException {
+        nowRunning--;
+        if (run == thCnt&&nowRunning==0) {
             saveImage();
-        } else
+//            for (int i = 0; i < repResponseBodies.size(); ++i) {
+//                if(repResponseBodies.get(i).getResponseBody()==null){
+//                    Log.e("check", i+"= null");
+//                }
+//                else
+//                    Log.e("check", i+"= yes");
+//            }
+
+        } else if(run<thCnt){
             downloadThreads.get(run++).start();
+            nowRunning++;
+        }
+       // Log.e("conThread",run + " " + thCnt +" "+ nowRunning);
+    }
+    private byte[] appendByteArray(byte[] original ,byte[] add) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        outputStream.write( original );
+        outputStream.write( add );
+
+        return outputStream.toByteArray( );
     }
 
-    public void makeByteArray() {
-        int idx=0;
-        int min = 0;
-        for (int i = 0; i < repResponseBodies.size(); ++i) {
-            for (int j = 0; j < repResponseBodies.size(); ++j) {
-                if (repResponseBodies.get(j).getOffset() <= min) {
-                    min = repResponseBodies.get(j).getOffset();
-                    idx=j;
-                }
-            }
-            tmp.add(repResponseBodies.get(idx));
-            repResponseBodies.remove(idx);
-        }
-    }
-    public byte[] appendByte(byte[] in, byte[] to){
-        byte[] c = new byte[in.length + to.length];
-        System.arraycopy(to, 0, c, 0, to.length);
-        System.arraycopy(in, 0, c, to.length, in.length);
-        return c;
-    }
 
 }

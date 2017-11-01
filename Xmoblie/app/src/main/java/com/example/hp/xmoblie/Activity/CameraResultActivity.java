@@ -143,11 +143,13 @@ public class CameraResultActivity extends AppCompatActivity {
             public void onClick(View view) {
                 startService(new Intent(CameraResultActivity.this, DownloadManager.class)
                         .putExtra("type",1)
-                        .putExtra("filename","awef.txt")
+                        //.putExtra("filename","awef.txt")
+                        .putExtra("filename","100mb.bin")
                         .putExtra("path","\\")
                         .putExtra("token",getIntent().getStringExtra("token"))
                         .putExtra("offset",0)
-                        .putExtra("length",4 ));
+                        .putExtra("length", 104857600 ));
+                        //.putExtra("length", 4 ));
             }
         });
         upload.setOnClickListener(new View.OnClickListener() {

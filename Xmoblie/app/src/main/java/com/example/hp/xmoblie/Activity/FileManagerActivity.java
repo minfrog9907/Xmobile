@@ -1,47 +1,33 @@
 package com.example.hp.xmoblie.Activity;
 
-import android.animation.ValueAnimator;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.text.Layout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.CompletionInfo;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
-import android.widget.CheckedTextView;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hp.xmoblie.Adapter.BaseExpandableAdapter;
-import com.example.hp.xmoblie.Animation.AnimatedExpandableListView;
-import com.example.hp.xmoblie.Animation.AnimatedExpandableListView.AnimatedExpandableListAdapter;
+
+import com.example.hp.xmoblie.Adapter.FileManagerListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
-
-
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
+import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -49,12 +35,10 @@ import com.example.hp.xmoblie.Service.ApiClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,21 +55,21 @@ public class FileManagerActivity extends ActionBarActivity {
     private LinearLayout spinnerList, searchBtn, noFIleTxt;
     private ImageView showSortWay;
     private AutoCompleteTextView searchEdit;
-    private AnimatedExpandableListView expListView;
+    private ListView expListView;
     private List<FileItem> listDataHeader;
     private HashMap<FileItem, List<FileItem>> listDataChild;
     private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
     private boolean selectMode = false;
     private CustomFilemanagerBtnGroup cfbg;
-    private int checkedItem = 0;
-    private BaseExpandableAdapter listAdapter;
+    private FileManagerListAdapter listAdapter;
     private ScrollView fileListScroll;
 
     private ApiClient apiClient;
 
     private List<String> searchHistory = new ArrayList<String>();
     private List<String> moveDirHistory = new ArrayList<String>();
+    private List<FileItem> checkedItems = new ArrayList<FileItem>();
 
     private final static Comparator<FileItem> comparator = new Comparator<FileItem>() {
         private final Collator collator = Collator.getInstance();
@@ -121,7 +105,7 @@ public class FileManagerActivity extends ActionBarActivity {
         noFIleTxt = (LinearLayout) findViewById(R.id.noFIleTxt);
         showSortWay = (ImageView) findViewById(R.id.showSortWay);
         searchEdit = (AutoCompleteTextView) findViewById(R.id.searchEdit);
-        expListView = (AnimatedExpandableListView) findViewById(R.id.fileList);
+        expListView = (ListView) findViewById(R.id.fileList);
         apiClient = ApiClient.service;
         cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
         fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
@@ -164,57 +148,23 @@ public class FileManagerActivity extends ActionBarActivity {
             }
         });
 
-        //ExpandableList onClickListener
-        expListView.setOnGroupClickListener(new AnimatedExpandableListView.OnGroupClickListener() {
-
+        //ListView onClickListener
+        expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                FileItemHolder fileItemHolder = (FileItemHolder)view.getTag();
                 if (!selectMode) {
-                    ImageView fileIcon = (ImageView) view.findViewById(R.id.fileIcon);
-
-                    if (fileIcon.getTag().equals("file")) {
+                    if (fileItemHolder.fileIcon.getTag().equals("file")) {
                         Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
                     } else {
-                        ImageView imageView = (ImageView) view.findViewById(R.id.showMoreMenu);
-                        if (imageView.getRotation() == 180) {
-                            imageView.setRotation(0);
-                        } else {
-                            imageView.setRotation(180);
-                        }
-
-                        if (expListView.isGroupExpanded(i)) {
-                            expListView.collapseGroupWithAnimation(i);
-                        } else {
-                            expListView.expandGroupWithAnimation(i);
-                        }
-                    }
-                } else {
-
-                }
-                return true;
-            }
-        });
-
-        //ExpandableList onChildClickListener
-        expListView.setOnChildClickListener(new AnimatedExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                if (!selectMode) {
-                    ImageView fileIcon = (ImageView) view.findViewById(R.id.childFileIcon);
-                    if (fileIcon.getTag().equals("file")) {
-                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    } else {
-                        FileItem parants = (FileItem) expandableListView.getItemAtPosition(i);
-                        TextView textView = (TextView) view.findViewById(R.id.childFileName);
-                        searchData = checkRoot() + "" + parants.getFilename() + "\\" + textView.getText();
+                        FileItem parants = (FileItem)expListView.getAdapter().getItem(i);
+                        searchData = checkRoot() + parants.getFilename();
                         moveDir(searchData);
                     }
                 } else {
-
-
+                    selectItem(fileItemHolder);
                 }
-                return true;
+
             }
         });
 
@@ -223,10 +173,10 @@ public class FileManagerActivity extends ActionBarActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 changeSelectMode();
+                selectItem((FileItemHolder)view.getTag());
                 return true;
             }
         });
-
 
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -263,14 +213,6 @@ public class FileManagerActivity extends ActionBarActivity {
                 moveDir(searchEdit.getText().toString());
             }
         });
-
-        fileListScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                Log.d("asdf", "asdf");
-            }
-        });
-
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -282,14 +224,9 @@ public class FileManagerActivity extends ActionBarActivity {
             @Override
             public void onResponse(Call<List<FileItem>> call,
                                    Response<List<FileItem>> response) {
-                if (response.body() != null && response.errorBody() == null) {
+                if (response.body() != null) {
                     for (int i = 0; i < response.body().size(); ++i) {
                         listDataHeader.add(response.body().get(i));
-                        if (response.body().get(i).getType() == 16) {
-                            childFileProtocal(response.body().get(i));
-                        }
-
-                        //fileitem.java 파일 확인해서 사용 ㄱ
                     }
 
                     if (response.body().size() <= 0) {
@@ -300,47 +237,16 @@ public class FileManagerActivity extends ActionBarActivity {
 
                     sortData();
                     adaptList();
-                } else {
-                    fileProtocal(searchData);
                 }
             }
 
             @Override
             public void onFailure(Call<List<FileItem>> call, Throwable t) {
                 Log.e("jsonResponse", "빼애애앵ㄱ");
-
+                fileProtocal(searchData);
             }
         });
 
-    }
-
-    private void childFileProtocal(final FileItem parantsData) {
-
-        listDataChild = new HashMap<FileItem, List<FileItem>>();
-        String path = checkRoot() + "" + parantsData.getFilename();
-
-        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
-        call.enqueue(new Callback<List<FileItem>>() {
-            @Override
-            public void onResponse(Call<List<FileItem>> call,
-                                   Response<List<FileItem>> response) {
-                List<FileItem> childList = new ArrayList<FileItem>();
-                if (response.body().isEmpty()) {
-                    listDataChild.put(parantsData, childList);
-                } else {
-                    for (int i = 0; i < response.body().size(); ++i) {
-                        childList.add(response.body().get(i));
-                        listDataChild.put(parantsData, sortChildData(childList)); // Header, Child data
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<FileItem>> call, Throwable t) {
-                Log.e("jsonResponse", "빼애애앵ㄱ");
-
-            }
-        });
     }
 
     private void searchFile(String path) {
@@ -368,9 +274,7 @@ public class FileManagerActivity extends ActionBarActivity {
     }
 
     private void adaptList() {
-        listAdapter = new BaseExpandableAdapter(this, listDataHeader, listDataChild);
-
-        // setting list adapter
+        listAdapter = new FileManagerListAdapter(this, listDataHeader);
         expListView.setAdapter(listAdapter);
     }
 
@@ -399,22 +303,6 @@ public class FileManagerActivity extends ActionBarActivity {
                 Collections.sort(listDataHeader, comparator);
                 break;
         }
-    }
-
-    private List<FileItem> sortChildData(List<FileItem> childData) {
-        switch (orderData) {
-            case 0:
-                Collections.sort(childData, comparator);
-                break;
-            case 1:
-                Collections.sort(childData, comparator);
-                Collections.reverse(childData);
-                break;
-            default:
-                Collections.sort(childData, comparator);
-                break;
-        }
-        return childData;
     }
 
     private String checkRoot() {
@@ -478,26 +366,50 @@ public class FileManagerActivity extends ActionBarActivity {
     /* 다중 선택 */
 
     private void changeSelectMode() {
-        AnimatedExpandableListView l = expListView;
-        int count = l.getChildCount();
-        for (int i = 0; i < count; ++i) {
+        selectMode = true;
+        int count = listAdapter.getCount();
+        System.out.println(count);
 
-            ViewGroup row = (ViewGroup) l.getChildAt(i);
+        for ( int i = 0 ; i < count ; i++){
 
-            System.out.println(row);
+            View group = listAdapter.getViewAt(i);
+            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+            groupItemHolder.checkBox.setVisibility(View.VISIBLE);
 
-//            CheckBox check = (CheckBox) row.findViewById(R.id.checkbox);
-//            ImageView imageView = (ImageView) row.findViewById(R.id.showMoreMenu);
-//            check.setVisibility(View.VISIBLE);
-//            imageView.setVisibility(View.INVISIBLE);
+            if (groupItemHolder.fileIcon.getTag().equals("folder")) groupItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
 
         }
+    }
 
-        checkedItem = 0;
+    private void changeListMode() {
+        selectMode = false;
+        checkedItems.clear();
+        int count = listAdapter.getCount();
+
+        for ( int i = 0 ; i < count ; i++){
+
+            View group = listAdapter.getViewAt(i);
+            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+            groupItemHolder.checkBox.setChecked(false);
+            groupItemHolder.checkBox.setVisibility(View.INVISIBLE);
+
+            if (groupItemHolder.fileIcon.getTag().equals("folder")) groupItemHolder.showMoreMenu.setVisibility(View.VISIBLE);
+
+        }
+    }
+
+    private void selectItem(FileItemHolder fileItemHolder){
+        fileItemHolder.checkBox.toggle();
+        if(fileItemHolder.checkBox.isChecked()){
+            if(!checkedItems.contains(fileItemHolder.realFileItem)){
+                checkedItems.add(fileItemHolder.realFileItem);
+            }
+        }else{
+            checkedItems.remove(fileItemHolder.realFileItem);
+        }
     }
 
     /* 버튼 클릭 이벤트 */
-
 
     @Override
     public void onBackPressed() {
@@ -512,7 +424,8 @@ public class FileManagerActivity extends ActionBarActivity {
             }
             moveDirwithoutHistory(moveDirHistory.get(moveDirHistory.size() - 1));
         } else {
-
+            System.out.println(checkedItems);
+            changeListMode();
         }
     }
 

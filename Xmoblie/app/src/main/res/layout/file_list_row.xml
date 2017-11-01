@@ -2,17 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00ffffff">
-
-    <LinearLayout
-        android:id="@+id/childLine"
-        android:layout_width="1dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="15dp"
-        android:background="#73F1E2"
-        android:orientation="horizontal"
-        android:visibility="invisible"
-        android:layout_centerVertical="true"/>
+    android:background="#00ffffff"
+    android:id="@+id/fileListRow">
 
     <ImageView
         android:id="@+id/fileIcon"
@@ -56,28 +47,12 @@
         android:layout_centerVertical="true"/>
 
     <ImageView
-        android:id="@+id/childFileIcon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="35dp" />
-
-    <TextView
-        android:id="@+id/childFileName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="70dp"
-        android:textSize="15dp" />
-    <ImageView
         android:id="@+id/showMoreMenu"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/arrow_light" />
-
 
     <CheckBox
         android:id="@+id/checkbox"

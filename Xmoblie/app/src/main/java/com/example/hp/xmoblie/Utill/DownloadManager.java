@@ -63,7 +63,7 @@ public class DownloadManager extends Service {
         path = intent.getStringExtra("path");
         token = intent.getStringExtra("token");
         offet = intent.getLongExtra("offset", 0);
-        length = intent.getIntExtra("length", 4096);
+        length = intent.getIntExtra("length", 4000);
         type = intent.getIntExtra("type", 1);
         left = length;
 

@@ -19,6 +19,7 @@ import okio.BufferedSource;
  */
 
 public class DownloadMotherThread extends Thread {
+    int LENGTH =4000;
     int len;
     int left;
     int run = 0;
@@ -40,11 +41,11 @@ public class DownloadMotherThread extends Thread {
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
-            length = left > 4096 ? 4096 : left;
-            dt.dataSet(type, filename, path, token, 4096 * thCnt + offset, length, thCnt, this);
+            length = left > LENGTH ? LENGTH : left;
+            dt.dataSet(type, filename, path, token, LENGTH * thCnt + offset, length, thCnt, this);
             downloadThreads.add(dt);
 
-            left -= 4096;
+            left -= LENGTH;
 
             repResponseBodies.add(new ResponseBody() {
                 @Nullable

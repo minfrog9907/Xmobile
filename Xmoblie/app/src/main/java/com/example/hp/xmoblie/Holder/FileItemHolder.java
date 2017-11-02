@@ -17,7 +17,6 @@ public class FileItemHolder {
     public TextView fileName;
     public ImageView fileIcon;
     public ImageView showMoreMenu;
-    public Drawable type;
     public CheckBox checkBox;
     public FileItem realFileItem;
 }

@@ -51,5 +51,6 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.sdsmdg.harjot:croller:1.0.7'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta3'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
     testCompile 'junit:junit:4.12'
 }

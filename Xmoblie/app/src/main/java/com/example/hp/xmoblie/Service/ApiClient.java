@@ -13,6 +13,7 @@ import com.example.hp.xmoblie.Items.StarItem;
 import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -27,6 +28,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -86,10 +88,10 @@ public interface ApiClient {
     );
 
     @FormUrlEncoded
-    @DELETE("/file")
-    Call<List<DeleteItem>>repoDelete(
+    @HTTP(method = "DELETE", path = "/file", hasBody = true)
+    Call<String>repoDelete(
             @Header("token") String token,
-            @Field("list")List<DeleteItem> list
+            @Field("list") String list
     );
 
     @FormUrlEncoded

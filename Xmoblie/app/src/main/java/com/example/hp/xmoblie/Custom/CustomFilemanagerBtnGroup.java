@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import com.example.hp.xmoblie.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by HP on 2017-10-25.
  */
@@ -72,7 +75,7 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     private void setMultiMod(){
         LinearLayout customFilemanagerBtnGroup = (LinearLayout)v.findViewById(R.id.CustomFilemanagerBtnGroup);
-        customFilemanagerBtnGroup.getLayoutParams().height = (int) (150 * scale + 5.0f);
+        customFilemanagerBtnGroup.getLayoutParams().height = (int) (100 * scale + 5.0f);
         int childCount = customFilemanagerBtnGroup.getChildCount();
         for(int i = 0; i < childCount; i++){
             LinearLayout view = (LinearLayout) customFilemanagerBtnGroup.getChildAt(i);
@@ -94,7 +97,7 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     private void setSingleMod(){
         LinearLayout customFilemanagerBtnGroup = (LinearLayout)v.findViewById(R.id.CustomFilemanagerBtnGroup);
-        customFilemanagerBtnGroup.getLayoutParams().height = (int) (250 * scale + 5.0f);
+        customFilemanagerBtnGroup.getLayoutParams().height = (int) (180 * scale + 5.0f);
         int childCount = customFilemanagerBtnGroup.getChildCount();
         for(int i = 0; i < childCount; i++){
             LinearLayout view = (LinearLayout) customFilemanagerBtnGroup.getChildAt(i);
@@ -115,5 +118,17 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
         }else{
             setSingleMod();
         }
+    }
+
+    public List<View> getBtns(){
+        List<View> viewList = new ArrayList<>();
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.selectAll));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.shareFile));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.fileLog));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.changeName));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.addTag));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.fileInfo));
+        viewList.add((LinearLayout)this.findViewById(R.id.deleteFileBtn));
+        return viewList;
     }
 }

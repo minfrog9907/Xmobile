@@ -11,6 +11,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -26,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.hp.xmoblie.Adapter.FileManagerListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
+import com.example.hp.xmoblie.Custom.CustomFilemanagerBtn;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.FileItem;
@@ -62,6 +67,7 @@ public class FileManagerActivity extends ActionBarActivity {
     private String searchData = "\\";
     private boolean selectMode = false;
     private CustomFilemanagerBtnGroup cfbg;
+    private int cfbgHeight;
     private FileManagerListAdapter listAdapter;
     private ScrollView fileListScroll;
 
@@ -109,11 +115,21 @@ public class FileManagerActivity extends ActionBarActivity {
         apiClient = ApiClient.service;
         cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
         fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
+        ViewTreeObserver observer = cfbg.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                cfbg.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                cfbgHeight = cfbg.getMeasuredHeight();
+                cfbg.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+            }
+        });
 
-        Toast.makeText(this, "뒤로가기 버튼을 꾹 누르면 파일 매니저가 종료됩니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "뒤로가기 버튼을 꾹 누르면 파일 \n매니저가 종료됩니다.", Toast.LENGTH_SHORT).show();
         getSearchHistroy();
         moveDir(searchData);
         spinnerArray();
+        addBtnEvent(cfbg.getBtns());
 
         //ActionBar 설정
         ActionBar actionBar = getSupportActionBar();
@@ -152,12 +168,12 @@ public class FileManagerActivity extends ActionBarActivity {
         expListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                FileItemHolder fileItemHolder = (FileItemHolder)view.getTag();
+                FileItemHolder fileItemHolder = (FileItemHolder) view.getTag();
                 if (!selectMode) {
                     if (fileItemHolder.fileIcon.getTag().equals("file")) {
                         Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
                     } else {
-                        FileItem parants = (FileItem)expListView.getAdapter().getItem(i);
+                        FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
                         searchData = checkRoot() + parants.getFilename();
                         moveDir(searchData);
                     }
@@ -172,8 +188,11 @@ public class FileManagerActivity extends ActionBarActivity {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                changeSelectMode();
-                selectItem((FileItemHolder)view.getTag());
+                if (!selectMode) {
+                    changeSelectMode();
+                    selectItem((FileItemHolder) view.getTag());
+                    adapterView.setSelection(i);
+                }
                 return true;
             }
         });
@@ -213,6 +232,7 @@ public class FileManagerActivity extends ActionBarActivity {
                 moveDir(searchEdit.getText().toString());
             }
         });
+
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -237,6 +257,9 @@ public class FileManagerActivity extends ActionBarActivity {
 
                     sortData();
                     adaptList();
+                }
+                if (response.errorBody() != null) {
+                    fileProtocal(searchData);
                 }
             }
 
@@ -363,53 +386,164 @@ public class FileManagerActivity extends ActionBarActivity {
         searchEdit.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, searchHistory));
     }
 
-    /* 다중 선택 */
-
-    private void changeSelectMode() {
-        selectMode = true;
-        int count = listAdapter.getCount();
-        System.out.println(count);
-
-        for ( int i = 0 ; i < count ; i++){
-
-            View group = listAdapter.getViewAt(i);
-            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
-            groupItemHolder.checkBox.setVisibility(View.VISIBLE);
-
-            if (groupItemHolder.fileIcon.getTag().equals("folder")) groupItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
-
-        }
-    }
+    /* 선택 모드 */
 
     private void changeListMode() {
         selectMode = false;
+        controllBtnGroup();
         checkedItems.clear();
         int count = listAdapter.getCount();
 
-        for ( int i = 0 ; i < count ; i++){
+        for (int i = 0; i < count; i++) {
 
             View group = listAdapter.getViewAt(i);
             FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
             groupItemHolder.checkBox.setChecked(false);
             groupItemHolder.checkBox.setVisibility(View.INVISIBLE);
 
-            if (groupItemHolder.fileIcon.getTag().equals("folder")) groupItemHolder.showMoreMenu.setVisibility(View.VISIBLE);
+            if (groupItemHolder.fileIcon.getTag().equals("folder"))
+                groupItemHolder.showMoreMenu.setVisibility(View.VISIBLE);
 
         }
     }
 
-    private void selectItem(FileItemHolder fileItemHolder){
+    private void changeSelectMode() {
+        selectMode = true;
+        controllBtnGroup();
+        int count = listAdapter.getCount();
+
+        for (int i = 0; i < count; i++) {
+            View group = listAdapter.getViewAt(i);
+            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+            groupItemHolder.checkBox.setVisibility(View.VISIBLE);
+
+            if (groupItemHolder.fileIcon.getTag().equals("folder"))
+                groupItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void selectItem(FileItemHolder fileItemHolder) {
         fileItemHolder.checkBox.toggle();
-        if(fileItemHolder.checkBox.isChecked()){
-            if(!checkedItems.contains(fileItemHolder.realFileItem)){
-                checkedItems.add(fileItemHolder.realFileItem);
-            }
-        }else{
-            checkedItems.remove(fileItemHolder.realFileItem);
+        if (fileItemHolder.checkBox.isChecked()) {
+            addSelectedItem(fileItemHolder.realFileItem);
+        } else {
+            removeItem(fileItemHolder.realFileItem);
+        }
+        changeCBGMod();
+    }
+
+    private void controllBtnGroup() {
+        ResizeAnimation animation = new ResizeAnimation(cfbg);
+        cfbg.setMultiMod(false);
+        animation.setDuration(250);
+        if (selectMode) {
+            animation.setParams(0, cfbgHeight);
+        } else {
+            animation.setParams(cfbgHeight, 0);
+        }
+        cfbg.startAnimation(animation);
+    }
+
+    private void addSelectedItem(FileItem fileItem) {
+        if (!checkedItems.contains(fileItem)) {
+            checkedItems.add(fileItem);
         }
     }
 
-    /* 버튼 클릭 이벤트 */
+    private void removeItem(FileItem fileItem) {
+        if (checkedItems.contains(fileItem)) {
+            checkedItems.remove(fileItem);
+        }
+    }
+
+    private void changeCBGMod() {
+        if (checkedItems.size() > 1) {
+            cfbg.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            cfbg.setMultiMod(true);
+        } else {
+            cfbg.setMultiMod(false);
+        }
+    }
+
+    /*ButtonGroup 클릭 이벤트*/
+
+    private void addBtnEvent(List<View> viewList) {
+        int count = viewList.size();
+        for (int i = 0; i < count; i++) {
+            viewList.get(i).setOnClickListener(CFBOnclick);
+        }
+    }
+
+    LinearLayout.OnClickListener CFBOnclick = new CustomFilemanagerBtn.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()) {
+                case R.id.selectAll:
+                    selectAll();
+                    break;
+                case R.id.shareFile:
+                    shareFile();
+                    break;
+                case R.id.fileLog:
+                    fileLog();
+                    break;
+                case R.id.changeName:
+                    changeName();
+                    break;
+                case R.id.addTag:
+                    addTad();
+                    break;
+                case R.id.fileInfo:
+                    fileInfo();
+                    break;
+                case R.id.deleteFileBtn :
+                    removeFile();
+                    break;
+            }
+        }
+    };
+
+    private void selectAll() {
+
+        int count = listAdapter.getCount();
+
+        for (int i = 0; i < count; i++) {
+            View group = listAdapter.getViewAt(i);
+            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+            groupItemHolder.checkBox.setChecked(true);
+            if (groupItemHolder.checkBox.isChecked()) {
+                addSelectedItem(groupItemHolder.realFileItem);
+            }
+        }
+        changeCBGMod();
+
+    }
+
+    private void shareFile() {
+        Log.d("clicked button","share");
+    }
+
+    private void fileLog() {
+        Log.d("clicked button","filelog");
+    }
+
+    private void changeName() {
+        Log.d("clicked button","changName");
+    }
+
+    private void addTad() {
+        Log.d("clicked button","addTag");
+    }
+
+    private void fileInfo() {
+        Log.d("clicked button","fileinfo");
+    }
+
+    private void removeFile() {
+        Log.d("clicked button","removeFile");
+    }
+
+    /* 디바이스 버튼 클릭 이벤트 */
 
     @Override
     public void onBackPressed() {

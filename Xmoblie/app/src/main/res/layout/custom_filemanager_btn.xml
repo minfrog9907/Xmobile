@@ -75,8 +75,8 @@
 
         <ImageView
             android:id="@+id/fileManagerBtnImg"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
 
             android:src="@drawable/all"/>
 
@@ -87,7 +87,7 @@
             android:layout_below="@id/fileManagerBtnImg"
             android:layout_marginTop="10dp"
             android:text="전체 선택"
-            android:textSize="15dp"/>
+            android:textSize="10dp"/>
 
     </LinearLayout>
 

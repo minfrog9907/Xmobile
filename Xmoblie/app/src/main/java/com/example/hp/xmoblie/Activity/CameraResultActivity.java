@@ -4,7 +4,9 @@ package com.example.hp.xmoblie.Activity;
  * Created by HP on 2017-09-27.
  */
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +15,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -35,6 +38,8 @@ import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Utill.DownloadManager;
+import com.example.hp.xmoblie.Utill.NotificationBarService;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.util.FileUtils;
 
@@ -65,6 +70,7 @@ public class CameraResultActivity extends AppCompatActivity {
         System.loadLibrary("opencv_java3");
         System.loadLibrary("native-lib");
     }
+
     int IMAGE_DATA = 1050;
 
     ImageView preview;
@@ -141,15 +147,17 @@ public class CameraResultActivity extends AppCompatActivity {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startService(new Intent(CameraResultActivity.this, DownloadManager.class)
-                        .putExtra("type",1)
-                        //.putExtra("filename","awef.txt")
-                        .putExtra("filename","winserver.png")
-                        .putExtra("path","\\")
-                        .putExtra("token",getIntent().getStringExtra("token"))
-                        .putExtra("offset",0)
-                        .putExtra("length", 54085 ));
-                        //.putExtra("length", 4 ));
+                ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+                if (serviceControlCenter.isAbleDownload())
+                    startService(new Intent(CameraResultActivity.this, DownloadManager.class)
+                            .putExtra("type", 1)
+                            //.putExtra("filename","awef.txt")
+                            .putExtra("filename", "winserver.png")
+                            .putExtra("path", "\\")
+                            .putExtra("token", getIntent().getStringExtra("token"))
+                            .putExtra("offset", 0)
+                            .putExtra("length", 54085));
+                //.putExtra("length", 4 ));
             }
         });
         upload.setOnClickListener(new View.OnClickListener() {
@@ -162,9 +170,9 @@ public class CameraResultActivity extends AppCompatActivity {
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(CameraResultActivity.this,ImageDataSetActivity.class)
-                        .putExtra("token",getIntent().getStringExtra("token"))
-                        .putExtra("node" , node),IMAGE_DATA);
+                startActivityForResult(new Intent(CameraResultActivity.this, ImageDataSetActivity.class)
+                        .putExtra("token", getIntent().getStringExtra("token"))
+                        .putExtra("node", node), IMAGE_DATA);
             }
         });
         //Log.e("dir",getIntent().getStringExtra("node")+"   "+getIntent().getStringExtra("dir")+"/tmp/");
@@ -232,8 +240,8 @@ public class CameraResultActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==200){
-            name = data.getStringExtra("name")+" ( "+data.getStringExtra("place")+")";
+        if (resultCode == 200) {
+            name = data.getStringExtra("name") + " ( " + data.getStringExtra("place") + ")";
             price = data.getStringExtra("price");
         }
 
@@ -250,7 +258,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
-        Log.e("path",Uri.parse(path)+"");
+        Log.e("path", Uri.parse(path) + "");
         File file = new File(path);
 
         // create RequestBody instance from file
@@ -271,7 +279,7 @@ public class CameraResultActivity extends AppCompatActivity {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-                Call<JustRequestItem> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"),description,body,name,Integer.parseInt(price.replace(",","").replace("원","").replace(" ","")));
+        Call<JustRequestItem> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace(" ", "")));
         call.enqueue(new Callback<JustRequestItem>() {
             @Override
             public void onResponse(Call<JustRequestItem> call,
@@ -285,6 +293,23 @@ public class CameraResultActivity extends AppCompatActivity {
             }
         });
     }
+
+    ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("connected", "failed");
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("connected", "success");
+            DownloadManager.LocalBinder mLocalBinder = (DownloadManager.LocalBinder) service;
+            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+            serviceControlCenter.setDownloadManager(mLocalBinder.getServerInstance());
+
+        }
+    };
+
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.

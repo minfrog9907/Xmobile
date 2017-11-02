@@ -7,9 +7,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
@@ -28,8 +30,6 @@ public class DownloadManager extends Service {
 
     long offet = 4096;
 
-    boolean mBounded;
-
     String path = "";
     String token = "";
     String filename = "";
@@ -37,13 +37,13 @@ public class DownloadManager extends Service {
     ApiClient apiClient;
 
     DownloadMotherThread dlm;
+    IBinder mBinder = new DownloadManager.LocalBinder();
 
-    NotificationBarService mNotificationBarService;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -69,6 +69,8 @@ public class DownloadManager extends Service {
 
         try {
             downloadFile();
+            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+            serviceControlCenter.getNotificationBarService().startDownload();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,8 +80,6 @@ public class DownloadManager extends Service {
     public void downloadFile() throws IOException {
         dlm = new DownloadMotherThread();
         dlm.run(type, filename, path, token, offet, length, this);
-        bindService(new Intent(DownloadManager.this,NotificationManager.class),mConnection, BIND_AUTO_CREATE);
-        mNotificationBarService.startDownload();
     }
 
     public void dead() {
@@ -89,21 +89,12 @@ public class DownloadManager extends Service {
         stopSelf();
 
     }
-    ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBounded = false;
-            mNotificationBarService = null;
-        }
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mBounded = true;
-            NotificationBarService.LocalBinder mLocalBinder = (NotificationBarService.LocalBinder)service;
-            mNotificationBarService = mLocalBinder.getServerInstance();
+    public class LocalBinder extends Binder {
+        public DownloadManager getServerInstance() {
+            return DownloadManager.this;
         }
-    };
-
+    }
 
 
 

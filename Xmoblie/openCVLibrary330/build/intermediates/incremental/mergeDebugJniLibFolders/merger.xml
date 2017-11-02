@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD:Xmoblie/openCVLibrary330/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
 <merger version="3"><dataSet config="main"><source path="C:\Users\HP\Desktop\Xmoblie\Xmoblie\openCVLibrary330\src\main\jniLibs"/></dataSet><dataSet config="debug"><source path="C:\Users\HP\Desktop\Xmoblie\Xmoblie\openCVLibrary330\src\debug\jniLibs"/></dataSet></merger>
+=======
+<merger version="3"><dataSet config="main"><source path="C:\Users\HP\AndroidStudioProjects\Xmoblie\openCVLibrary330\src\main\jniLibs"/></dataSet><dataSet config="release"><source path="C:\Users\HP\AndroidStudioProjects\Xmoblie\openCVLibrary330\src\release\jniLibs"/></dataSet></merger>
+>>>>>>> 94abbc290e58598cb00af00f1886d88399cf36f5:Xmoblie/openCVLibrary330/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml

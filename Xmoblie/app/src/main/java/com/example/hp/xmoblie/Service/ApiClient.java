@@ -10,12 +10,16 @@ import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.StarItem;
+import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
 import java.io.File;
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.http.Body;
@@ -48,6 +52,12 @@ public interface ApiClient {
 
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
+    Retrofit filesever = new Retrofit.Builder()
+            .baseUrl("https://xstream.lfconfig.xyz")//.baseUrl("https://10.1.21.228")
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+            .build();
+
+    ApiClient severService = filesever.create(ApiClient.class);
     @FormUrlEncoded
     @POST("/login")
     Call<LoginItem> repoContributors(
@@ -113,14 +123,14 @@ public interface ApiClient {
             @Field("data")String data
     );
 
-    @FormUrlEncoded
     @Multipart
     @POST("/image/re")
     Call<JustRequestItem>repoUploadBills(
             @Header("token") String token,
             @Part("image") RequestBody image,
-            @Field("location")String location,
-            @Field("price")int price
+            @Part MultipartBody.Part file,
+            @Query("location") String location,
+            @Query("price")int price
     );
 
     @GET("/shortcut")
@@ -132,6 +142,11 @@ public interface ApiClient {
     );
     @GET("/xmobile/awef.json.txt")
     Call<OCRDataItem>repoOCRT(    );
+
+    @POST("/file")
+    Call<ResponseBody>repoDownload(
+            @Body RequestBody bytes
+    );
 }
 
 

@@ -34,6 +34,7 @@ import com.example.hp.xmoblie.Items.OCRWordDataItem;
 import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Utill.DownloadManager;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.util.FileUtils;
 
@@ -137,10 +138,24 @@ public class CameraResultActivity extends AppCompatActivity {
         LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
         LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
 
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startService(new Intent(CameraResultActivity.this, DownloadManager.class)
+                        .putExtra("type",1)
+                        //.putExtra("filename","awef.txt")
+                        .putExtra("filename","100mb.bin")
+                        .putExtra("path","\\")
+                        .putExtra("token",getIntent().getStringExtra("token"))
+                        .putExtra("offset",0)
+                        .putExtra("length", 104857600 ));
+                        //.putExtra("length", 4 ));
+            }
+        });
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("path",node);
+                uploadFile(node);
             }
         });
 
@@ -230,7 +245,50 @@ public class CameraResultActivity extends AppCompatActivity {
         sendBroadcast(mediaScanIntent);
     }
 
+    private void uploadFile(String path) {
+        // create upload service client
 
+        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+        // use the FileUtils to get the actual file by uri
+        Log.e("path",Uri.parse(path)+"");
+        File file = new File(path);
+
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse(path),
+                        file
+                );
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+
+        // add another part within the multipart request
+        String descriptionString = "hello, this is description speaking";
+        RequestBody description =
+                RequestBody.create(
+                        okhttp3.MultipartBody.FORM, descriptionString);
+
+        // finally, execute the request
+                Call<JustRequestItem> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"),description,body,name,Integer.parseInt(price.replace(",","").replace("원","").replace(" ","")));
+        call.enqueue(new Callback<JustRequestItem>() {
+            @Override
+            public void onResponse(Call<JustRequestItem> call,
+                                   Response<JustRequestItem> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<JustRequestItem> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
+    }
+    /**
+     * A native method that is implemented by the 'native-lib' native library,
+     * which is packaged with this application.
+     */
     public native void loadImage(String imageFileName, long img);
 
     public native void imageprocessing(long inputImage, long outputImage);

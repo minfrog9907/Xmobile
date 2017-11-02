@@ -69,6 +69,7 @@
         <activity android:name=".Activity.AreYouSurePopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
+        <service android:name=".Utill.DownloadManager"/>
     </application>
 
 </manifest>

@@ -144,11 +144,11 @@ public class CameraResultActivity extends AppCompatActivity {
                 startService(new Intent(CameraResultActivity.this, DownloadManager.class)
                         .putExtra("type",1)
                         //.putExtra("filename","awef.txt")
-                        .putExtra("filename","100mb.bin")
+                        .putExtra("filename","winserver.png")
                         .putExtra("path","\\")
                         .putExtra("token",getIntent().getStringExtra("token"))
                         .putExtra("offset",0)
-                        .putExtra("length", 104857600 ));
+                        .putExtra("length", 54085 ));
                         //.putExtra("length", 4 ));
             }
         });

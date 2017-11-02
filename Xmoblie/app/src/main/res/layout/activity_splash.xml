@@ -33,8 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="25dp"
             android:text="Start your works with XMobile"
-            android:textColor="#73F1E2"
-            app:font="custom1" />
+            android:textColor="#73F1E2" />
     </LinearLayout>
 
 

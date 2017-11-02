@@ -22,16 +22,20 @@ import retrofit2.Response;
 
 public class DownloadThread extends Thread {
     int type;
+    int id;
+    int length;
+
+    long offset;
+
     String filename;
     String path;
     String token;
-    long offset;
-    int length;
-    int id;
-    DownLoadMotherThread dm;
+
+    DownloadMotherThread dm;
 
     public void run() {
         byte[] euckrStringBuffer;
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
             outputStream.write(reverse(intToByteArray(type)));
@@ -46,6 +50,7 @@ public class DownloadThread extends Thread {
         RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), euckrStringBuffer);
 
         ApiClient apiClient = ApiClient.severService;
+
         Call<ResponseBody> call = apiClient.repoDownload(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -67,25 +72,28 @@ public class DownloadThread extends Thread {
             }
         });
     }
-    public byte[] longToBytes(long x) {
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(x);
-        return buffer.array();
-    }
-    public  void dataSet(int type, String filename, String path, String token, long offset, int length,int id,DownLoadMotherThread dt){
-        this.filename =filename;
-        this.length=length;
+
+    public  void dataSet(int type, String filename, String path, String token, long offset, int length,int id,DownloadMotherThread dt){
         this.type=type;
+        this.filename =filename;
         this.path =path;
         this.token=token;
         this.offset=offset;
+        this.length=length;
         this.id=id;
         this.dm=dt;
     }
+
     private byte[] intToByteArray(final int integer) {
         ByteBuffer buff = ByteBuffer.allocate(Integer.BYTES);
         buff.putInt(integer);
         return buff.array();
+    }
+
+    public byte[] longToBytes(long x) {
+        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+        buffer.putLong(x);
+        return buffer.array();
     }
 
     public byte[] reverse(byte[] array) {

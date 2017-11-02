@@ -70,6 +70,7 @@
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
         <service android:name=".Utill.DownloadManager"/>
+        <service android:name=".Utill.NotificationBarService"/>
     </application>
 
 </manifest>

@@ -5,8 +5,9 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FileManagerActivity extends ActionBarActivity {
+public class FileManagerActivity extends AppCompatActivity {
 
     private Spinner spinnerOrder, spinnerSort;
     private LinearLayout spinnerList, searchBtn, noFIleTxt;

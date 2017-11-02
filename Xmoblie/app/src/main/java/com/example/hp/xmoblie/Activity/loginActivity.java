@@ -1,10 +1,13 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -42,28 +45,28 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 id = idEditText.getText().toString();
                 pw = pwEditText.getText().toString();
-                loginSystem(id,pw);
+                loginSystem(id, pw);
                 //  loginProcess(id, pw);
             }
         });
 
-        autoLogin = getSharedPreferences("autoLogin",MODE_PRIVATE);
-        boolean auto=false;
-        auto =autoLogin.getBoolean("autoLogin",false);
-        Log.e("autoLogin",auto+"");
-        if (auto){
-            id =autoLogin.getString("id","");
-            pw =autoLogin.getString("password","");
-            Toast.makeText(getApplicationContext(),"자동로그인되었습니다.",Toast.LENGTH_LONG).show();
-            loginSystem(id,pw);
+        autoLogin = getSharedPreferences("autoLogin", MODE_PRIVATE);
+        boolean auto = false;
+        auto = autoLogin.getBoolean("autoLogin", false);
+        Log.e("autoLogin", auto + "");
+        if (auto) {
+            id = autoLogin.getString("id", "");
+            pw = autoLogin.getString("password", "");
+            Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_LONG).show();
+            loginSystem(id, pw);
         }
     }
 
     private void loginProcess(String id, String pw) {
         SharedPreferences.Editor editor = autoLogin.edit();
         editor.putBoolean("autoLogin", true);
-        editor.putString("id",id);
-        editor.putString("password",pw);
+        editor.putString("id", id);
+        editor.putString("password", pw);
         editor.commit();
 
     }
@@ -73,8 +76,18 @@ public class LoginActivity extends AppCompatActivity {
 
         ApiClient apiClient = ApiClient.service;
 
-        String deviceid = //"testDevice";
-         mgr.getDeviceId();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        String deviceid = "testDevice";
+                //mgr.getDeviceId();
         final Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
         call.enqueue(new Callback<LoginItem>() {
             @Override

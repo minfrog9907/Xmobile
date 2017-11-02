@@ -1,17 +1,25 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
+import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Utill.NotificationBarService;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
 import java.text.DateFormat;
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     static boolean isOpen = true;
     static boolean isFirst = true;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +144,10 @@ public class MainActivity extends AppCompatActivity {
 
         offWorkProgressClass();
 
+        Intent intent =new Intent(MainActivity.this, NotificationBarService.class);
+        bindService(intent,mConnection,BIND_AUTO_CREATE);
+
+
     }
 
     public void offWorkProgressClass(){
@@ -184,5 +197,21 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
     }
+
+    ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("connected","failed");
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("connected","success");
+            NotificationBarService.LocalBinder mLocalBinder = (NotificationBarService.LocalBinder)service;
+            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+            serviceControlCenter.setNotificationBarService(mLocalBinder.getServerInstance());
+
+        }
+    };
 }
 

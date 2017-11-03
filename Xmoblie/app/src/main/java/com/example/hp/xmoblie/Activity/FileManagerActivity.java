@@ -1,5 +1,6 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -34,9 +35,12 @@ import com.example.hp.xmoblie.Animation.ResizeAnimation;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtn;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
+import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.github.clans.fab.FloatingActionButton;
+import com.google.gson.Gson;
 
 
 import org.json.JSONArray;
@@ -51,6 +55,10 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -71,12 +79,15 @@ public class FileManagerActivity extends AppCompatActivity {
     private int cfbgHeight;
     private FileManagerListAdapter listAdapter;
     private ScrollView fileListScroll;
+    private FloatingActionButton takePhotoBtn,uploadFileBtn,makeFolderBtn;
 
     private ApiClient apiClient;
 
     private List<String> searchHistory = new ArrayList<String>();
     private List<String> moveDirHistory = new ArrayList<String>();
     private List<FileItem> checkedItems = new ArrayList<FileItem>();
+
+    private static final MediaType JSON = MediaType.parse("text/plain");
 
     private final static Comparator<FileItem> comparator = new Comparator<FileItem>() {
         private final Collator collator = Collator.getInstance();
@@ -105,6 +116,7 @@ public class FileManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_manager);
 
+        apiClient = ApiClient.service;
         spinnerOrder = (Spinner) findViewById(R.id.spinnerOrder);
         spinnerSort = (Spinner) findViewById(R.id.spinnerSort);
         spinnerList = (LinearLayout) findViewById(R.id.spinnerList);
@@ -113,9 +125,11 @@ public class FileManagerActivity extends AppCompatActivity {
         showSortWay = (ImageView) findViewById(R.id.showSortWay);
         searchEdit = (AutoCompleteTextView) findViewById(R.id.searchEdit);
         expListView = (ListView) findViewById(R.id.fileList);
-        apiClient = ApiClient.service;
         cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
         fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
+        takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
+        uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
+        makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
         ViewTreeObserver observer = cfbg.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -234,6 +248,27 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+        /* Floating button 클릭 이벤트 */
+        takePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(FileManagerActivity.this, CameraActivity.class).putExtra("token",getIntent().getStringExtra("token")));
+            }
+        });
+
+        uploadFileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        makeFolderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -542,7 +577,53 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private void removeFile() {
         Log.d("clicked button","removeFile");
+        ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
+        DeleteItem deleteItem;
+        for(int i = 0; i < checkedItems.size(); i++){
+            deleteItem = new DeleteItem();
+            String fileName = checkedItems.get(i).getFilename();
+            String filePath = checkRoot()+checkedItems.get(i).getFilename();
+
+            deleteItem.setFilename(fileName);
+            deleteItem.setPath(filePath);
+            
+            deleteItemList.add(deleteItem);
+        }
+
+
+        Gson gson = new Gson();
+        String jsonPlace = gson.toJson(deleteItemList);
+
+        RequestBody requestBody = RequestBody.create(JSON, jsonPlace);
+        System.out.println(requestBody);
+        System.out.println(requestBody.contentType());
+
+        final Call<String> call = apiClient.repoDelete(getIntent().getStringExtra("token"),jsonPlace);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.body() != null){
+                    Toast.makeText(FileManagerActivity.this, "작동됨", Toast.LENGTH_SHORT).show();
+                    searchFile(searchData);
+                }else if(response.errorBody() != null){
+                    Toast.makeText(FileManagerActivity.this, "에러", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
+
+    /* FloatingActionButton 클릭 이벤트 */
+
+
 
     /* 디바이스 버튼 클릭 이벤트 */
 
@@ -559,7 +640,6 @@ public class FileManagerActivity extends AppCompatActivity {
             }
             moveDirwithoutHistory(moveDirHistory.get(moveDirHistory.size() - 1));
         } else {
-            System.out.println(checkedItems);
             changeListMode();
         }
     }

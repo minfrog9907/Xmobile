@@ -15,6 +15,8 @@ import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.R;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +86,107 @@ public class FileManagerListAdapter extends BaseAdapter {
 
             if (type == 128) {
                 fileItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
-                fileItemHolder.fileIcon.setImageResource(R.drawable.file);
+
+                String fileFormat = FilenameUtils.getExtension(fileItemHolder.realFileItem.getFilename());
+                switch (fileFormat){
+                    case "7zip" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_7zip);
+                        break;
+                    case "alz" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_alz);
+                        break;
+                    case "avi" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_avi);
+                        break;
+                    case "bmp" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_bmp);
+                        break;
+                    case "c" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_c);
+                        break;
+                    case "cpp" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_cpp);
+                        break;
+                    case "cs" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_cs);
+                        break;
+                    case "dll" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_dll);
+                        break;
+                    case "doc" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_doc);
+                        break;
+                    case "egg" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_egg);
+                        break;
+                    case "exe" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_exe);
+                        break;
+                    case "gif" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_gif);
+                        break;
+                    case "h" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_h);
+                        break;
+                    case "hwp" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_hwp);
+                        break;
+                    case "jpg" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_jpg);
+                        break;
+                    case "js" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_js);
+                        break;
+                    case "mkv" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_mkv);
+                        break;
+                    case "mp3" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_mp3);
+                        break;
+                    case "mp4" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_mp4);
+                        break;
+                    case "pdf" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_pdf);
+                        break;
+                    case "png" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_png);
+                        break;
+                    case "ppt" : case "pptx" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_ppt);
+                        break;
+                    case "ps1" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_ps1);
+                        break;
+                    case "smi" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_smi);
+                        break;
+                    case "srt" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_srt);
+                        break;
+                    case "tar" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_tar);
+                        break;
+                    case "txt" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_txt);
+                        break;
+                    case "wma" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_wma);
+                        break;
+                    case "wmv" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_wmv);
+                        break;
+                    case "xlsx" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_xlsx);
+                        break;
+                    case "zip" :
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_zip);
+                        break;
+                    default:
+                        fileItemHolder.fileIcon.setImageResource(R.drawable.file);
+                        break;
+                }
+
                 fileItemHolder.fileIcon.setTag("file");
             } else {
                 fileItemHolder.fileIcon.setImageResource(R.drawable.folder);

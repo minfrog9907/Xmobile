@@ -75,7 +75,7 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     private void setMultiMod(){
         LinearLayout customFilemanagerBtnGroup = (LinearLayout)v.findViewById(R.id.CustomFilemanagerBtnGroup);
-        customFilemanagerBtnGroup.getLayoutParams().height = (int) (100 * scale + 5.0f);
+        customFilemanagerBtnGroup.getLayoutParams().height = (int) (120 * scale + 5.0f);
         int childCount = customFilemanagerBtnGroup.getChildCount();
         for(int i = 0; i < childCount; i++){
             LinearLayout view = (LinearLayout) customFilemanagerBtnGroup.getChildAt(i);

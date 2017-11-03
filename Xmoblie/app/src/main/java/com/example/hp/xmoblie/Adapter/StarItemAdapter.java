@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Holder.StarItemHolder;
@@ -65,7 +66,10 @@ public class StarItemAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = inflater.inflate(R.layout.file_list_row, null);
             starItemHolder.FileName = (TextView) view.findViewById(R.id.fileName);
+
             view.setTag(starItemHolder);
+            ImageView showMoreMenu = (ImageView) view.findViewById(R.id.showMoreMenu);
+            showMoreMenu.setVisibility(View.INVISIBLE);
 
             starItemHolder.FileName.setText(fileTitle);
 

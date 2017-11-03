@@ -39,7 +39,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.android.support:design:26.+'
-    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.github.yalantis:ucrop:2.2.1-native'
     compile 'com.rmtheis:tess-two:6.2.0'

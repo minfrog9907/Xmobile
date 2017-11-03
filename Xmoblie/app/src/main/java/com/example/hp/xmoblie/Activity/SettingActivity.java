@@ -46,7 +46,7 @@ public class SettingActivity extends Activity {
     TextView tvStartHour;
     TextView tvStartMinute;
     Croller detaSeekBar;
-    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn;
+    Button hourUpBtn, hourDownBtn, minuteUpButton, minuteDownBtn, dailyCheerEditBtn, nightThemeBtn, lightThemeBtn, startHourUpBtn, startHourDownBtn, startMinuteUpBtn, startMinuteDownBtn, btnLogOut;
     EditText MondayCheerText, TuesdayCheerText, WednesdayCheerText, ThursdayCheerText, FridayCheerText;
 
     boolean editOff = true;
@@ -90,14 +90,13 @@ public class SettingActivity extends Activity {
         minuteUpButton = (Button) findViewById(R.id.minuteUpButton);
         minuteDownBtn = (Button) findViewById(R.id.minuteDownBtn);
         dailyCheerEditBtn = (Button) findViewById(R.id.dailyCheerEditBtn);
-        nightThemeBtn = (Button) findViewById(R.id.nightThemeBtn);
-        lightThemeBtn = (Button) findViewById(R.id.lightThemeBtn);
         MondayCheerText = (EditText) findViewById(R.id.MondayCheerText);
         TuesdayCheerText = (EditText) findViewById(R.id.TuesCheerText);
         WednesdayCheerText = (EditText) findViewById(R.id.WednesdayCheerText);
         ThursdayCheerText = (EditText) findViewById(R.id.Thursday);
         FridayCheerText = (EditText) findViewById(R.id.FridayCheerText);
         detaSeekBar = (Croller) findViewById(R.id.detaSeekBar);
+        btnLogOut = (Button) findViewById(R.id.btnLogOut);
 
         strSH = tvStartHour.getText().toString();
         strEH = tvHour.getText().toString();
@@ -276,6 +275,21 @@ public class SettingActivity extends Activity {
                 thuT = saveText.getString("thu", "");
                 friT = saveText.getString("fri", "");
 
+            }
+        });
+
+        btnLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences autoLogin = getSharedPreferences("autoLogin", MODE_PRIVATE);
+                SharedPreferences.Editor editor1 = autoLogin.edit();
+
+                editor1.putBoolean("autoLogin", false);
+                editor1.commit();
+
+                Intent goToLogin = new Intent(SettingActivity.this, LoginActivity.class);
+                startActivity(goToLogin);
+                finish();
             }
         });
 

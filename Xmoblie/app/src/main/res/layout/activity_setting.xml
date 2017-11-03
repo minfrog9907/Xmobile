@@ -463,7 +463,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="테마"
+                    android:text="로그아웃"
                     android:textColor="#73F1E2"
                     android:textSize="15dp" />
 
@@ -475,30 +475,13 @@
                     android:background="#8073F1E2">
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <Button
+                    android:id="@+id/btnLogOut"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center_horizontal"
-                    >
-
-                    <Button
-                        android:id="@+id/nightThemeBtn"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="@drawable/darknight_light"
-                        android:layout_marginRight="20dp" />
-
-                    <Button
-                        android:id="@+id/lightThemeBtn"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="@drawable/sun_light"
-                        android:layout_marginLeft="20dp" />
-
-                </LinearLayout>
-
+                    android:text="LOG OUT"
+                    android:background="#73F1E2"
+                    android:textColor="#2b2b2b"/>
             </LinearLayout>
 
     </ScrollView>

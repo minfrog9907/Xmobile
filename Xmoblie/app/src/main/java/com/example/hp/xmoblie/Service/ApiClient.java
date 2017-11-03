@@ -27,6 +27,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -39,7 +40,7 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://xmobile2.lfconfig.xyz")
+            .baseUrl("http://xmobile.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -53,8 +54,8 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("https://xstream.lfconfig.xyz")//.baseUrl("https://10.1.21.228")
-            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+            .baseUrl("http://xstream.lfconfig.xyz")//.baseUrl("https://10.1.21.228")
+            //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
     ApiClient severService = filesever.create(ApiClient.class);
@@ -75,15 +76,6 @@ public interface ApiClient {
 
     @GET("/file_list.json")
     Call<List<FileItem>>test();
-
-
-    @FormUrlEncoded
-    @POST("/file")
-    Call<JustRequestItem>repoUpload(
-            @Header("token") String token,
-            @Field("file")File file,
-            @Field("path")String path
-    );
 
     @FormUrlEncoded
     @DELETE("/file")
@@ -125,7 +117,7 @@ public interface ApiClient {
 
     @Multipart
     @POST("/image/re")
-    Call<JustRequestItem>repoUploadBills(
+    Call<ResponseBody>repoUploadBills(
             @Header("token") String token,
             @Part("image") RequestBody image,
             @Part MultipartBody.Part file,
@@ -146,6 +138,15 @@ public interface ApiClient {
     @POST("/file")
     Call<ResponseBody>repoDownload(
             @Body RequestBody bytes
+    );
+
+    @Multipart
+    @POST("/file")
+    Call<ResponseBody>repoUpload(
+            @Header("token") String token,
+            @Part("file") RequestBody file,
+            @Part MultipartBody.Part body,
+            @Query("path")String path
     );
 }
 

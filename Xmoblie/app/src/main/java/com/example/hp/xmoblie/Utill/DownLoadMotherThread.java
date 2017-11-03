@@ -19,7 +19,7 @@ import okio.BufferedSource;
  */
 
 public class DownloadMotherThread extends Thread {
-    int LENGTH =4000;
+    int LENGTH =100000;
     int len;
     int left;
     int run = 0;

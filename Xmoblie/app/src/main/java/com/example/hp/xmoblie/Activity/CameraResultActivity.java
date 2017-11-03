@@ -163,7 +163,14 @@ public class CameraResultActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadFile(node);
+                uploadBills(node);
+            }
+        });
+        nameEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadFile("/storage/emulated/0/Download/bills","asdfasdf.jpg");
+
             }
         });
 
@@ -253,7 +260,7 @@ public class CameraResultActivity extends AppCompatActivity {
         sendBroadcast(mediaScanIntent);
     }
 
-    private void uploadFile(String path) {
+    private void uploadBills(String path) {
         // create upload service client
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
@@ -279,16 +286,57 @@ public class CameraResultActivity extends AppCompatActivity {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-        Call<JustRequestItem> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace(" ", "")));
-        call.enqueue(new Callback<JustRequestItem>() {
+        Call<ResponseBody> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace(" ", "")));
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<JustRequestItem> call,
-                                   Response<JustRequestItem> response) {
+            public void onResponse(Call<ResponseBody> call,
+                                   Response<ResponseBody> response) {
                 Log.v("Upload", "success");
             }
 
             @Override
-            public void onFailure(Call<JustRequestItem> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("Upload error:", t.getMessage());
+            }
+        });
+    }
+
+    private void uploadFile(String path,String filename) {
+        // create upload service client
+
+        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+        // use the FileUtils to get the actual file by uri
+        Log.e("path", Uri.parse(path) + "");
+        File file = new File(path+"/"+filename);
+
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse(path+"/"+filename),
+                        file
+                );
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        // add another part within the multipart request
+        String descriptionString = "file data";
+        RequestBody description =
+                RequestBody.create(
+                        okhttp3.MultipartBody.FORM, descriptionString);
+
+        // finally, execute the request
+        Call<ResponseBody> call = apiClient.repoUpload(getIntent().getStringExtra("token"), description, body,"\\");
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call,
+                                   Response<ResponseBody> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("Upload error:", t.getMessage());
             }
         });

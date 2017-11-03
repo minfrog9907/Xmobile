@@ -2,9 +2,12 @@ package com.example.hp.xmoblie.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 
 import android.os.Bundle;
@@ -17,6 +20,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
+import android.widget.AbsListView.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -34,10 +39,13 @@ import com.example.hp.xmoblie.Adapter.FileManagerListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtn;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
+import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.gson.Gson;
@@ -69,17 +77,17 @@ public class FileManagerActivity extends AppCompatActivity {
     private LinearLayout spinnerList, searchBtn, noFIleTxt;
     private ImageView showSortWay;
     private AutoCompleteTextView searchEdit;
-    private ListView expListView;
+    private OverScrollListView expListView;
     private List<FileItem> listDataHeader;
     private HashMap<FileItem, List<FileItem>> listDataChild;
     private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
-    private boolean selectMode = false;
+    private boolean selectMode = false, startFileProtocal = false;
     private CustomFilemanagerBtnGroup cfbg;
     private int cfbgHeight;
     private FileManagerListAdapter listAdapter;
     private ScrollView fileListScroll;
-    private FloatingActionButton takePhotoBtn,uploadFileBtn,makeFolderBtn;
+    private FloatingActionButton takePhotoBtn, uploadFileBtn, makeFolderBtn;
 
     private ApiClient apiClient;
 
@@ -124,7 +132,7 @@ public class FileManagerActivity extends AppCompatActivity {
         noFIleTxt = (LinearLayout) findViewById(R.id.noFIleTxt);
         showSortWay = (ImageView) findViewById(R.id.showSortWay);
         searchEdit = (AutoCompleteTextView) findViewById(R.id.searchEdit);
-        expListView = (ListView) findViewById(R.id.fileList);
+        expListView = (OverScrollListView) findViewById(R.id.fileList);
         cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
         fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
@@ -212,6 +220,19 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+        expListView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
+            @Override
+            public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
+                if(exceededOffset){
+                    searchFile(searchData);
+                }
+            }
+        });
+
+        Drawable d = new BitmapDrawable(getResources(), "ic_stat_name");
+        expListView.setOverscrollHeader(d);
+        expListView.setOverScrollOffsetY(100);
+
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -252,7 +273,7 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(FileManagerActivity.this, CameraActivity.class).putExtra("token",getIntent().getStringExtra("token")));
+                startActivity(new Intent(FileManagerActivity.this, CameraActivity.class).putExtra("token", getIntent().getStringExtra("token")));
             }
         });
 
@@ -266,14 +287,17 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                createDialog();
             }
         });
+
     }
 
     /* 경로 이동 및 파일 실행 */
 
     private void fileProtocal(String path) {
+        if (startFileProtocal) return;
+        startFileProtocal = true;
         listDataHeader = new ArrayList<>();
         final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
         call.enqueue(new Callback<List<FileItem>>() {
@@ -297,12 +321,14 @@ public class FileManagerActivity extends AppCompatActivity {
                 if (response.errorBody() != null) {
                     fileProtocal(searchData);
                 }
+                startFileProtocal = false;
             }
 
             @Override
             public void onFailure(Call<List<FileItem>> call, Throwable t) {
                 Log.e("jsonResponse", "빼애애앵ㄱ");
                 fileProtocal(searchData);
+                startFileProtocal = false;
             }
         });
 
@@ -323,7 +349,6 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void moveDir(String path) {
-        Log.d("moveDir", "moveDir");
         moveDirHistory.add(path);
         searchFile(path);
     }
@@ -333,7 +358,9 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void adaptList() {
-        listAdapter = new FileManagerListAdapter(this, listDataHeader);
+        if (listAdapter != new FileManagerListAdapter(this, listDataHeader)) {
+            listAdapter = new FileManagerListAdapter(this, listDataHeader);
+        }
         expListView.setAdapter(listAdapter);
     }
 
@@ -532,7 +559,7 @@ public class FileManagerActivity extends AppCompatActivity {
                 case R.id.fileInfo:
                     fileInfo();
                     break;
-                case R.id.deleteFileBtn :
+                case R.id.deleteFileBtn:
                     removeFile();
                     break;
             }
@@ -556,37 +583,36 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void shareFile() {
-        Log.d("clicked button","share");
+        Log.d("clicked button", "share");
     }
 
     private void fileLog() {
-        Log.d("clicked button","filelog");
+        Log.d("clicked button", "filelog");
     }
 
     private void changeName() {
-        Log.d("clicked button","changName");
+        Log.d("clicked button", "changName");
     }
 
     private void addTad() {
-        Log.d("clicked button","addTag");
+        Log.d("clicked button", "addTag");
     }
 
     private void fileInfo() {
-        Log.d("clicked button","fileinfo");
+        Log.d("clicked button", "fileinfo");
     }
 
     private void removeFile() {
-        Log.d("clicked button","removeFile");
+        Log.d("clicked button", "removeFile");
         ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
         DeleteItem deleteItem;
-        for(int i = 0; i < checkedItems.size(); i++){
+        for (int i = 0; i < checkedItems.size(); i++) {
             deleteItem = new DeleteItem();
             String fileName = checkedItems.get(i).getFilename();
-            String filePath = checkRoot()+checkedItems.get(i).getFilename();
 
             deleteItem.setFilename(fileName);
-            deleteItem.setPath(filePath);
-            
+            deleteItem.setPath(searchData);
+
             deleteItemList.add(deleteItem);
         }
 
@@ -595,26 +621,25 @@ public class FileManagerActivity extends AppCompatActivity {
         String jsonPlace = gson.toJson(deleteItemList);
 
         RequestBody requestBody = RequestBody.create(JSON, jsonPlace);
-        System.out.println(requestBody);
-        System.out.println(requestBody.contentType());
 
-        final Call<String> call = apiClient.repoDelete(getIntent().getStringExtra("token"),jsonPlace);
+        final Call<ResponseBody> call = apiClient.repoDelete(getIntent().getStringExtra("token"), jsonPlace);
 
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(response.body() != null){
-                    Toast.makeText(FileManagerActivity.this, "작동됨", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "파일이 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    changeListMode();
                     searchFile(searchData);
-                }else if(response.errorBody() != null){
-                    Toast.makeText(FileManagerActivity.this, "에러", Toast.LENGTH_SHORT).show();
-                }else{
+                } else if (response.errorBody() != null) {
+                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                } else {
                     Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
             }
         });
@@ -623,7 +648,34 @@ public class FileManagerActivity extends AppCompatActivity {
 
     /* FloatingActionButton 클릭 이벤트 */
 
+    private void mkDir(String dir) {
+        final Call<JustRequestItem> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
+        call.enqueue(new Callback<JustRequestItem>() {
+            @Override
+            public void onResponse(Call<JustRequestItem> call, Response<JustRequestItem> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FileManagerActivity.this, "폴더 생성중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+                searchFile(searchData);
+            }
 
+            @Override
+            public void onFailure(Call<JustRequestItem> call, Throwable t) {
+                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    /* create dialog */
+
+    private void createDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        CreateDialogFragment createDialogFragment = new CreateDialogFragment();
+        createDialogFragment.show(fragmentManager, "asdf");
+    }
 
     /* 디바이스 버튼 클릭 이벤트 */
 

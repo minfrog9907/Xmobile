@@ -41,7 +41,7 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://xmobile2.lfconfig.xyz")
+            .baseUrl("http://xmobile.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -89,7 +89,7 @@ public interface ApiClient {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/file", hasBody = true)
-    Call<String>repoDelete(
+    Call<ResponseBody>repoDelete(
             @Header("token") String token,
             @Field("list") String list
     );

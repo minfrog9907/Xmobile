@@ -163,29 +163,45 @@
         app:menu_animationDelayPerItem="55"
         app:menu_backgroundColor="@android:color/transparent"
         app:menu_buttonSpacing="0dp"
-        app:menu_colorNormal="#da3c2f"
-        app:menu_colorPressed="#dc4b3f"
-        app:menu_colorRipple="#99d4d4d4"
+        app:menu_colorNormal="#73F1E2"
+        app:menu_colorPressed="#a8f0e7"
+        app:menu_colorRipple="#a8f0e7"
         app:menu_fab_show_animation="@anim/fab_scale_up"
         app:menu_fab_size="normal"
-        app:menu_icon="@drawable/fab_add"
-        app:menu_labels_colorNormal="#333"
+        app:menu_icon="@drawable/ic_floating_plus"
         app:menu_openDirection="up">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/material_design_floating_action_menu_item1"
+            android:id="@+id/takePhotoBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/message_logo"
-            app:fab_label="Menu Item 1" />
+            android:src="@drawable/ic_photocarmera_light"
+            app:fab_colorNormal="#1f1f1f"
+            app:fab_colorPressed="#262626"
+            app:fab_colorRipple="#99FFFFFF"
+            app:fab_label="영수증 촬영" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/material_design_floating_action_menu_item2"
+            android:id="@+id/uploadFileBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/upload"
+            android:src="@drawable/ic_upload"
+            app:fab_colorNormal="#1f1f1f"
+            app:fab_colorPressed="#262626"
+            app:fab_colorRipple="#99FFFFFF"
             app:fabSize="normal"
-            app:fab_label="Menu Item 2" />
+            app:fab_label="업로드" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/makeFolderBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_folder_light"
+            app:fab_colorNormal="#1f1f1f"
+            app:fab_colorPressed="#262626"
+            app:fab_colorRipple="#99FFFFFF"
+            app:fabSize="normal"
+            app:fab_label="폴더 생성" />
 
     </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

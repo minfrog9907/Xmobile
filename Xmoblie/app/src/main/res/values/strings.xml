@@ -2,4 +2,9 @@
     <string name="app_name">Xmoblie</string>
     <string name="title_activity_file_manager">FileManagerActivity</string>
     <string name="action_settings">Settings</string>
+    
+    <string name="accept">확인</string>
+    <string name="cancle">취소</string>
+
+    <string name="nofile">No Files</string>
 </resources>

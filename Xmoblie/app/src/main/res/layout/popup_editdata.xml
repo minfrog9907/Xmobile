@@ -23,14 +23,7 @@
         android:layout_weight="3"
         android:weightSum="2"
         android:layout_marginTop="10dp">
-        <com.example.hp.xmoblie.Custom.SideStick_BTN
-            android:id="@+id/editdata_re"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:symbol="@drawable/edit"
-            app:text="다시 설정"
-            ></com.example.hp.xmoblie.Custom.SideStick_BTN>
+
         <com.example.hp.xmoblie.Custom.SideStick_BTN
             android:id="@+id/editdata_commit"
             android:layout_width="0dp"

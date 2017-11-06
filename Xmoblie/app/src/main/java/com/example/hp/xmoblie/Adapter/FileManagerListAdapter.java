@@ -88,7 +88,7 @@ public class FileManagerListAdapter extends BaseAdapter {
                 fileItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
 
                 String fileFormat = FilenameUtils.getExtension(fileItemHolder.realFileItem.getFilename());
-                switch (fileFormat){
+                switch (fileFormat.toLowerCase()){
                     case "7zip" :
                         fileItemHolder.fileIcon.setImageResource(R.drawable.fileicon_7zip);
                         break;

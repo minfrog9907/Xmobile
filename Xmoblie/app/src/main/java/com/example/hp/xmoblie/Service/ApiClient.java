@@ -28,11 +28,8 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-<<<<<<< HEAD
-import retrofit2.http.HEAD;
-=======
 import retrofit2.http.HTTP;
->>>>>>> f392a2d806d42c7b9c464fac0f1d71f84daee994
+
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;

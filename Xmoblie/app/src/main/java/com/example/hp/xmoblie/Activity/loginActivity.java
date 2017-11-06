@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText idEditText, pwEditText;
     String id, pw;
     SharedPreferences autoLogin;
+    boolean auto = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +52,11 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         autoLogin = getSharedPreferences("autoLogin", MODE_PRIVATE);
-        boolean auto = false;
         auto = autoLogin.getBoolean("autoLogin", false);
         Log.e("autoLogin", auto + "");
         if (auto) {
             id = autoLogin.getString("id", "");
             pw = autoLogin.getString("password", "");
-            Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_LONG).show();
             loginSystem(id, pw);
         }
     }
@@ -86,8 +85,7 @@ public class LoginActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        String deviceid = "testDevice";
-                //mgr.getDeviceId();
+        String deviceid = mgr.getDeviceId();
         final Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
         call.enqueue(new Callback<LoginItem>() {
             @Override
@@ -100,6 +98,10 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("token", response.body().getToken());
                         intent.putExtra("privilege", response.body().getPrivilege());
                         loginProcess(userid,password);
+
+                        if (auto)
+                            Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
+
                         startActivity(intent);
                         finish();
                         break;

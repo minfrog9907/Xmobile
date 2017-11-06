@@ -291,12 +291,13 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                Log.v("Upload", "success");
+                Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Upload error:", t.getMessage());
+                Toast.makeText(getApplicationContext(),"Upload Fail",Toast.LENGTH_SHORT).show();
+
             }
         });
     }

@@ -9,51 +9,34 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
-import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.JustRequestItem;
-import com.example.hp.xmoblie.Items.OCRDataItem;
-import com.example.hp.xmoblie.Items.OCRLineDataItem;
-import com.example.hp.xmoblie.Items.OCRWordDataItem;
-import com.example.hp.xmoblie.Items.OCRWordsDataItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
-import com.example.hp.xmoblie.Utill.DownloadManager;
-import com.example.hp.xmoblie.Utill.NotificationBarService;
+import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.util.FileUtils;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -149,10 +132,10 @@ public class CameraResultActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
                 if (serviceControlCenter.isAbleDownload())
-                    startService(new Intent(CameraResultActivity.this, DownloadManager.class)
+                    startService(new Intent(CameraResultActivity.this, DownloadManagerService.class)
                             .putExtra("type", 1)
                             //.putExtra("filename","awef.txt")
-                            .putExtra("filename", "winserver.png")
+                            .putExtra("filename", "test.ps1")
                             .putExtra("path", "\\")
                             .putExtra("token", getIntent().getStringExtra("token"))
                             .putExtra("offset", 0)
@@ -291,12 +274,13 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                Log.v("Upload", "success");
+                Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Upload error:", t.getMessage());
+                Toast.makeText(getApplicationContext(),"Upload Fail",Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -332,7 +316,7 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                Log.v("Upload", "success");
+                Toast.makeText(getApplicationContext(),"업로드 완료",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -351,9 +335,9 @@ public class CameraResultActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.e("connected", "success");
-            DownloadManager.LocalBinder mLocalBinder = (DownloadManager.LocalBinder) service;
+            DownloadManagerService.LocalBinder mLocalBinder = (DownloadManagerService.LocalBinder) service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-            serviceControlCenter.setDownloadManager(mLocalBinder.getServerInstance());
+            serviceControlCenter.setDownloadManagerService(mLocalBinder.getServerInstance());
 
         }
     };

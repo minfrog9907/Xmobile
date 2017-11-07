@@ -1,19 +1,8 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
-import com.example.hp.xmoblie.Items.OCRDataItem;
-import com.example.hp.xmoblie.Items.StarItem;
-import com.example.hp.xmoblie.Service.ApiClient;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by HP on 2017-09-20.

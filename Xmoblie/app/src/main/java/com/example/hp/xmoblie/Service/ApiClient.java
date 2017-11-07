@@ -4,32 +4,32 @@ package com.example.hp.xmoblie.Service;
  * Created by HP on 2017-10-16.
  */
 
-import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
-import com.example.hp.xmoblie.Items.StarItem;
-import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
+import com.example.hp.xmoblie.Items.RollbackItem;
+import com.example.hp.xmoblie.Items.ShortCutItem;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+<<<<<<< HEAD
 import retrofit2.http.HEAD;
 import retrofit2.http.HTTP;
+=======
+import retrofit2.http.HTTP;
+
+>>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -48,7 +48,7 @@ public interface ApiClient {
 
     ApiClient service = retrofit.create(ApiClient.class);
 
-    Retrofit retrofitTest= new Retrofit.Builder()
+    Retrofit retrofitTest = new Retrofit.Builder()
             .baseUrl("http://lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
@@ -61,6 +61,7 @@ public interface ApiClient {
             .build();
 
     ApiClient severService = filesever.create(ApiClient.class);
+
     @FormUrlEncoded
     @POST("/login")
     Call<LoginItem> repoContributors(
@@ -71,40 +72,44 @@ public interface ApiClient {
     );
 
     @GET("/file")
-    Call<List<FileItem>>repoFileNodes(
+    Call<List<FileItem>> repoFileNodes(
             @Header("token") String token
             , @Query("dir") String dir
-        );
+    );
 
     @GET("/file_list.json")
-    Call<List<FileItem>>test();
+    Call<List<FileItem>> test();
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/file", hasBody = true)
-    Call<ResponseBody>repoDelete(
+    Call<ResponseBody> repoDelete(
             @Header("token") String token,
             @Field("list") String list
     );
 
     @FormUrlEncoded
     @PUT("/file")
-    Call<JustRequestItem>repoRename(
+    Call<JustRequestItem> repoRename(
             @Header("token") String token,
-            @Field("originalName")String originalName,
-            @Field("path")String path,
-            @Field("newName")String newName);
+            @Field("originalName") String originalName,
+            @Field("path") String path,
+            @Field("newName") String newName);
 
 
     @FormUrlEncoded
     @POST("/file/move")
-    Call<JustRequestItem>repoMove(
+    Call<JustRequestItem> repoMove(
             @Header("token") String token,
-            @Field("filename")String filename,
-            @Field("path")String path,
-            @Field("targetPath")String targetPath);
+            @Field("filename") String filename,
+            @Field("path") String path,
+            @Field("targetPath") String targetPath);
 
     @GET("/winfile/mkdir")
+<<<<<<< HEAD
     Call<ResponseBody>repoMkDir(
+=======
+    Call<JustRequestItem> repoMkDir(
+>>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
             @Header("token") String token
             , @Query("dirname") String dirname
             , @Query("path") String path
@@ -112,44 +117,77 @@ public interface ApiClient {
 
     @FormUrlEncoded
     @POST("/image")
-    Call<OCRDataItem>repoOCR(
+    Call<OCRDataItem> repoOCR(
             @Header("token") String token,
-            @Field("data")String data
+            @Field("data") String data
     );
 
     @Multipart
     @POST("/image/re")
-    Call<ResponseBody>repoUploadBills(
+    Call<ResponseBody> repoUploadBills(
             @Header("token") String token,
             @Part("image") RequestBody image,
             @Part MultipartBody.Part file,
             @Query("location") String location,
-            @Query("price")int price
+            @Query("price") int price
     );
 
     @GET("/shortcut")
-    Call<List<StarItem>>repoStar(
+    Call<List<ShortCutItem>> repoStar(
             @Header("token") String header,
-            @Query("offset")int offset,
-            @Query("limit")int limit
+            @Query("offset") int offset,
+            @Query("limit") int limit
 
     );
+
     @GET("/xmobile/awef.json.txt")
-    Call<OCRDataItem>repoOCRT(    );
+    Call<OCRDataItem> repoOCRT();
 
     @POST("/file")
-    Call<ResponseBody>repoDownload(
+    Call<ResponseBody> repoDownload(
             @Body RequestBody bytes
     );
 
     @Multipart
     @POST("/file")
-    Call<ResponseBody>repoUpload(
+    Call<ResponseBody> repoUpload(
             @Header("token") String token,
             @Part("file") RequestBody file,
             @Part MultipartBody.Part body,
-            @Query("path")String path
+            @Query("path") String path
     );
+
+    @GET("/shortcut")
+    Call<List<ShortCutItem>> repoShortCut(
+            @Header("token") String token,
+            @Query("offset") int offset,
+            @Query("limit") int limit
+    );
+
+    @GET("/file/rollbackinfo\n")
+    Call<ResponseBody>repoRollback(
+            @Header("token")String token,
+            @Query("path")String path,
+            @Query("filename")String filename
+    );
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/shortcut", hasBody = true)
+    Call<ResponseBody>repoSHCDelete(
+            @Header("token")String token,
+            @Field("path")String path,
+            @Field("filename")String filename
+    );
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/file/dir", hasBody = true)
+    Call<List<RollbackItem>>repoDeleteFolder(
+            @Header("token")String token,
+            @Field("path")String path,
+            @Field("filename")String filename
+    );
+
+
 }
 
 

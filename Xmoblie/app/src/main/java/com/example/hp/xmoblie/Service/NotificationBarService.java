@@ -1,4 +1,4 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,13 +12,16 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.IntDef;
+import android.os.Message;
 import android.support.annotation.Nullable;
-
-import android.support.v4.app.NotificationCompat;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.Activity.MainActivity;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Utill.DownloadMotherThread;
+import com.example.hp.xmoblie.Utill.NotificationHandler;
 
 /**
  * Created by HP on 2017-11-02.
@@ -27,18 +30,22 @@ import com.example.hp.xmoblie.R;
 public class NotificationBarService extends Service {
     NotificationManager Notifi_M;
     IBinder mBinder = new LocalBinder();
-
+    NotificationHandler  handler;
+    Notification.Builder builder;
+    int max;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCreate() {
         super.onCreate();
         Notifi_M = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
+        handler = new NotificationHandler();
+        Log.e("Created","Nofitication Created");
     }
 
     @Override
@@ -52,15 +59,30 @@ public class NotificationBarService extends Service {
         super.onDestroy();
     }
     public void startDownload(){
+        Log.e("asd","asd");
         Intent intent = new Intent(NotificationBarService.this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(NotificationBarService.this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(R.drawable.ic_launcher).setTicker("HETT").setWhen(System.currentTimeMillis())
-                .setNumber(1).setContentTitle("푸쉬 제목").setContentText("푸쉬내용")
+                .setNumber(1).setContentTitle("다운로드중").setContentText("다운로드중")
+                .setProgress(100,0,true)
                 .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE).setContentIntent(pendingIntent).setAutoCancel(true);
 
-        Notifi_M.notify( 777 , builder.build());
+        Notifi_M.notify( 1 , builder.build());
+    }
+    public void setDownLoadMax(int max){
+        this.max =max;
+        builder.setProgress(max,0,true);
+        Notifi_M.notify( 1 , builder.build());
+    }
+
+    public void updateDownload(int process){
+        builder.setProgress(max,process,true);
+        Notifi_M.notify( 1 , builder.build());
+    }
+    public NotificationHandler addService(){
+       return handler;
     }
 
 

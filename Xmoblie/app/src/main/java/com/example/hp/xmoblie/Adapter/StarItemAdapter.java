@@ -9,8 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Holder.StarItemHolder;
-import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.StarItem;
+import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.R;
 
 import java.util.ArrayList;
@@ -23,10 +22,10 @@ import java.util.List;
 public class StarItemAdapter extends BaseAdapter {
 
     private Context _context;
-    private List<StarItem> _list; // header titles
+    private List<ShortCutItem> _list; // header titles
     private List<View> listSaver = new ArrayList<>();
 
-    public StarItemAdapter(Context context, List<StarItem> _list) {
+    public StarItemAdapter(Context context, List<ShortCutItem> _list) {
         this._context = context;
         this._list = _list;
         mackView();
@@ -38,7 +37,7 @@ public class StarItemAdapter extends BaseAdapter {
     }
 
     @Override
-    public StarItem getItem(int i) {
+    public ShortCutItem getItem(int i) {
         return _list.get(i);
     }
 

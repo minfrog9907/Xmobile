@@ -4,7 +4,7 @@ package com.example.hp.xmoblie.Items;
  * Created by HP on 2017-10-30.
  */
 
-public class StarItem {
+public class ShortCutItem {
     String filename;
     String path;
     long size;

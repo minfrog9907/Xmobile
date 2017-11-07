@@ -10,6 +10,7 @@ import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
+import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
 import java.util.List;
 
@@ -23,13 +24,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-<<<<<<< HEAD
-import retrofit2.http.HEAD;
-import retrofit2.http.HTTP;
-=======
-import retrofit2.http.HTTP;
 
->>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -56,8 +52,9 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://xstream.lfconfig.xyz")//.baseUrl("https://10.1.21.228")
-            //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+            //.baseUrl("http://xstream.lfconfig.xyz")
+            .baseUrl("https://10.1.21.228")
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
     ApiClient severService = filesever.create(ApiClient.class);
@@ -105,11 +102,7 @@ public interface ApiClient {
             @Field("targetPath") String targetPath);
 
     @GET("/winfile/mkdir")
-<<<<<<< HEAD
     Call<ResponseBody>repoMkDir(
-=======
-    Call<JustRequestItem> repoMkDir(
->>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
             @Header("token") String token
             , @Query("dirname") String dirname
             , @Query("path") String path

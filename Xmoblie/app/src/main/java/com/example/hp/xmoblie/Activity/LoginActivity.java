@@ -93,17 +93,33 @@ public class LoginActivity extends AppCompatActivity {
                                    Response<LoginItem> response) {
                 switch (response.body().getStatus()) {
                     case 0:
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("username", response.body().getUsername());
-                        intent.putExtra("token", response.body().getToken());
-                        intent.putExtra("privilege", response.body().getPrivilege());
-                        loginProcess(userid,password);
+                        if (getIntent().getBooleanExtra("pb",false)==false) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("username", response.body().getUsername());
+                            intent.putExtra("token", response.body().getToken());
+                            intent.putExtra("privilege", response.body().getPrivilege());
+                            loginProcess(userid, password);
 
-                        if (auto)
-                            Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
+                            if (auto)
+                                Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
 
-                        startActivity(intent);
-                        finish();
+                            startActivity(intent);
+                            finish();
+                        }
+                        else if(getIntent().getBooleanExtra("pb",false)==true){
+                            Intent intent = new Intent(getApplicationContext(), FileManagerActivity.class);
+                            intent.putExtra("username", response.body().getUsername());
+                            intent.putExtra("token", response.body().getToken());
+                            intent.putExtra("privilege", response.body().getPrivilege());
+                            intent.putExtra("path",getIntent().getStringExtra("path"));
+                            loginProcess(userid, password);
+
+                            if (auto)
+                                Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
+
+                            startActivity(intent);
+                            finish();
+                        }
                         break;
                     case 1:
                         Toast.makeText(getApplicationContext(), "잘못된 아이디 또는 비밀번호입니다.", Toast.LENGTH_LONG).show();

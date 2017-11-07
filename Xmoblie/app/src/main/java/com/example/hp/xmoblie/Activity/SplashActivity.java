@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,26 +34,38 @@ import retrofit2.Response;
 public class SplashActivity extends BaseActivity {
     private final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1000;
     private final int SPLASH_DISPLAY_LENGTH = 1500;
+    Intent intent;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_splash);
 
+        intent = new Intent(SplashActivity.this, LoginActivity.class);
+
+        Uri data = getIntent().getData();
+        if (data !=null &&data.getQueryParameter("path") != null) {
+            intent.putExtra("path", data.getQueryParameter("path"));
+            intent.putExtra("pb", true);
+        } else {
+            intent.putExtra("pb", false);
+        }
+
+
         int internetPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         int storagePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int cameraPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         int readStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-        int pravitePemissionCheck = ContextCompat.checkSelfPermission(this,Manifest.permission.PACKAGE_USAGE_STATS);
+        int pravitePemissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.PACKAGE_USAGE_STATS);
 
 
         if (internetPermissionCheck == PackageManager.PERMISSION_DENIED
-                ||storagePermissionCheck == PackageManager.PERMISSION_DENIED
-                ||cameraPermissionCheck == PackageManager.PERMISSION_DENIED
-                ||readStatePermissionCheck ==PackageManager.PERMISSION_DENIED
-                ||pravitePemissionCheck==PackageManager.PERMISSION_DENIED) {
+                || storagePermissionCheck == PackageManager.PERMISSION_DENIED
+                || cameraPermissionCheck == PackageManager.PERMISSION_DENIED
+                || readStatePermissionCheck == PackageManager.PERMISSION_DENIED
+                || pravitePemissionCheck == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.READ_PHONE_STATE,Manifest.permission.PACKAGE_USAGE_STATS},
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PACKAGE_USAGE_STATS},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
         }
@@ -67,7 +80,7 @@ public class SplashActivity extends BaseActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    startActivity(intent);
                     finish();
                 }
             }, SPLASH_DISPLAY_LENGTH);
@@ -88,7 +101,7 @@ public class SplashActivity extends BaseActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            startActivity(intent);
                             finish();
                         }
                     }, SPLASH_DISPLAY_LENGTH);

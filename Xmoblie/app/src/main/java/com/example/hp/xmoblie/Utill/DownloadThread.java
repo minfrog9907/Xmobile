@@ -56,6 +56,7 @@ public class DownloadThread extends Thread {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
+                    Log.e("download","success");
                     dm.setResponseBody(response.body(),id);
                     dm.reportDead(id);
                 } catch (IOException e) {

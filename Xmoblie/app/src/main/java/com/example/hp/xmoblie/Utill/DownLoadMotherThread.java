@@ -45,6 +45,7 @@ public class DownloadMotherThread extends Thread {
 
         handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         handler.sendEmptyMessage(0);
+
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
@@ -79,7 +80,7 @@ public class DownloadMotherThread extends Thread {
         message.arg1=thCnt;
         handler.sendMessage(message);
 
-        Log.e("downloadind","start");
+        Log.e("downloadind","start "+thCnt);
         for (int i = nowRunning; i < 2; ++i) {
             if (run < thCnt) {
                 downloadThreads.get(run++).run();
@@ -104,6 +105,7 @@ public class DownloadMotherThread extends Thread {
             FileOutputStream out = new FileOutputStream(file);
             for (int i = 0; i < repResponseBodies.size(); ++i) {
                 out.write(repResponseBodies.get(i).bytes());
+                Log.e("write",i + " " + repResponseBodies.get(i).bytes().length);
             }
             out.flush();
             out.close();
@@ -131,11 +133,6 @@ public class DownloadMotherThread extends Thread {
 
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
-        Message message = handler.obtainMessage();
-        message.what =100;
-        message.arg1=run;
-        handler.sendMessage(message);
-
         if (run == thCnt&&nowRunning==0) {
             saveImage();
         } else if(run<thCnt){

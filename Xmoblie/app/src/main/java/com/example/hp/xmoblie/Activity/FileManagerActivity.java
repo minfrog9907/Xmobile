@@ -55,6 +55,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -287,7 +288,11 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createDialog();
+                if(searchData == "\\"){
+                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }else {
+                    createDialog();
+                }
             }
         });
 
@@ -649,10 +654,10 @@ public class FileManagerActivity extends AppCompatActivity {
     /* FloatingActionButton 클릭 이벤트 */
 
     private void mkDir(String dir) {
-        final Call<JustRequestItem> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
-        call.enqueue(new Callback<JustRequestItem>() {
+        final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<JustRequestItem> call, Response<JustRequestItem> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
                     Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -662,7 +667,7 @@ public class FileManagerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<JustRequestItem> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -672,9 +677,50 @@ public class FileManagerActivity extends AppCompatActivity {
     /* create dialog */
 
     private void createDialog() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        CreateDialogFragment createDialogFragment = new CreateDialogFragment();
-        createDialogFragment.show(fragmentManager, "asdf");
+        CreateDialogFragment dialog = CreateDialogFragment.newInstance(new CreateDialogFragment.DirInputListener() {
+            @Override
+            public boolean onDirInputComplete(String newDir) {
+                if(newDir != null) {
+
+                    if(newDir.length() <= 30){
+
+                        if(newDir.length() + searchData.length() <= 200){
+
+                            try {
+
+                                String eucKrDir = new String(newDir.getBytes("utf-8"), "euc-kr");
+                                if(newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")){
+
+                                    mkDir(eucKrDir);
+                                    return true;
+
+                                }else{
+                                    Toast.makeText(FileManagerActivity.this, "폴더명에 들어갈 수 없는 문자가 포함되어 있습니다.", Toast.LENGTH_SHORT).show();
+                                    return false;
+                                }
+
+                            } catch (UnsupportedEncodingException e) {
+
+                                e.printStackTrace();
+
+                            }
+                        }else{
+
+                            Toast.makeText(FileManagerActivity.this, "폴더명 + 경로명은 200자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    }else{
+
+                        Toast.makeText(FileManagerActivity.this, "폴더명은 30자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                }
+                return false;
+            }
+        }, searchData.replace("\\","/"));
+        dialog.show(getSupportFragmentManager(), "addDialog");
     }
 
     /* 디바이스 버튼 클릭 이벤트 */

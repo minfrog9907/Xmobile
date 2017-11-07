@@ -401,10 +401,9 @@ public class SettingActivity extends Activity {
     }
 
     public void setPREF(boolean set){
+        SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
 
         if (set == true) {
-
-            SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
             SharedPreferences.Editor editor = setting.edit();
             editor.putInt("startHour", startHour);
             editor.putInt("endHour", endHour);
@@ -414,7 +413,6 @@ public class SettingActivity extends Activity {
             editor.commit();
         } else {
 
-            SharedPreferences setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
             int SH = setting.getInt("startHour", 0);
             this.startHour = SH;
             if (this.startHour < 10) {

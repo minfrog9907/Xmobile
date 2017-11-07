@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,15 +36,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView offWorkTimeTxt;
     private DoubleCloseHandler doubleCloseHandler;
     private Main_BTN fileManagerBtn, historyBtn, cameraBtn, settingBtn;
-    Calendar calendar;
-    static String date1AsString;
-    static String date2AsString;
-    static String todayDate;
-    DateFormat dateFormat;
-    Date date1, date2;
+    private final Handler handler = new Handler();
+    private Calendar calendar;
+    private static String date1AsString;
+    private static String date2AsString;
+    private static String todayDate;
+    private DateFormat dateFormat;
+    private Date date1, date2;
+    private SharedPreferences setting;
 
-    static boolean isOpen = true;
-    static boolean isFirst = true;
+    private static boolean isOpen = true;
+    private static boolean isFirst = true;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         date2 = calendar.getTime();
 
         date2AsString = dateFormat.format(date2);
+        setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
@@ -151,16 +155,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void offWorkProgressClass(){
-        final Handler handler = new Handler();
-
-        final int onWorkTime = 32400;
-        final int offWorkTime = 61200;
-        final int workingTime = offWorkTime - onWorkTime;
-
         Runnable runnable = new Runnable() {
 
             @Override
             public void run() {
+                int onWorkTime = (setting.getInt("startHour", 9) * 3600) + (setting.getInt("startMinute", 0) * 60);
+                int offWorkTime = (setting.getInt("endHour", 18) * 3600) + (setting.getInt("endMinute", 0) * 60);
+                int workingTime = offWorkTime - onWorkTime;
+
                 Calendar oCalendar = Calendar.getInstance( );
                 int nowHour = oCalendar.get(Calendar.HOUR_OF_DAY);
                 int nowMin = oCalendar.get(Calendar.MINUTE);
@@ -196,6 +198,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         doubleCloseHandler.onBackPressed();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        offWorkProgressClass();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeMessages(0);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        handler.removeMessages(0);
     }
 
     ServiceConnection mConnection = new ServiceConnection() {

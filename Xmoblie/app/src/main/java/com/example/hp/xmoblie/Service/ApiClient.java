@@ -24,8 +24,8 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-
 import retrofit2.http.HTTP;
+
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -52,8 +52,8 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            //.baseUrl("http://xstream.lfconfig.xyz")
-            .baseUrl("https://10.1.21.228")
+            .baseUrl("https://xstream.lfconfig.xyz")
+            //.baseUrl("https://10.1.21.228")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
@@ -102,7 +102,7 @@ public interface ApiClient {
             @Field("targetPath") String targetPath);
 
     @GET("/winfile/mkdir")
-    Call<ResponseBody>repoMkDir(
+    Call<ResponseBody> repoMkDir(
             @Header("token") String token
             , @Query("dirname") String dirname
             , @Query("path") String path

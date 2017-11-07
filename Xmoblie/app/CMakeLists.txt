@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 
 set(pathOPENCV F:/ProgramFile/opencv/opencv-3.3.0-android-sdk/OpenCV-android-sdk)
-set(pathPROJECT C:/Users/HP/AndroidStudioProjects/Xmoblie)
+set(pathPROJECT C:/Users/HP/Desktop/Xmoblie/Xmoblie)
 set(pathLIBOPENCV_JAVA ${pathPROJECT}/app/src/main/JniLibs/${ANDROID_ABI}/libopencv_java3.so)
 
 set(CMAKE_VERBOSE_MAKEFILE on)
@@ -36,7 +36,7 @@ add_library( lib_opencv SHARED IMPORTED )
 set_target_properties(lib_opencv PROPERTIES IMPORTED_LOCATION ${pathLIBOPENCV_JAVA})
 
 
-# Searche s for a specified prebuilt library and stores the path as a
+# Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
 # you want to add. CMake verifies that the library exists before

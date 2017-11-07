@@ -1,8 +1,12 @@
 package com.example.hp.xmoblie.Utill;
 
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.example.hp.xmoblie.Service.DownloadManagerService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,18 +30,21 @@ public class DownloadMotherThread extends Thread {
     int thCnt = 0;
     int nowRunning = 0;
     String filename;
-    DownloadManager dm;
+    DownloadManagerService dm;
+    NotificationHandler handler;
 
     ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
     ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
 
-    public void run(int type, String filename, String path, String token, long offset, int length, DownloadManager dm) throws IOException {
+    public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
         this.filename = filename;
         this.dm =dm;
 
         len = length;
         left = length;
 
+        handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
+        handler.sendEmptyMessage(0);
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
@@ -66,6 +73,12 @@ public class DownloadMotherThread extends Thread {
             });
             thCnt++;
         }
+
+        Message message = handler.obtainMessage();
+        message.what =200;
+        message.arg1=thCnt;
+        handler.sendMessage(message);
+
         Log.e("downloadind","start");
         for (int i = nowRunning; i < 2; ++i) {
             if (run < thCnt) {
@@ -118,6 +131,11 @@ public class DownloadMotherThread extends Thread {
 
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
+        Message message = handler.obtainMessage();
+        message.what =100;
+        message.arg1=run;
+        handler.sendMessage(message);
+
         if (run == thCnt&&nowRunning==0) {
             saveImage();
         } else if(run<thCnt){
@@ -126,7 +144,6 @@ public class DownloadMotherThread extends Thread {
         }
 
     }
-
     public int finishedPakitCNT(){
         return run+1;
     }

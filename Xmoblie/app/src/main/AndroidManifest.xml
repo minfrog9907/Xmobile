@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.hp.xmoblie">
 
     <uses-feature android:name="android.hardware.camera2" />
@@ -12,7 +13,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
+    <uses-permission xmlns:tools="http://schemas.android.com/tools"
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_xmobile"
@@ -33,6 +36,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="sharedLink" android:host="filemanager"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
         </activity>
         <activity android:name=".Activity.CheerPopUp">
             <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
@@ -47,7 +57,9 @@
 
         <activity
             android:name=".Activity.LoginActivity"
-            android:theme="@style/AppTheme.Dark.Login" />
+            android:theme="@style/AppTheme.Dark.Login" >
+
+        </activity>
         <activity android:name=".Activity.SettingActivity">
 
 
@@ -56,7 +68,9 @@
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
         <activity
             android:name=".Activity.CameraResultActivity"
             android:hardwareAccelerated="false">
@@ -69,8 +83,9 @@
         <activity android:name=".Activity.AreYouSurePopUp"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
-        <service android:name=".Utill.DownloadManager"/>
-        <service android:name=".Utill.NotificationBarService"/>
+
+        <service android:name=".Service.DownloadManagerService"/>
+        <service android:name=".Service.NotificationBarService"/>
     </application>
 
 </manifest>

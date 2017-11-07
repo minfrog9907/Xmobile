@@ -1,5 +1,8 @@
 package com.example.hp.xmoblie.Utill;
 
+import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.NotificationBarService;
+
 /**
  * Created by HP on 2017-11-02.
  */
@@ -7,7 +10,7 @@ package com.example.hp.xmoblie.Utill;
 public class ServiceControlCenter {
     private static ServiceControlCenter instance;
 
-    DownloadManager downloadManager;
+    DownloadManagerService downloadManagerService;
     NotificationBarService notificationBarService;
 
     public static ServiceControlCenter getInstance() {
@@ -17,16 +20,16 @@ public class ServiceControlCenter {
             return instance;
     }
 
-    public void setDownloadManager(DownloadManager downloadManager) {
-        this.downloadManager = downloadManager;
+    public void setDownloadManagerService(DownloadManagerService downloadManagerService) {
+        this.downloadManagerService = downloadManagerService;
     }
 
     public void setNotificationBarService(NotificationBarService notificationBarService) {
         this.notificationBarService = notificationBarService;
     }
 
-    public DownloadManager getDownloadManager() {
-        return downloadManager;
+    public DownloadManagerService getDownloadManagerService() {
+        return downloadManagerService;
     }
 
     public NotificationBarService getNotificationBarService() {
@@ -34,11 +37,11 @@ public class ServiceControlCenter {
     }
 
     public void downloadFinish(){
-        downloadManager = null;
+        downloadManagerService = null;
     }
 
     public boolean isAbleDownload(){
-        if(downloadManager == null)
+        if(downloadManagerService == null)
             return true;
         else
             return false;

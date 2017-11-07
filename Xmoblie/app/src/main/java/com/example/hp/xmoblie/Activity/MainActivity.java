@@ -14,11 +14,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
-import com.example.hp.xmoblie.Utill.NotificationBarService;
+import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
@@ -146,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent =new Intent(MainActivity.this, NotificationBarService.class);
         bindService(intent,mConnection,BIND_AUTO_CREATE);
-
 
     }
 

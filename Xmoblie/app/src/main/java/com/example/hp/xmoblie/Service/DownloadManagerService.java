@@ -1,21 +1,13 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Service;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.hp.xmoblie.R;
-import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Utill.DownloadMotherThread;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
 import java.io.IOException;
 
@@ -23,7 +15,7 @@ import java.io.IOException;
  * Created by HP on 2017-10-30.
  */
 
-public class DownloadManager extends Service {
+public class DownloadManagerService extends Service {
     int length = 0;
     int left;
     int type = 1;
@@ -37,7 +29,7 @@ public class DownloadManager extends Service {
     ApiClient apiClient;
 
     DownloadMotherThread dlm;
-    IBinder mBinder = new DownloadManager.LocalBinder();
+    IBinder mBinder = new DownloadManagerService.LocalBinder();
 
 
     @Nullable
@@ -91,8 +83,8 @@ public class DownloadManager extends Service {
     }
 
     public class LocalBinder extends Binder {
-        public DownloadManager getServerInstance() {
-            return DownloadManager.this;
+        public DownloadManagerService getServerInstance() {
+            return DownloadManagerService.this;
         }
     }
 

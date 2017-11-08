@@ -1,5 +1,8 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +16,7 @@ import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +55,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 
 
@@ -91,6 +96,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private int cfbgHeight;
     private FileManagerListAdapter listAdapter;
     private ScrollView fileListScroll;
+    private FloatingActionMenu material_design_android_floating_action_menu;
     private FloatingActionButton takePhotoBtn, uploadFileBtn, makeFolderBtn;
 
     private ApiClient apiClient;
@@ -139,6 +145,7 @@ public class FileManagerActivity extends AppCompatActivity {
         expListView = (OverScrollListView) findViewById(R.id.fileList);
         cfbg = (CustomFilemanagerBtnGroup) findViewById(R.id.cfbg);
         fileListScroll = (ScrollView) findViewById(R.id.fileListScroll);
+        material_design_android_floating_action_menu = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
@@ -215,12 +222,34 @@ public class FileManagerActivity extends AppCompatActivity {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                FileItemHolder fileItemHolder = (FileItemHolder) view.getTag();
+                FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
                 if (!selectMode) {
                     changeSelectMode();
-                    selectItem((FileItemHolder) view.getTag());
+                    selectItem(fileItemHolder);
                     adapterView.setSelection(i);
                 }
+
+                    ImageView imageView = view.findViewById(R.id.fileIcon);
+
+                    // 태그 생성
+                    ClipData.Item item = new ClipData.Item(
+                            (CharSequence) fileItem.getFilename());
+
+                    String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
+                    ClipData data = new ClipData(fileItem.getFilename(),mimeTypes, item);
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+
+                    imageView.startDrag(data, // data to be dragged
+                            shadowBuilder, // drag shadow
+                            imageView, // 드래그 드랍할  Vew
+                            0 // 필요없은 플래그
+                    );
+
+                    imageView.setVisibility(View.INVISIBLE);
+
                 return true;
+
             }
         });
 
@@ -233,8 +262,8 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
-        Drawable d = new BitmapDrawable(getResources(), "ic_stat_name");
-        expListView.setOverscrollHeader(d);
+//        Drawable d = new BitmapDrawable(getResources(), "ic_stat_name");
+//        expListView.setOverscrollHeader(d);
         expListView.setOverScrollOffsetY(100);
 
         spinnerOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -274,6 +303,7 @@ public class FileManagerActivity extends AppCompatActivity {
         });
 
         /* Floating button 클릭 이벤트 */
+
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -299,9 +329,11 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
-    /* 경로 이동 및 파일 실행 */
+    /* 프로토콜 */
 
     private void fileProtocal(String path) {
         if (startFileProtocal) return;
@@ -341,6 +373,61 @@ public class FileManagerActivity extends AppCompatActivity {
         });
 
     }
+
+    private void removeFileProtocal(ArrayList<DeleteItem> deleteItemList){
+        Gson gson = new Gson();
+        String jsonPlace = gson.toJson(deleteItemList);
+
+        final Call<ResponseBody> call = apiClient.repoFileDelete(getIntent().getStringExtra("token"), jsonPlace);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "파일이 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    changeListMode();
+                    searchFile(searchData);
+                } else if (response.errorBody() != null) {
+                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void removeFolderProtocal(final String folderName){
+        final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), searchData, folderName);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "'" +folderName + "' 폴더가 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    changeListMode();
+                    searchFile(searchData);
+                }else if(response.code() == 400) {
+                    Toast.makeText(FileManagerActivity.this, "'" +folderName + "' 폴더가 비어있지 않아 삭제가 불가능 합니다.", Toast.LENGTH_SHORT).show();
+                }else if (response.errorBody() != null) {
+                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /* 경로 이동 및 파일 실행 */
 
     private void searchFile(String path) {
         searchData = path;
@@ -461,7 +548,8 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private void changeListMode() {
         selectMode = false;
-        controllBtnGroup();
+        toggleFloating(selectMode);
+        controllBtnGroup(false);
         checkedItems.clear();
         int count = listAdapter.getCount();
 
@@ -480,7 +568,8 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private void changeSelectMode() {
         selectMode = true;
-        controllBtnGroup();
+        toggleFloating(selectMode);
+        controllBtnGroup(true);
         int count = listAdapter.getCount();
 
         for (int i = 0; i < count; i++) {
@@ -503,11 +592,11 @@ public class FileManagerActivity extends AppCompatActivity {
         changeCBGMod();
     }
 
-    private void controllBtnGroup() {
+    private void controllBtnGroup(boolean showBtnGroup) {
         ResizeAnimation animation = new ResizeAnimation(cfbg);
         cfbg.setMultiMod(false);
         animation.setDuration(250);
-        if (selectMode) {
+        if (showBtnGroup) {
             animation.setParams(0, cfbgHeight);
         } else {
             animation.setParams(cfbgHeight, 0);
@@ -536,12 +625,24 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     }
 
+    private void toggleFloating(boolean isSelectMod) {
+        if (isSelectMod) {
+            material_design_android_floating_action_menu.setVisibility(View.GONE);
+        } else {
+            material_design_android_floating_action_menu.setVisibility(View.VISIBLE);
+        }
+    }
+
     /*ButtonGroup 클릭 이벤트*/
 
     private void addBtnEvent(List<View> viewList) {
         int count = viewList.size();
         for (int i = 0; i < count; i++) {
-            viewList.get(i).setOnClickListener(CFBOnclick);
+            View view = viewList.get(i);
+            view.setOnClickListener(CFBOnclick);
+            if(view.getId() == R.id.deleteFileBtn){
+                view.setOnDragListener(new DragListener());
+            }
         }
     }
 
@@ -611,46 +712,48 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void removeFile() {
-        Log.d("clicked button", "removeFile");
         ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
+        ArrayList<String> deleteFolderList = new ArrayList<>();
         DeleteItem deleteItem;
-        for (int i = 0; i < checkedItems.size(); i++) {
-            deleteItem = new DeleteItem();
-            String fileName = checkedItems.get(i).getFilename();
 
+        for (int i = 0; i < checkedItems.size(); i++) {
+            FileItem fileItem = checkedItems.get(i);
+            if(fileItem.getType() == 128){
+                deleteItem = new DeleteItem();
+                String fileName = checkedItems.get(i).getFilename();
+
+                deleteItem.setFilename(fileName);
+                deleteItem.setPath(searchData);
+
+                deleteItemList.add(deleteItem);
+            }else if(fileItem.getType() == 16){
+                deleteFolderList.add(fileItem.getFilename());
+            }
+        }
+        if(deleteItemList.size() > 0) {
+            removeFileProtocal(deleteItemList);
+        }
+        if(deleteFolderList.size() > 0){
+            for(int i = 0; i < deleteFolderList.size(); i++){
+                removeFolderProtocal(deleteFolderList.get(i));
+            }
+        }
+    }
+
+    private void removeFile(FileItem fileItem){
+        if(fileItem.getType() == 128){
+            ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
+            DeleteItem deleteItem = new DeleteItem();
+            String fileName = fileItem.getFilename();
             deleteItem.setFilename(fileName);
             deleteItem.setPath(searchData);
-
             deleteItemList.add(deleteItem);
+
+            removeFileProtocal(deleteItemList);
+        }else if(fileItem.getType() == 16){
+            removeFolderProtocal(fileItem.getFilename());
         }
 
-
-        Gson gson = new Gson();
-        String jsonPlace = gson.toJson(deleteItemList);
-
-        RequestBody requestBody = RequestBody.create(JSON, jsonPlace);
-
-        final Call<ResponseBody> call = apiClient.repoDelete(getIntent().getStringExtra("token"), jsonPlace);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "파일이 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                    changeListMode();
-                    searchFile(searchData);
-                } else if (response.errorBody() != null) {
-                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 
@@ -675,14 +778,15 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
     }
-    private void renameFile(String newName, String oldName){
+
+    private void renameFile(String newName, String oldName) {
         final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
-        System.out.println(oldName + "     " + searchData + "     "+ newName);
+        System.out.println(oldName + "     " + searchData + "     " + newName);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                 }
@@ -696,7 +800,7 @@ public class FileManagerActivity extends AppCompatActivity {
         });
     }
 
-    private boolean checkFileFormat(String newDir){
+    private boolean checkFileFormat(String newDir) {
         if (newDir != null) {
 
             if (newDir.length() <= 30) {
@@ -736,14 +840,15 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean FileManagement(String newDir){
-        if(checkFileFormat(newDir)){
+    private boolean FileManagement(String newDir) {
+        if (checkFileFormat(newDir)) {
             mkDir(newDir);
         }
         return checkFileFormat(newDir);
     }
-    private boolean FileManagement(String newName, String oldName){
-        if(checkFileFormat(newName)){
+
+    private boolean FileManagement(String newName, String oldName) {
+        if (checkFileFormat(newName)) {
             renameFile(newName, oldName);
         }
         return checkFileFormat(newName);
@@ -755,11 +860,13 @@ public class FileManagerActivity extends AppCompatActivity {
         CreateDialogFragment dialog = null;
         InputListener inputListener;
 
-        switch (dialogType){
-            case "mkdir" :
+        switch (dialogType) {
+            case "mkdir":
                 inputListener = new InputListener() {
                     @Override
-                    public boolean onInputComplete(String newDir) {return FileManagement(newDir);}
+                    public boolean onInputComplete(String newDir) {
+                        return FileManagement(newDir);
+                    }
                 };
                 dialog = MkdirDialogFragment.newInstance(inputListener, searchData.replace("\\", "/"));
                 break;
@@ -767,15 +874,17 @@ public class FileManagerActivity extends AppCompatActivity {
                 final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
                 inputListener = new InputListener() {
                     @Override
-                    public boolean onInputComplete(String newDir) {return FileManagement(newDir, oldName);}
+                    public boolean onInputComplete(String newDir) {
+                        return FileManagement(newDir, oldName);
+                    }
                 };
                 dialog = RenameDialogFragment.newInstance(inputListener, oldName);
                 break;
 
         }
-        if(dialog != null){
+        if (dialog != null) {
             dialog.show(getSupportFragmentManager(), "addDialog");
-        }else{
+        } else {
             Toast.makeText(this, "잘못된 요청 입니다.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -808,4 +917,60 @@ public class FileManagerActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    class DragListener implements View.OnDragListener {
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+
+            // 이벤트 시작
+            switch (event.getAction()) {
+
+                // 이미지를 드래그 시작될때
+                case DragEvent.ACTION_DRAG_STARTED:
+                    Log.d("DragClickListener", "ACTION_DRAG_STARTED");
+                    break;
+
+                // 드래그한 이미지를 옮길려는 지역으로 들어왔을때
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    Log.d("DragClickListener", "ACTION_DRAG_ENTERED");
+                    // 이미지가 들어왔다는 것을 알려주기 위해 배경이미지 변경
+//                    v.setBackground(targetShape);
+                    break;
+
+                // 드래그한 이미지가 영역을 빠져 나갈때
+                case DragEvent.ACTION_DRAG_EXITED:
+                    Log.d("DragClickListener", "ACTION_DRAG_EXITED");
+//                    v.setBackground(normalShape);
+                    break;
+
+                // 이미지를 드래그해서 드랍시켰을때
+                case DragEvent.ACTION_DROP:
+                    Log.d("DragClickListener", "ACTION_DROP");
+
+                    if (v == findViewById(R.id.deleteFileBtn)) {
+                        View view = (View) event.getLocalState();
+                        ViewGroup viewgroup = (ViewGroup) view
+                                .getParent();
+                        FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
+                        FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+                        removeFile(fileItem);
+                    }
+                    break;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    Log.d("DragClickListener", "ACTION_DRAG_ENDED");
+                    View view = (View) event.getLocalState();
+                    view.setVisibility(View.VISIBLE);
+
+//                    v.setBackground(normalShape); // go back to normal shape
+
+                default:
+                    break;
+            }
+            return true;
+        }
+    }
+
 }
+

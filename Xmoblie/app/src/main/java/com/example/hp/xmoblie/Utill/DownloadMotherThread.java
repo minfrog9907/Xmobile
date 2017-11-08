@@ -23,7 +23,7 @@ import okio.BufferedSource;
  */
 
 public class DownloadMotherThread extends Thread {
-    int LENGTH =100000;
+    int LENGTH =37268;
     int len;
     int left;
     int run = 0;
@@ -43,8 +43,9 @@ public class DownloadMotherThread extends Thread {
         len = length;
         left = length;
 
-        handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
-        handler.sendEmptyMessage(0);
+        //handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
+        //handler.sendEmptyMessage(0);
+
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
@@ -74,10 +75,11 @@ public class DownloadMotherThread extends Thread {
             thCnt++;
         }
 
-        Message message = handler.obtainMessage();
-        message.what =200;
-        message.arg1=thCnt;
-        handler.sendMessage(message);
+       // Message message = handler.obtainMessage();
+      //  message.what =200;
+       // message.arg1=thCnt;
+       // handler.sendMessage(message);
+
 
         Log.e("downloadind","start");
         for (int i = nowRunning; i < 2; ++i) {
@@ -131,10 +133,11 @@ public class DownloadMotherThread extends Thread {
 
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
-        Message message = handler.obtainMessage();
-        message.what =100;
-        message.arg1=run;
-        handler.sendMessage(message);
+       // Message message = handler.obtainMessage();
+        ///message.what =100;
+       /// message.arg1=run;
+       // handler.sendMessage(message);
+
 
         if (run == thCnt&&nowRunning==0) {
             saveImage();

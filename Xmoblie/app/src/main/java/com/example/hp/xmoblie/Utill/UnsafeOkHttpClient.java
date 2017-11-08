@@ -1,5 +1,7 @@
 package com.example.hp.xmoblie.Utill;
 
+import java.io.IOException;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -8,7 +10,10 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.cert.CertificateException;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by HP on 2017-10-31.
@@ -50,7 +55,18 @@ public class UnsafeOkHttpClient {
                     return true;
                 }
             });
+            builder.addInterceptor(new Interceptor() {
+                                          @Override
+                                          public Response intercept(Interceptor.Chain chain) throws IOException {
+                                              Request original = chain.request();
 
+                                              Request request = original.newBuilder()
+                                                      .header("Accept-Encoding","")
+                                                      .build();
+
+                                              return chain.proceed(request);
+                                          }
+                                      });
             OkHttpClient okHttpClient = builder.build();
             return okHttpClient;
         } catch (Exception e) {

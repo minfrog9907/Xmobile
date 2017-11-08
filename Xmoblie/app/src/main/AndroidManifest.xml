@@ -40,8 +40,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="sharedLink" android:host="filemanager"
-                    tools:ignore="AppLinkUrlError" />
+                <data android:scheme="sharedlink" android:host="filemanager"/>
             </intent-filter>
         </activity>
         <activity android:name=".Activity.CheerPopUp">

@@ -10,6 +10,7 @@ import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
+import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
 import java.util.List;
 
@@ -52,8 +53,9 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://xstream.lfconfig.xyz")//.baseUrl("https://10.1.21.228")
-            //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+            .baseUrl("https://xstream.lfconfig.xyz")
+            //.baseUrl("https://10.1.21.228")
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
     ApiClient severService = filesever.create(ApiClient.class);

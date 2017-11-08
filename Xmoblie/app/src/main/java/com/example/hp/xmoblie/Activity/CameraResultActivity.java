@@ -26,6 +26,7 @@ import com.example.hp.xmoblie.Custom.SideStick_BTN;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.UploadService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
 import org.opencv.android.Utils;
@@ -135,11 +136,11 @@ public class CameraResultActivity extends AppCompatActivity {
                     startService(new Intent(CameraResultActivity.this, DownloadManagerService.class)
                             .putExtra("type", 1)
                             //.putExtra("filename","awef.txt")
-                            .putExtra("filename", "test.ps1")
+                            .putExtra("filename", "vdisk.PNG")
                             .putExtra("path", "\\")
                             .putExtra("token", getIntent().getStringExtra("token"))
                             .putExtra("offset", 0)
-                            .putExtra("length", 54085));
+                            .putExtra("length", 97287));
                 //.putExtra("length", 4 ));
             }
         });
@@ -152,7 +153,12 @@ public class CameraResultActivity extends AppCompatActivity {
         nameEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFile("/storage/emulated/0/Download/bills","asdfasdf.jpg");
+                startService(new Intent(CameraResultActivity.this, UploadService.class)
+                        .putExtra("token", getIntent().getStringExtra("token"))
+                        .putExtra("path", "/storage/emulated/0/Download/bills")
+                        .putExtra("filename", "asdfasdf.jpg")
+                        .putExtra("target", "\\"));
+
 
             }
         });
@@ -274,54 +280,13 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                Toast.makeText(getApplicationContext(),"Upload Success",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Upload Success", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getApplicationContext(),"Upload Fail",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Upload Fail", Toast.LENGTH_SHORT).show();
 
-            }
-        });
-    }
-
-    private void uploadFile(String path,String filename) {
-        // create upload service client
-
-        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
-        // use the FileUtils to get the actual file by uri
-        Log.e("path", Uri.parse(path) + "");
-        File file = new File(path+"/"+filename);
-
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse(path+"/"+filename),
-                        file
-                );
-
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-
-        // add another part within the multipart request
-        String descriptionString = "file data";
-        RequestBody description =
-                RequestBody.create(
-                        okhttp3.MultipartBody.FORM, descriptionString);
-
-        // finally, execute the request
-        Call<ResponseBody> call = apiClient.repoUpload(getIntent().getStringExtra("token"), description, body,"\\");
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call,
-                                   Response<ResponseBody> response) {
-                Toast.makeText(getApplicationContext(),"업로드 완료",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Upload error:", t.getMessage());
             }
         });
     }

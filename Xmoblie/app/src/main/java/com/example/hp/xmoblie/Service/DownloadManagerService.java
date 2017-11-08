@@ -61,8 +61,8 @@ public class DownloadManagerService extends Service {
 
         try {
             downloadFile();
-            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-            serviceControlCenter.getNotificationBarService().startDownload();
+           // ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+           // serviceControlCenter.getNotificationBarService().startDownload();
         } catch (IOException e) {
             e.printStackTrace();
         }

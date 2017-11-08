@@ -52,9 +52,9 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("https://xstream.lfconfig.xyz")
+            .baseUrl("http://xstream.lfconfig.xyz")
             //.baseUrl("https://10.1.21.228")
-            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+            //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
     ApiClient severService = filesever.create(ApiClient.class);

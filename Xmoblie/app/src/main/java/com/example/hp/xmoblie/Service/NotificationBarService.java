@@ -45,6 +45,16 @@ public class NotificationBarService extends Service {
         super.onCreate();
         Notifi_M = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         handler = new NotificationHandler();
+
+        Intent intent = new Intent(NotificationBarService.this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(NotificationBarService.this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder = new Notification.Builder(getApplicationContext());
+        builder.setSmallIcon(R.drawable.ic_launcher).setTicker("HETT").setWhen(System.currentTimeMillis())
+                .setNumber(1).setContentTitle("다운로드중").setContentText("다운로드중")
+                .setProgress(100,0,true)
+                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE).setContentIntent(pendingIntent).setAutoCancel(true);
+
         Log.e("Created","Nofitication Created");
     }
 
@@ -60,14 +70,6 @@ public class NotificationBarService extends Service {
     }
     public void startDownload(){
         Log.e("asd","asd");
-        Intent intent = new Intent(NotificationBarService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(NotificationBarService.this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder = new Notification.Builder(getApplicationContext());
-        builder.setSmallIcon(R.drawable.ic_launcher).setTicker("HETT").setWhen(System.currentTimeMillis())
-                .setNumber(1).setContentTitle("다운로드중").setContentText("다운로드중")
-                .setProgress(100,0,true)
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE).setContentIntent(pendingIntent).setAutoCancel(true);
 
         Notifi_M.notify( 1 , builder.build());
     }

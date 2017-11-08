@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#D9D9D9"
-            android:text=" '/' 경로에 새 폴더가 생성 됩니다. "/>
+            android:text=" 'FileName' 의 이름을 변경합니다."/>
 
         <EditText
             android:id="@+id/editdata_edit"

@@ -23,13 +23,9 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-<<<<<<< HEAD
+
 import retrofit2.http.HEAD;
 import retrofit2.http.HTTP;
-=======
-import retrofit2.http.HTTP;
-
->>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -89,7 +85,7 @@ public interface ApiClient {
 
     @FormUrlEncoded
     @PUT("/file")
-    Call<JustRequestItem> repoRename(
+    Call<ResponseBody> repoRename(
             @Header("token") String token,
             @Field("originalName") String originalName,
             @Field("path") String path,
@@ -105,11 +101,7 @@ public interface ApiClient {
             @Field("targetPath") String targetPath);
 
     @GET("/winfile/mkdir")
-<<<<<<< HEAD
     Call<ResponseBody>repoMkDir(
-=======
-    Call<JustRequestItem> repoMkDir(
->>>>>>> 0dfeb4fdef448097af09948015d5d34fbd5f2d80
             @Header("token") String token
             , @Query("dirname") String dirname
             , @Query("path") String path

@@ -40,6 +40,9 @@ import com.example.hp.xmoblie.Animation.ResizeAnimation;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtn;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
 import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
+import com.example.hp.xmoblie.Dialog.InputListener;
+import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
+import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
@@ -224,7 +227,7 @@ public class FileManagerActivity extends AppCompatActivity {
         expListView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
             @Override
             public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
-                if(exceededOffset){
+                if (exceededOffset) {
                     searchFile(searchData);
                 }
             }
@@ -288,10 +291,10 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(searchData == "\\"){
+                if (searchData == "\\") {
                     Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
-                }else {
-                    createDialog();
+                } else {
+                    createDialog("mkdir");
                 }
             }
         });
@@ -596,7 +599,7 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void changeName() {
-        Log.d("clicked button", "changName");
+        createDialog("renamefile");
     }
 
     private void addTad() {
@@ -651,7 +654,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
     }
 
-    /* FloatingActionButton 클릭 이벤트 */
+    /* 파일 관리 메소드 */
 
     private void mkDir(String dir) {
         final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
@@ -661,7 +664,27 @@ public class FileManagerActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(FileManagerActivity.this, "폴더 생성중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+                searchFile(searchData);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void renameFile(String newName, String oldName){
+        final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
+        System.out.println(oldName + "     " + searchData + "     "+ newName);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다..", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                 }
                 searchFile(searchData);
             }
@@ -673,55 +696,91 @@ public class FileManagerActivity extends AppCompatActivity {
         });
     }
 
+    private boolean checkFileFormat(String newDir){
+        if (newDir != null) {
+
+            if (newDir.length() <= 30) {
+
+                if (newDir.length() + searchData.length() <= 180) {
+
+                    try {
+
+                        String eucKrDir = new String(newDir.getBytes("utf-8"), "euc-kr");
+                        if (newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")) {
+
+                            return true;
+
+                        } else {
+                            Toast.makeText(FileManagerActivity.this, "폴더명에 들어갈 수 없는 문자가 포함되어 있습니다.", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+
+                    } catch (UnsupportedEncodingException e) {
+
+                        e.printStackTrace();
+
+                    }
+                } else {
+
+                    Toast.makeText(FileManagerActivity.this, "폴더명 + 경로명은 200자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
+
+                }
+
+            } else {
+
+                Toast.makeText(FileManagerActivity.this, "폴더명은 30자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }
+        return false;
+    }
+
+    private boolean FileManagement(String newDir){
+        if(checkFileFormat(newDir)){
+            mkDir(newDir);
+        }
+        return checkFileFormat(newDir);
+    }
+    private boolean FileManagement(String newName, String oldName){
+        if(checkFileFormat(newName)){
+            renameFile(newName, oldName);
+        }
+        return checkFileFormat(newName);
+    }
 
     /* create dialog */
 
-    private void createDialog() {
-        CreateDialogFragment dialog = CreateDialogFragment.newInstance(new CreateDialogFragment.DirInputListener() {
-            @Override
-            public boolean onDirInputComplete(String newDir) {
-                if(newDir != null) {
+    private void createDialog(String dialogType) {
+        CreateDialogFragment dialog = null;
+        InputListener inputListener;
 
-                    if(newDir.length() <= 30){
+        switch (dialogType){
+            case "mkdir" :
+                inputListener = new InputListener() {
+                    @Override
+                    public boolean onInputComplete(String newDir) {return FileManagement(newDir);}
+                };
+                dialog = MkdirDialogFragment.newInstance(inputListener, searchData.replace("\\", "/"));
+                break;
+            case "renamefile":
+                final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
+                inputListener = new InputListener() {
+                    @Override
+                    public boolean onInputComplete(String newDir) {return FileManagement(newDir, oldName);}
+                };
+                dialog = RenameDialogFragment.newInstance(inputListener, oldName);
+                break;
 
-                        if(newDir.length() + searchData.length() <= 200){
-
-                            try {
-
-                                String eucKrDir = new String(newDir.getBytes("utf-8"), "euc-kr");
-                                if(newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")){
-
-                                    mkDir(eucKrDir);
-                                    return true;
-
-                                }else{
-                                    Toast.makeText(FileManagerActivity.this, "폴더명에 들어갈 수 없는 문자가 포함되어 있습니다.", Toast.LENGTH_SHORT).show();
-                                    return false;
-                                }
-
-                            } catch (UnsupportedEncodingException e) {
-
-                                e.printStackTrace();
-
-                            }
-                        }else{
-
-                            Toast.makeText(FileManagerActivity.this, "폴더명 + 경로명은 200자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
-
-                        }
-
-                    }else{
-
-                        Toast.makeText(FileManagerActivity.this, "폴더명은 30자를 넘지 말아야 합니다.", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                }
-                return false;
-            }
-        }, searchData.replace("\\","/"));
-        dialog.show(getSupportFragmentManager(), "addDialog");
+        }
+        if(dialog != null){
+            dialog.show(getSupportFragmentManager(), "addDialog");
+        }else{
+            Toast.makeText(this, "잘못된 요청 입니다.", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     /* 디바이스 버튼 클릭 이벤트 */
 

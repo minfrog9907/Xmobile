@@ -61,13 +61,10 @@ public class DownloadManagerService extends Service {
 
         try {
             downloadFile();
-<<<<<<< HEAD
+
           //  ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
           //  serviceControlCenter.getNotificationBarService().startDownload();
-=======
-           // ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-           // serviceControlCenter.getNotificationBarService().startDownload();
->>>>>>> 6db906d1438176b6a9a18c808784aecc3962a855
+
         } catch (IOException e) {
             e.printStackTrace();
         }

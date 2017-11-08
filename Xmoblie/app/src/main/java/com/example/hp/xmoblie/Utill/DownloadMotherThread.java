@@ -43,13 +43,9 @@ public class DownloadMotherThread extends Thread {
         len = length;
         left = length;
 
-<<<<<<< HEAD:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownLoadMotherThread.java
         //handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         //handler.sendEmptyMessage(0);
-=======
-       // handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
-       // handler.sendEmptyMessage(0);
->>>>>>> 6db906d1438176b6a9a18c808784aecc3962a855:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownloadMotherThread.java
+
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
@@ -80,15 +76,10 @@ public class DownloadMotherThread extends Thread {
         }
 
        // Message message = handler.obtainMessage();
-<<<<<<< HEAD:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownLoadMotherThread.java
       //  message.what =200;
        // message.arg1=thCnt;
        // handler.sendMessage(message);
-=======
-        //message.what =200;
-       // message.arg1=thCnt;
-        //handler.sendMessage(message);
->>>>>>> 6db906d1438176b6a9a18c808784aecc3962a855:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownloadMotherThread.java
+
 
         Log.e("downloadind","start");
         for (int i = nowRunning; i < 2; ++i) {
@@ -143,15 +134,10 @@ public class DownloadMotherThread extends Thread {
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
        // Message message = handler.obtainMessage();
-<<<<<<< HEAD:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownLoadMotherThread.java
         ///message.what =100;
        /// message.arg1=run;
        // handler.sendMessage(message);
-=======
-       // message.what =100;
-        //message.arg1=run;
-        //handler.sendMessage(message);
->>>>>>> 6db906d1438176b6a9a18c808784aecc3962a855:Xmoblie/app/src/main/java/com/example/hp/xmoblie/Utill/DownloadMotherThread.java
+
 
         if (run == thCnt&&nowRunning==0) {
             saveImage();

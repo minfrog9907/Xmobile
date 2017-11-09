@@ -81,9 +81,18 @@ public interface ApiClient {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/file", hasBody = true)
-    Call<ResponseBody> repoDelete(
+    Call<ResponseBody> repoFileDelete(
             @Header("token") String token,
             @Field("list") String list
+    );
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/file/dir", hasBody = true)
+    Call<ResponseBody> repoFolderDelete(
+            @Header("token") String token,
+            @Field("path") String path,
+            @Field("filename") String filename
+
     );
 
     @FormUrlEncoded

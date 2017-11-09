@@ -68,6 +68,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -232,25 +233,25 @@ public class FileManagerActivity extends AppCompatActivity {
                     changeSelectMode();
                     selectItem(fileItemHolder);
                     adapterView.setSelection(i);
+
+                    ImageView imageView = view.findViewById(R.id.fileIcon);
+
+                    // 태그 생성
+                    ClipData.Item item = new ClipData.Item(
+                            (CharSequence) fileItem.getFilename());
+
+                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                    ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+
+                    imageView.startDrag(data, // data to be dragged
+                            shadowBuilder, // drag shadow
+                            imageView, // 드래그 드랍할  Vew
+                            0 // 필요없은 플래그
+                    );
+
+                    imageView.setVisibility(View.INVISIBLE);
                 }
-
-                ImageView imageView = view.findViewById(R.id.fileIcon);
-
-                // 태그 생성
-                ClipData.Item item = new ClipData.Item(
-                        (CharSequence) fileItem.getFilename());
-
-                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-                ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
-                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
-
-                imageView.startDrag(data, // data to be dragged
-                        shadowBuilder, // drag shadow
-                        imageView, // 드래그 드랍할  Vew
-                        0 // 필요없은 플래그
-                );
-
-                imageView.setVisibility(View.INVISIBLE);
 
                 return true;
 
@@ -342,25 +343,34 @@ public class FileManagerActivity extends AppCompatActivity {
         private String psearchData = null;
         private ArrayList<DeleteItem> deleteItemList = null;
         private String folderName = null;
+        private String newName = null;
+        private String oldName = null;
+        private String newDir = null;
 
-        public void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
+        void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
             this.deleteItemList = deleteItemList;
         }
-
-        public void setFolderName(String folderName) {
+        void setFolderName(String folderName) {
             this.folderName = folderName;
         }
-
-        public void setSearchData(String searchData) {
+        void setSearchData(String searchData) {
             this.psearchData = searchData;
         }
-
-        public void setProtocol(String protocol) {
+        void setProtocol(String protocol) {
             this.protocol = protocol;
         }
+        void setNewName(String newName) {
+            this.newName = newName;
+        }
+        void setOldName(String oldName) {
+            this.oldName = oldName;
+        }
+        void setNewDir(String newDir) {
+            this.newDir = newDir;
+        }
 
-        public void activateProtocol() {
-            if (protocol != null){
+        void activateProtocol() {
+            if (protocol != null) {
                 switch (protocol) {
                     case "fileProtocol":
                         if (psearchData != null) {
@@ -392,11 +402,29 @@ public class FileManagerActivity extends AppCompatActivity {
                             Log.e("Protocol", "you need setSearchData");
                         }
                         break;
+                    case "renameFileProtocol":
+                        if (newName != null) {
+                            if (oldName != null) {
+                                renameFileProtocol(newName, oldName);
+                            } else {
+                                Log.e("Protocol", "you need setOldName");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setNewName");
+                        }
+                        break;
+                    case "mkDir":
+                        if(newDir != null){
+                            mkDir(newDir);
+                        }else{
+                            Log.e("Protocol", "you need setNewDir");
+                        }
+                        break;
                     default:
                         Log.e("Protocol", " Nonexistent protocol");
                         break;
                 }
-            }else{
+            } else {
                 Log.e("Protocol", " you need setProtocol");
             }
         }
@@ -488,6 +516,47 @@ public class FileManagerActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private void renameFileProtocol(String newName, String oldName) {
+            final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                        changeListMode();
+                        searchFile(searchData);
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private void mkDir(String dir) {
+            final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    searchFile(searchData);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -709,9 +778,8 @@ public class FileManagerActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             View view = viewList.get(i);
             view.setOnClickListener(CFBOnclick);
-            if (view.getId() == R.id.deleteFileBtn) {
-                view.setOnDragListener(new DragListener());
-            }
+            view.setOnDragListener(new DragListener());
+
         }
     }
 
@@ -804,7 +872,7 @@ public class FileManagerActivity extends AppCompatActivity {
             protocol.setProtocol("removeFileProtocol");
             protocol.setSearchData(searchData);
             protocol.setDeleteItemList(deleteItemList);
-            protocol.activateProtocol();
+            confirmDialog("파일을 삭제 하시겠습니까?", protocol).show();
         }
         if (deleteFolderList.size() > 0) {
             for (int i = 0; i < deleteFolderList.size(); i++) {
@@ -812,7 +880,7 @@ public class FileManagerActivity extends AppCompatActivity {
                 protocol.setProtocol("removeFolderProtocol");
                 protocol.setSearchData(searchData);
                 protocol.setFolderName(deleteFolderList.get(i));
-                protocol.activateProtocol();
+                confirmDialog("'" + deleteFolderList.get(i) + "' 폴더를 삭제 하시겠습니까?", protocol).show();
             }
         }
     }
@@ -830,58 +898,16 @@ public class FileManagerActivity extends AppCompatActivity {
             protocol.setProtocol("removeFileProtocol");
             protocol.setSearchData(searchData);
             protocol.setDeleteItemList(deleteItemList);
+            confirmDialog("파일을 삭제 하시겠습니까?", protocol).show();
         } else if (fileItem.getType() == 16) {
             protocol.setProtocol("removeFolderProtocol");
             protocol.setSearchData(searchData);
             protocol.setFolderName(fileItem.getFilename());
+            confirmDialog("'" + fileItem.getFilename() + "' 폴더를 삭제 하시겠습니까?", protocol).show();
         }
-
-        protocol.activateProtocol();
-
     }
 
     /* 파일 관리 메소드 */
-
-    private void mkDir(String dir) {
-        final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-                searchFile(searchData);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void renameFile(String newName, String oldName) {
-        final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
-        System.out.println(oldName + "     " + searchData + "     " + newName);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-                searchFile(searchData);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private boolean checkFileFormat(String newDir) {
         if (newDir != null) {
@@ -892,14 +918,17 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     try {
 
-                        String eucKrDir = new String(newDir.getBytes("utf-8"), "euc-kr");
+                        byte[] stringbyte = newDir.getBytes(Charset.forName("euc-kr"));
+                        String eucKrDir = new String(stringbyte, "euc-kr");
+
+                        System.out.println(eucKrDir + "    " + newDir);
+
                         if (newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")) {
 
                             return true;
 
                         } else {
                             Toast.makeText(FileManagerActivity.this, "폴더명에 들어갈 수 없는 문자가 포함되어 있습니다.", Toast.LENGTH_SHORT).show();
-                            return false;
                         }
 
                     } catch (UnsupportedEncodingException e) {
@@ -925,16 +954,25 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private boolean FileManagement(String newDir) {
         if (checkFileFormat(newDir)) {
-            mkDir(newDir);
+            Protocol protocol = new Protocol();
+            protocol.setProtocol("mkDir");
+            protocol.setNewDir(newDir);
+            protocol.activateProtocol();
+            return true;
         }
-        return checkFileFormat(newDir);
+        return false;
     }
 
     private boolean FileManagement(String newName, String oldName) {
         if (checkFileFormat(newName)) {
-            renameFile(newName, oldName);
+            Protocol protocol = new Protocol();
+            protocol.setProtocol("renameFileProtocol");
+            protocol.setNewName(newName);
+            protocol.setOldName(oldName);
+            protocol.activateProtocol();
+            return true;
         }
-        return checkFileFormat(newName);
+        return false;
     }
 
     /* create dialog */
@@ -989,7 +1027,6 @@ public class FileManagerActivity extends AppCompatActivity {
                         dialogInterface.cancel();
                     }
                 });
-        System.out.println("대화상자");
         return builder.create();
     }
 
@@ -1021,12 +1058,6 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
-<<<<<<< HEAD
-    public void downloadFinish(){
-
-    }
-}
-=======
     class DragListener implements View.OnDragListener {
 
         @Override
@@ -1035,35 +1066,21 @@ public class FileManagerActivity extends AppCompatActivity {
             // 이벤트 시작
             switch (event.getAction()) {
 
-                // 이미지를 드래그 시작될때
-                case DragEvent.ACTION_DRAG_STARTED:
-                    Log.d("DragClickListener", "ACTION_DRAG_STARTED");
-                    break;
-
-                // 드래그한 이미지를 옮길려는 지역으로 들어왔을때
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    Log.d("DragClickListener", "ACTION_DRAG_ENTERED");
-                    // 이미지가 들어왔다는 것을 알려주기 위해 배경이미지 변경
-//                    v.setBackground(targetShape);
-                    break;
-
-                // 드래그한 이미지가 영역을 빠져 나갈때
-                case DragEvent.ACTION_DRAG_EXITED:
-                    Log.d("DragClickListener", "ACTION_DRAG_EXITED");
-//                    v.setBackground(normalShape);
-                    break;
-
                 // 이미지를 드래그해서 드랍시켰을때
                 case DragEvent.ACTION_DROP:
                     Log.d("DragClickListener", "ACTION_DROP");
+                    switch (v.getId()) {
+                        case R.id.deleteFileBtn:
+                            View view = (View) event.getLocalState();
+                            ViewGroup viewgroup = (ViewGroup) view
+                                    .getParent();
+                            FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
+                            FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+                            removeFile(fileItem);
+                            break;
+                        case R.id.changeName:
 
-                    if (v == findViewById(R.id.deleteFileBtn)) {
-                        View view = (View) event.getLocalState();
-                        ViewGroup viewgroup = (ViewGroup) view
-                                .getParent();
-                        FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
-                        FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
-                        removeFile(fileItem);
+                            break;
                     }
                     break;
 
@@ -1071,8 +1088,6 @@ public class FileManagerActivity extends AppCompatActivity {
                     Log.d("DragClickListener", "ACTION_DRAG_ENDED");
                     View view = (View) event.getLocalState();
                     view.setVisibility(View.VISIBLE);
-
-//                    v.setBackground(normalShape); // go back to normal shape
 
                 default:
                     break;
@@ -1084,4 +1099,3 @@ public class FileManagerActivity extends AppCompatActivity {
 
 }
 
->>>>>>> fce75488bde0251466b52561ce46254216d2e78c

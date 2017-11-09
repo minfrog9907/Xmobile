@@ -133,6 +133,7 @@ public class DownloadMotherThread extends Thread {
 
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
+        downloadThreads.get(id).interrupt();
        // Message message = handler.obtainMessage();
         ///message.what =100;
        /// message.arg1=run;
@@ -142,7 +143,7 @@ public class DownloadMotherThread extends Thread {
         if (run == thCnt&&nowRunning==0) {
             saveImage();
         } else if(run<thCnt){
-            downloadThreads.get(run++).start();
+            downloadThreads.get(run++).run();
             nowRunning++;
         }
 
@@ -150,6 +151,9 @@ public class DownloadMotherThread extends Thread {
     public int finishedPakitCNT(){
         return run+1;
     }
-
+    public void recall(int id){
+        Log.e("recall","recall");
+        downloadThreads.get(id).run();
+    }
 
 }

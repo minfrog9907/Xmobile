@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
+import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
@@ -131,16 +132,13 @@ public class CameraResultActivity extends AppCompatActivity {
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-                if (serviceControlCenter.isAbleDownload())
-                    startService(new Intent(CameraResultActivity.this, DownloadManagerService.class)
-                            .putExtra("type", 1)
-                            //.putExtra("filename","awef.txt")
-                            .putExtra("filename", "vdisk.PNG")
-                            .putExtra("path", "\\")
-                            .putExtra("token", getIntent().getStringExtra("token"))
-                            .putExtra("offset", 0)
-                            .putExtra("length", 97287));
+                try {
+                    if(ServiceControlCenter.getInstance().getDownloadManagerService()==null)
+                        Log.e("sibal","sibal");
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FileManagerActivity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 //.putExtra("length", 4 ));
             }
         });
@@ -291,21 +289,7 @@ public class CameraResultActivity extends AppCompatActivity {
         });
     }
 
-    ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("connected", "failed");
-        }
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("connected", "success");
-            DownloadManagerService.LocalBinder mLocalBinder = (DownloadManagerService.LocalBinder) service;
-            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-            serviceControlCenter.setDownloadManagerService(mLocalBinder.getServerInstance());
-
-        }
-    };
 
     /**
      * A native method that is implemented by the 'native-lib' native library,

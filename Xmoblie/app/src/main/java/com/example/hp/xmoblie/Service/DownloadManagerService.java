@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.example.hp.xmoblie.Activity.FileManagerActivity;
+import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Utill.DownloadMotherThread;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
@@ -17,7 +20,6 @@ import java.io.IOException;
 
 public class DownloadManagerService extends Service {
     int length = 0;
-    int left;
     int type = 1;
 
     long offet = 4096;
@@ -29,6 +31,8 @@ public class DownloadManagerService extends Service {
     ApiClient apiClient;
 
     DownloadMotherThread dlm;
+
+    FileManagerActivity fileManagerActivity;
     IBinder mBinder = new DownloadManagerService.LocalBinder();
 
 
@@ -51,45 +55,42 @@ public class DownloadManagerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        filename = intent.getStringExtra("filename");
-        path = intent.getStringExtra("path");
+
         token = intent.getStringExtra("token");
-        offet = intent.getLongExtra("offset", 0);
-        length = intent.getIntExtra("length", 4000);
-        type = intent.getIntExtra("type", 1);
-        left = length;
 
-        try {
-            downloadFile();
 
-          //  ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-          //  serviceControlCenter.getNotificationBarService().startDownload();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void downloadFile() throws IOException {
-        dlm = new DownloadMotherThread();
-        dlm.run(type, filename, path, token, offet, length, this);
+    public boolean downloadFile(DownloadRequestItem dri,FileManagerActivity fma) throws IOException {
+        if (!ServiceControlCenter.getInstance().isAbleDownload()) {
+            fileManagerActivity= fma;
+
+            offet = dri.getOffset();
+            length = dri.getLength();
+            type = dri.getType();
+            filename = dri.getFilename();
+            path = dri.getPath();
+
+            dlm = new DownloadMotherThread();
+            dlm.run(type, filename, path, token, offet, length, this);
+            return true;
+        } else
+            return false;
     }
 
     public void dead() {
         if (dlm != null && dlm.isAlive()) {
-            dlm.stop();
+            dlm.interrupt();
+            Log.e("kill","kill MT");
         }
-        stopSelf();
-
+        fileManagerActivity.downloadFinish();
     }
 
     public class LocalBinder extends Binder {
         public DownloadManagerService getServerInstance() {
             return DownloadManagerService.this;
+
         }
     }
-
-
-
 }

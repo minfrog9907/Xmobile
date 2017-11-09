@@ -808,4 +808,8 @@ public class FileManagerActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    public void downloadFinish(){
+
+    }
 }

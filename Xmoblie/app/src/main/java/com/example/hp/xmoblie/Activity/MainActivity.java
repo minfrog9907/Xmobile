@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
@@ -149,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent =new Intent(MainActivity.this, NotificationBarService.class);
         bindService(intent,mConnection,BIND_AUTO_CREATE);
-
+        bindService(new Intent(MainActivity.this, DownloadManagerService.class)
+                .putExtra("token", getIntent().getStringExtra("token"))
+                ,mDownConnection,BIND_AUTO_CREATE);
     }
 
     public void offWorkProgressClass(){
@@ -228,6 +231,21 @@ public class MainActivity extends AppCompatActivity {
             NotificationBarService.LocalBinder mLocalBinder = (NotificationBarService.LocalBinder)service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
             serviceControlCenter.setNotificationBarService(mLocalBinder.getServerInstance());
+
+        }
+    };
+    ServiceConnection mDownConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("connected", "failed");
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("connected", "success");
+            DownloadManagerService.LocalBinder mLocalBinder = (DownloadManagerService.LocalBinder) service;
+            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+            serviceControlCenter.setDownloadManagerService(mLocalBinder.getServerInstance());
 
         }
     };

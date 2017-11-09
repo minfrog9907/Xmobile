@@ -10,6 +10,8 @@ import com.example.hp.xmoblie.Service.NotificationBarService;
 public class ServiceControlCenter {
     private static ServiceControlCenter instance;
 
+    public boolean downloadNow=false;
+
     DownloadManagerService downloadManagerService;
     NotificationBarService notificationBarService;
 
@@ -37,14 +39,11 @@ public class ServiceControlCenter {
     }
 
     public void downloadFinish(){
-        downloadManagerService = null;
+        downloadNow=false;
     }
-
+    public void downloadStart(){downloadNow = true;}
     public boolean isAbleDownload(){
-        if(downloadManagerService == null)
-            return true;
-        else
-            return false;
+        return downloadNow;
     }
 
 }

@@ -24,7 +24,7 @@ public class DownloadThread extends Thread {
     int type;
     int id;
     int length;
-
+    int recallTime=0;
     long offset;
 
     String filename;
@@ -62,15 +62,20 @@ public class DownloadThread extends Thread {
                     e.printStackTrace();
                 }
                 if (this != null && isAlive())
-                    stop();
+                    interrupt();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("downloadsss",t.getMessage());
+                if(recallTime++!=4){
+                    dm.recall(id);
+                }
+                if (recallTime==4){}
 
             }
         });
+
     }
 
     public  void dataSet(int type, String filename, String path, String token, long offset, int length,int id,DownloadMotherThread dt){

@@ -1021,6 +1021,12 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
+<<<<<<< HEAD
+    public void downloadFinish(){
+
+    }
+}
+=======
     class DragListener implements View.OnDragListener {
 
         @Override
@@ -1078,3 +1084,4 @@ public class FileManagerActivity extends AppCompatActivity {
 
 }
 
+>>>>>>> fce75488bde0251466b52561ce46254216d2e78c

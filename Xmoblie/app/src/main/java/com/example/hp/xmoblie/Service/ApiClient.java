@@ -40,6 +40,7 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
+            //.baseUrl("http://10.1.21.228")
             .baseUrl("http://xmobile.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
@@ -54,7 +55,7 @@ public interface ApiClient {
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("https://xstream.lfconfig.xyz")
+            .baseUrl("http://xstream.lfconfig.xyz")
             //.baseUrl("https://10.1.21.228")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
@@ -146,6 +147,7 @@ public interface ApiClient {
 
     @GET("/xmobile/awef.json.txt")
     Call<OCRDataItem> repoOCRT();
+
 
     @POST("/file")
     Call<ResponseBody> repoDownload(

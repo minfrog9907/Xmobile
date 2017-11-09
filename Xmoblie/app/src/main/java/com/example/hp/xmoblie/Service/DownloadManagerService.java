@@ -62,9 +62,9 @@ public class DownloadManagerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public boolean downloadFile(DownloadRequestItem dri,FileManagerActivity fma) throws IOException {
+    public boolean downloadFile(DownloadRequestItem dri, FileManagerActivity fma) throws IOException {
         if (!ServiceControlCenter.getInstance().isAbleDownload()) {
-            fileManagerActivity= fma;
+            fileManagerActivity = fma;
 
             offet = dri.getOffset();
             length = dri.getLength();
@@ -74,16 +74,18 @@ public class DownloadManagerService extends Service {
 
             dlm = new DownloadMotherThread();
             dlm.run(type, filename, path, token, offet, length, this);
+            ServiceControlCenter.getInstance().downloadStart();
             return true;
         } else
             return false;
     }
 
     public void dead() {
-        if (dlm != null && dlm.isAlive()) {
-            dlm.interrupt();
-            Log.e("kill","kill MT");
-        }
+
+        dlm.interrupt();
+        Log.e("kill", "kill MT");
+
+        ServiceControlCenter.getInstance().downloadFinish();
         fileManagerActivity.downloadFinish();
     }
 

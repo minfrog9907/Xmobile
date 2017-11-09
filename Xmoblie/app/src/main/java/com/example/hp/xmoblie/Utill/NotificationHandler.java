@@ -10,18 +10,33 @@ import com.example.hp.xmoblie.Service.NotificationBarService;
  */
 
 public class NotificationHandler extends Handler {
+    String filename="";
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
-            case  1:
-            ServiceControlCenter.getInstance().getNotificationBarService().startDownload();
-            break;
-            case 200:
-                ServiceControlCenter.getInstance().getNotificationBarService().setDownLoadMax(msg.arg1);
+            case  1://?
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드중",0,0,true);
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
-            case 100:
-                ServiceControlCenter.getInstance().getNotificationBarService().updateDownload(msg.arg1);
+            case 100://다운중
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드중",msg.arg2,msg.arg1,false);
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
+                break;
+            case 200://맥스 설정
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드중",0,msg.arg1,true);
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
+                break;
+            case  222:// 다운완료
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 완료");
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
+                break;
+            case 333://실패
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 실패");
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
         }
+    }
+    public void setName(String name){
+       filename =name;
     }
 }

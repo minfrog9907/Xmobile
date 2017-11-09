@@ -43,8 +43,8 @@ public class DownloadMotherThread extends Thread {
         len = length;
         left = length;
 
-        //handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
-        //handler.sendEmptyMessage(0);
+        handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
+        handler.setName(filename);
 
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
@@ -75,10 +75,10 @@ public class DownloadMotherThread extends Thread {
             thCnt++;
         }
 
-       // Message message = handler.obtainMessage();
-      //  message.what =200;
-       // message.arg1=thCnt;
-       // handler.sendMessage(message);
+        Message message = handler.obtainMessage();
+        message.what =200;
+        message.arg1=thCnt;
+        handler.sendMessage(message);
 
 
         Log.e("downloadind","start");
@@ -111,6 +111,9 @@ public class DownloadMotherThread extends Thread {
             out.close();
             Log.e("finish","finish");
 
+            Message message = handler.obtainMessage();
+            message.what =222;
+            handler.sendMessage(message);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
@@ -134,10 +137,11 @@ public class DownloadMotherThread extends Thread {
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
         downloadThreads.get(id).interrupt();
-       // Message message = handler.obtainMessage();
-        ///message.what =100;
-       /// message.arg1=run;
-       // handler.sendMessage(message);
+        Message message = handler.obtainMessage();
+        message.what =100;
+        message.arg1=thCnt;
+        message.arg2=run;
+        handler.sendMessage(message);
 
 
         if (run == thCnt&&nowRunning==0) {
@@ -147,6 +151,14 @@ public class DownloadMotherThread extends Thread {
             nowRunning++;
         }
 
+    }
+    public synchronized void badRepoDie(int id){
+        downloadThreads.get(id).interrupt();
+        dm.dead();
+        Message message = handler.obtainMessage();
+        message.what =333;
+        message.arg1=run;
+        handler.sendMessage(message);
     }
     public int finishedPakitCNT(){
         return run+1;

@@ -230,23 +230,23 @@ public class FileManagerActivity extends AppCompatActivity {
                     adapterView.setSelection(i);
                 }
 
-                    ImageView imageView = view.findViewById(R.id.fileIcon);
+                ImageView imageView = view.findViewById(R.id.fileIcon);
 
-                    // 태그 생성
-                    ClipData.Item item = new ClipData.Item(
-                            (CharSequence) fileItem.getFilename());
+                // 태그 생성
+                ClipData.Item item = new ClipData.Item(
+                        (CharSequence) fileItem.getFilename());
 
-                    String[] mimeTypes = { ClipDescription.MIMETYPE_TEXT_PLAIN };
-                    ClipData data = new ClipData(fileItem.getFilename(),mimeTypes, item);
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
 
-                    imageView.startDrag(data, // data to be dragged
-                            shadowBuilder, // drag shadow
-                            imageView, // 드래그 드랍할  Vew
-                            0 // 필요없은 플래그
-                    );
+                imageView.startDrag(data, // data to be dragged
+                        shadowBuilder, // drag shadow
+                        imageView, // 드래그 드랍할  Vew
+                        0 // 필요없은 플래그
+                );
 
-                    imageView.setVisibility(View.INVISIBLE);
+                imageView.setVisibility(View.INVISIBLE);
 
                 return true;
 
@@ -330,7 +330,6 @@ public class FileManagerActivity extends AppCompatActivity {
         });
 
 
-
     }
 
     /* 프로토콜 */
@@ -374,7 +373,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
     }
 
-    private void removeFileProtocal(ArrayList<DeleteItem> deleteItemList){
+    private void removeFileProtocal(ArrayList<DeleteItem> deleteItemList) {
         Gson gson = new Gson();
         String jsonPlace = gson.toJson(deleteItemList);
 
@@ -401,19 +400,19 @@ public class FileManagerActivity extends AppCompatActivity {
         });
     }
 
-    private void removeFolderProtocal(final String folderName){
+    private void removeFolderProtocal(final String folderName) {
         final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), searchData, folderName);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "'" +folderName + "' 폴더가 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                     changeListMode();
                     searchFile(searchData);
-                }else if(response.code() == 400) {
-                    Toast.makeText(FileManagerActivity.this, "'" +folderName + "' 폴더가 비어있지 않아 삭제가 불가능 합니다.", Toast.LENGTH_SHORT).show();
-                }else if (response.errorBody() != null) {
+                } else if (response.code() == 400) {
+                    Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 비어있지 않아 삭제가 불가능 합니다.", Toast.LENGTH_SHORT).show();
+                } else if (response.errorBody() != null) {
                     Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
@@ -640,7 +639,7 @@ public class FileManagerActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             View view = viewList.get(i);
             view.setOnClickListener(CFBOnclick);
-            if(view.getId() == R.id.deleteFileBtn){
+            if (view.getId() == R.id.deleteFileBtn) {
                 view.setOnDragListener(new DragListener());
             }
         }
@@ -718,7 +717,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
         for (int i = 0; i < checkedItems.size(); i++) {
             FileItem fileItem = checkedItems.get(i);
-            if(fileItem.getType() == 128){
+            if (fileItem.getType() == 128) {
                 deleteItem = new DeleteItem();
                 String fileName = checkedItems.get(i).getFilename();
 
@@ -726,22 +725,22 @@ public class FileManagerActivity extends AppCompatActivity {
                 deleteItem.setPath(searchData);
 
                 deleteItemList.add(deleteItem);
-            }else if(fileItem.getType() == 16){
+            } else if (fileItem.getType() == 16) {
                 deleteFolderList.add(fileItem.getFilename());
             }
         }
-        if(deleteItemList.size() > 0) {
+        if (deleteItemList.size() > 0) {
             removeFileProtocal(deleteItemList);
         }
-        if(deleteFolderList.size() > 0){
-            for(int i = 0; i < deleteFolderList.size(); i++){
+        if (deleteFolderList.size() > 0) {
+            for (int i = 0; i < deleteFolderList.size(); i++) {
                 removeFolderProtocal(deleteFolderList.get(i));
             }
         }
     }
 
-    private void removeFile(FileItem fileItem){
-        if(fileItem.getType() == 128){
+    private void removeFile(FileItem fileItem) {
+        if (fileItem.getType() == 128) {
             ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
             DeleteItem deleteItem = new DeleteItem();
             String fileName = fileItem.getFilename();
@@ -750,7 +749,7 @@ public class FileManagerActivity extends AppCompatActivity {
             deleteItemList.add(deleteItem);
 
             removeFileProtocal(deleteItemList);
-        }else if(fileItem.getType() == 16){
+        } else if (fileItem.getType() == 16) {
             removeFolderProtocal(fileItem.getFilename());
         }
 
@@ -918,66 +917,66 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
-<<<<<<< HEAD
-    public void downloadFinish(){
+
+    public void downloadFinish() {
 
     }
 }
-=======
-    class DragListener implements View.OnDragListener {
 
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
+class DragListener implements View.OnDragListener {
 
-            // 이벤트 시작
-            switch (event.getAction()) {
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
 
-                // 이미지를 드래그 시작될때
-                case DragEvent.ACTION_DRAG_STARTED:
-                    Log.d("DragClickListener", "ACTION_DRAG_STARTED");
-                    break;
+        // 이벤트 시작
+        switch (event.getAction()) {
 
-                // 드래그한 이미지를 옮길려는 지역으로 들어왔을때
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    Log.d("DragClickListener", "ACTION_DRAG_ENTERED");
-                    // 이미지가 들어왔다는 것을 알려주기 위해 배경이미지 변경
+            // 이미지를 드래그 시작될때
+            case DragEvent.ACTION_DRAG_STARTED:
+                Log.d("DragClickListener", "ACTION_DRAG_STARTED");
+                break;
+
+            // 드래그한 이미지를 옮길려는 지역으로 들어왔을때
+            case DragEvent.ACTION_DRAG_ENTERED:
+                Log.d("DragClickListener", "ACTION_DRAG_ENTERED");
+                // 이미지가 들어왔다는 것을 알려주기 위해 배경이미지 변경
 //                    v.setBackground(targetShape);
-                    break;
+                break;
 
-                // 드래그한 이미지가 영역을 빠져 나갈때
-                case DragEvent.ACTION_DRAG_EXITED:
-                    Log.d("DragClickListener", "ACTION_DRAG_EXITED");
+            // 드래그한 이미지가 영역을 빠져 나갈때
+            case DragEvent.ACTION_DRAG_EXITED:
+                Log.d("DragClickListener", "ACTION_DRAG_EXITED");
 //                    v.setBackground(normalShape);
-                    break;
+                break;
 
-                // 이미지를 드래그해서 드랍시켰을때
-                case DragEvent.ACTION_DROP:
-                    Log.d("DragClickListener", "ACTION_DROP");
+            // 이미지를 드래그해서 드랍시켰을때
+            case DragEvent.ACTION_DROP:
+                Log.d("DragClickListener", "ACTION_DROP");
+//
+//                if (v == findViewById(R.id.deleteFileBtn)) {
+//                    View view = (View) event.getLocalState();
+//                    ViewGroup viewgroup = (ViewGroup) view
+//                            .getParent();
+//                    FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
+//                    FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+//                    removeFile(fileItem);
+//                }
+                break;
 
-                    if (v == findViewById(R.id.deleteFileBtn)) {
-                        View view = (View) event.getLocalState();
-                        ViewGroup viewgroup = (ViewGroup) view
-                                .getParent();
-                        FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
-                        FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
-                        removeFile(fileItem);
-                    }
-                    break;
-
-                case DragEvent.ACTION_DRAG_ENDED:
-                    Log.d("DragClickListener", "ACTION_DRAG_ENDED");
-                    View view = (View) event.getLocalState();
-                    view.setVisibility(View.VISIBLE);
+            case DragEvent.ACTION_DRAG_ENDED:
+                Log.d("DragClickListener", "ACTION_DRAG_ENDED");
+                View view = (View) event.getLocalState();
+                view.setVisibility(View.VISIBLE);
 
 //                    v.setBackground(normalShape); // go back to normal shape
 
-                default:
-                    break;
-            }
-            return true;
+            default:
+                break;
         }
+        return true;
     }
-
 }
 
->>>>>>> fce75488bde0251466b52561ce46254216d2e78c
+
+
+

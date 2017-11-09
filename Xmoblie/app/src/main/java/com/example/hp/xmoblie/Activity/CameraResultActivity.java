@@ -133,9 +133,7 @@ public class CameraResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    if(ServiceControlCenter.getInstance().getDownloadManagerService()==null)
-                        Log.e("sibal","sibal");
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FileManagerActivity());
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"100mb.bin","\\",0,104857600),new FileManagerActivity());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

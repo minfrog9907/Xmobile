@@ -121,6 +121,8 @@ public class NotificationBarService extends Service {
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setChannelId("my_channel_01")
                     .build();
+            notification.flags = Notification.FLAG_NO_CLEAR;
+
         }
         else{
             notification = new Notification.Builder(getApplicationContext())
@@ -130,6 +132,8 @@ public class NotificationBarService extends Service {
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.drawable.ic_launcher)
                     .build();
+            notification.flags = Notification.FLAG_NO_CLEAR;
+
         }
     }
 

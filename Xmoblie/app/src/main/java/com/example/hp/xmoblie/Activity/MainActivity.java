@@ -17,12 +17,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Custom.Main_BTN;
+import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         date2AsString = dateFormat.format(date2);
         setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
@@ -128,7 +131,12 @@ public class MainActivity extends AppCompatActivity {
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                //startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                try {
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FileManagerActivity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

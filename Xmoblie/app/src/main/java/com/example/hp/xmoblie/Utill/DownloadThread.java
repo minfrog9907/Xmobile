@@ -32,8 +32,10 @@ public class DownloadThread extends Thread {
     String token;
 
     DownloadMotherThread dm;
+    ApiClient apiClient= ApiClient.severService;
 
     public void run() {
+
         byte[] euckrStringBuffer;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
@@ -48,8 +50,6 @@ public class DownloadThread extends Thread {
 
         euckrStringBuffer = outputStream.toByteArray();
         RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), euckrStringBuffer);
-
-        ApiClient apiClient = ApiClient.severService;
 
         Call<ResponseBody> call = apiClient.repoDownload(body);
         call.enqueue(new Callback<ResponseBody>() {

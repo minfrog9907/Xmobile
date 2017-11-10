@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import okio.BufferedSource;
 
 public class DownloadMotherThread extends Thread {
     int LENGTH =37268;
+    int MAXTHREAD=1;
     int len;
     int left;
     int run = 0;
@@ -39,12 +41,13 @@ public class DownloadMotherThread extends Thread {
     public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
         this.filename = filename;
         this.dm =dm;
-
+        LENGTH  =length;
         len = length;
         left = length;
 
         handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         handler.setName(filename);
+
 
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
@@ -82,7 +85,7 @@ public class DownloadMotherThread extends Thread {
 
 
         Log.e("downloadind","start");
-        for (int i = nowRunning; i < 2; ++i) {
+        for (int i = nowRunning; i < MAXTHREAD; ++i) {
             if (run < thCnt) {
                 downloadThreads.get(run++).run();
                 nowRunning++;
@@ -160,9 +163,7 @@ public class DownloadMotherThread extends Thread {
         message.arg1=run;
         handler.sendMessage(message);
     }
-    public int finishedPakitCNT(){
-        return run+1;
-    }
+
     public void recall(int id){
         Log.e("recall","recall");
         downloadThreads.get(id).run();

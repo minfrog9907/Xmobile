@@ -10,10 +10,15 @@ import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
+import com.example.hp.xmoblie.Utill.PersistentCookieStore;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.List;
 
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -54,13 +59,16 @@ public interface ApiClient {
 
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
+
+
+
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://xstream.lfconfig.xyz")
-            //.baseUrl("https://10.1.21.228")
+            //.baseUrl("http://xstream.lfconfig.xyz")
+            .baseUrl("http://10.1.21.228:51000")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
-    ApiClient severService = filesever.create(ApiClient.class);
+    ApiClient severService =  filesever.create(ApiClient.class);
 
     @FormUrlEncoded
     @POST("/login")

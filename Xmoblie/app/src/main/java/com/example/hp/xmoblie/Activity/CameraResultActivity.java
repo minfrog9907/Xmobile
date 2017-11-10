@@ -123,23 +123,11 @@ public class CameraResultActivity extends AppCompatActivity {
         read_image_file();
         imageprocess_and_showResult();
 
-        SideStick_BTN edit = (SideStick_BTN) findViewById(R.id.cameraResult_ChangeNode);
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
         LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
         LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
 
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"100mb.bin","\\",0,104857600),new FileManagerActivity());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                //.putExtra("length", 4 ));
-            }
-        });
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

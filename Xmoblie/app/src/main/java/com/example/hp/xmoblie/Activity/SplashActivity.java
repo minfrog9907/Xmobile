@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,6 +41,8 @@ public class SplashActivity extends BaseActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_splash);
+        ServiceControlCenter.getInstance().setContext(this);
+
 
         intent = new Intent(SplashActivity.this, LoginActivity.class);
 

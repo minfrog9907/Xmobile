@@ -6,6 +6,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import okio.BufferedSource;
 
 public class DownloadMotherThread extends Thread {
     int LENGTH =37268;
+    int MAXTHREAD=1;
     int len;
     int left;
     int run = 0;
@@ -39,12 +41,13 @@ public class DownloadMotherThread extends Thread {
     public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
         this.filename = filename;
         this.dm =dm;
-
+        LENGTH  =length;
         len = length;
         left = length;
 
-        //handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
-        //handler.sendEmptyMessage(0);
+        handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
+        handler.setName(filename);
+
 
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
@@ -75,14 +78,14 @@ public class DownloadMotherThread extends Thread {
             thCnt++;
         }
 
-       // Message message = handler.obtainMessage();
-      //  message.what =200;
-       // message.arg1=thCnt;
-       // handler.sendMessage(message);
+        Message message = handler.obtainMessage();
+        message.what =200;
+        message.arg1=thCnt;
+        handler.sendMessage(message);
 
 
         Log.e("downloadind","start");
-        for (int i = nowRunning; i < 2; ++i) {
+        for (int i = nowRunning; i < MAXTHREAD; ++i) {
             if (run < thCnt) {
                 downloadThreads.get(run++).run();
                 nowRunning++;
@@ -111,6 +114,9 @@ public class DownloadMotherThread extends Thread {
             out.close();
             Log.e("finish","finish");
 
+            Message message = handler.obtainMessage();
+            message.what =222;
+            handler.sendMessage(message);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
@@ -134,10 +140,11 @@ public class DownloadMotherThread extends Thread {
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
         downloadThreads.get(id).interrupt();
-       // Message message = handler.obtainMessage();
-        ///message.what =100;
-       /// message.arg1=run;
-       // handler.sendMessage(message);
+        Message message = handler.obtainMessage();
+        message.what =100;
+        message.arg1=thCnt;
+        message.arg2=run;
+        handler.sendMessage(message);
 
 
         if (run == thCnt&&nowRunning==0) {
@@ -148,9 +155,16 @@ public class DownloadMotherThread extends Thread {
         }
 
     }
-    public int finishedPakitCNT(){
-        return run+1;
+    public synchronized void badRepoDie(int id){
+        downloadThreads.get(id).interrupt();
+        dm.dead();
+        ServiceControlCenter.getInstance().downloadFinish();
+        Message message = handler.obtainMessage();
+        message.what =333;
+        message.arg1=run;
+        handler.sendMessage(message);
     }
+
     public void recall(int id){
         Log.e("recall","recall");
         downloadThreads.get(id).run();

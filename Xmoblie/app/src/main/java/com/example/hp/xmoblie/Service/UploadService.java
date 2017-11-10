@@ -39,7 +39,8 @@ public class UploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.intent  =intent;
+        this.intent  = intent;
+        uploadFile(intent.getStringExtra("path"),intent.getStringExtra("filename"),intent.getStringExtra("target"));
         return super.onStartCommand(intent, flags, startId);
     }
 

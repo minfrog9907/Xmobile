@@ -1,6 +1,8 @@
 package com.example.hp.xmoblie.Utill;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -11,6 +13,7 @@ import javax.net.ssl.X509TrustManager;
 import javax.security.cert.CertificateException;
 
 import okhttp3.Interceptor;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -47,6 +50,9 @@ public class UnsafeOkHttpClient {
             // Create an ssl socket factory with our all-trusting manager
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
+            PersistentCookieStore cookieStore = new PersistentCookieStore(ServiceControlCenter.getInstance().getContext());
+            CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
+
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager)trustAllCerts[0]);
             builder.hostnameVerifier(new HostnameVerifier() {
@@ -62,11 +68,14 @@ public class UnsafeOkHttpClient {
 
                                               Request request = original.newBuilder()
                                                       .header("Accept-Encoding","")
+                                                      //.header("Expect","100-continue")
                                                       .build();
 
                                               return chain.proceed(request);
                                           }
                                       });
+
+            //builder.cookieJar(new JavaNetCookieJar(cookieManager));
             OkHttpClient okHttpClient = builder.build();
             return okHttpClient;
         } catch (Exception e) {

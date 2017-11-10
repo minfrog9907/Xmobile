@@ -46,7 +46,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 id = idEditText.getText().toString();
                 pw = pwEditText.getText().toString();
-                loginSystem(id, pw);
+                if (id != null && pw != null)
+                    loginSystem(id, pw);
                 //  loginProcess(id, pw);
             }
         });
@@ -93,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                                    Response<LoginItem> response) {
                 switch (response.body().getStatus()) {
                     case 0:
-                        if (getIntent().getBooleanExtra("pb",false)==false) {
+                        if (getIntent().getBooleanExtra("pb", false) == false) {
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("username", response.body().getUsername());
                             intent.putExtra("token", response.body().getToken());
@@ -105,13 +106,12 @@ public class LoginActivity extends AppCompatActivity {
 
                             startActivity(intent);
                             finish();
-                        }
-                        else if(getIntent().getBooleanExtra("pb",false)==true){
+                        } else if (getIntent().getBooleanExtra("pb", false) == true) {
                             Intent intent = new Intent(getApplicationContext(), FileManagerActivity.class);
                             intent.putExtra("username", response.body().getUsername());
                             intent.putExtra("token", response.body().getToken());
                             intent.putExtra("privilege", response.body().getPrivilege());
-                            intent.putExtra("path",getIntent().getStringExtra("path"));
+                            intent.putExtra("path", getIntent().getStringExtra("path"));
                             loginProcess(userid, password);
 
                             if (auto)

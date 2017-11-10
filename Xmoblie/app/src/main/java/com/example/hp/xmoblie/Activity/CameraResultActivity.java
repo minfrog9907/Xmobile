@@ -124,12 +124,13 @@ public class CameraResultActivity extends AppCompatActivity {
         read_image_file();
         imageprocess_and_showResult();
 
-        SideStick_BTN edit = (SideStick_BTN) findViewById(R.id.cameraResult_ChangeNode);
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
         LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
         LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
 
+<<<<<<< HEAD
+=======
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,6 +144,7 @@ public class CameraResultActivity extends AppCompatActivity {
                 //.putExtra("length", 4 ));
             }
         });
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

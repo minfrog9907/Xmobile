@@ -11,10 +11,15 @@ import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
+import com.example.hp.xmoblie.Utill.PersistentCookieStore;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
 
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.util.List;
 
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -41,6 +46,7 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
+            //.baseUrl("http://10.1.21.228")
             .baseUrl("http://xmobile.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
@@ -54,13 +60,22 @@ public interface ApiClient {
 
     ApiClient serviceTest = retrofitTest.create(ApiClient.class);
 
+
+
+
     Retrofit filesever = new Retrofit.Builder()
+<<<<<<< HEAD
+            //.baseUrl("http://xstream.lfconfig.xyz")
+            .baseUrl("http://10.1.21.228:51000")
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+=======
             .baseUrl("http://xstream.lfconfig.xyz")
             //.baseUrl("https://10.1.21.228")
             //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
             .build();
 
-    ApiClient severService = filesever.create(ApiClient.class);
+    ApiClient severService =  filesever.create(ApiClient.class);
 
     @FormUrlEncoded
     @POST("/login")
@@ -155,6 +170,7 @@ public interface ApiClient {
 
     @GET("/xmobile/awef.json.txt")
     Call<OCRDataItem> repoOCRT();
+
 
     @POST("/file")
     Call<ResponseBody> repoDownload(

@@ -1,5 +1,8 @@
 package com.example.hp.xmoblie.Utill;
 
+import android.content.Context;
+
+import com.example.hp.xmoblie.Activity.MainActivity;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 
@@ -11,10 +14,10 @@ public class ServiceControlCenter {
     private static ServiceControlCenter instance;
 
     public boolean downloadNow=false;
-
+    String token;
     DownloadManagerService downloadManagerService;
     NotificationBarService notificationBarService;
-
+    Context context;
     public static ServiceControlCenter getInstance() {
         if (instance == null)
             return instance = new ServiceControlCenter();
@@ -46,4 +49,19 @@ public class ServiceControlCenter {
         return downloadNow;
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

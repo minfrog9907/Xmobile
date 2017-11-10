@@ -32,8 +32,10 @@ public class DownloadThread extends Thread {
     String token;
 
     DownloadMotherThread dm;
+    ApiClient apiClient= ApiClient.severService;
 
     public void run() {
+
         byte[] euckrStringBuffer;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
@@ -48,8 +50,6 @@ public class DownloadThread extends Thread {
 
         euckrStringBuffer = outputStream.toByteArray();
         RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), euckrStringBuffer);
-
-        ApiClient apiClient = ApiClient.severService;
 
         Call<ResponseBody> call = apiClient.repoDownload(body);
         call.enqueue(new Callback<ResponseBody>() {
@@ -71,7 +71,9 @@ public class DownloadThread extends Thread {
                 if(recallTime++!=4){
                     dm.recall(id);
                 }
-                if (recallTime==4){}
+                if (recallTime==4){
+                    dm.badRepoDie(id);
+                }
 
             }
         });
@@ -118,4 +120,9 @@ public class DownloadThread extends Thread {
         return array;
     }
 
+    @Override
+    public void interrupt() {
+        super.interrupt();
+        Log.e("kill","kill DT");
+    }
 }

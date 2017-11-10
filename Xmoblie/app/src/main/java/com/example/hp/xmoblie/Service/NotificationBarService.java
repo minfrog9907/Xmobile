@@ -28,11 +28,15 @@ import com.example.hp.xmoblie.Utill.NotificationHandler;
  */
 
 public class NotificationBarService extends Service {
-    NotificationManager Notifi_M;
+    String id = "my_channel_01";
+    CharSequence name = "Xmobile";
+    String description = "Xmobile";
+    Notification notification;
+    NotificationManager notifi_M;
     IBinder mBinder = new LocalBinder();
-    NotificationHandler  handler;
-    Notification.Builder builder;
-    int max;
+    NotificationHandler handler;
+
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -43,19 +47,33 @@ public class NotificationBarService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Notifi_M = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         handler = new NotificationHandler();
 
-        Intent intent = new Intent(NotificationBarService.this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(NotificationBarService.this, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notifi_M = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        builder = new Notification.Builder(getApplicationContext());
-        builder.setSmallIcon(R.drawable.ic_launcher).setTicker("HETT").setWhen(System.currentTimeMillis())
-                .setNumber(1).setContentTitle("다운로드중").setContentText("다운로드중")
-                .setProgress(100,0,true)
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE).setContentIntent(pendingIntent).setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            int importance = NotificationManager.IMPORTANCE_LOW;
 
-        Log.e("Created","Nofitication Created");
+            NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+
+            mChannel.setDescription(description);
+            mChannel.enableLights(true);
+
+            mChannel.setLightColor(Color.RED);
+            mChannel.enableVibration(false);
+
+
+            notifi_M.createNotificationChannel(mChannel);
+
+
+
+            Log.e("Created", "Nofitication Created O");
+
+        } else {
+
+            Log.e("Created", "Nofitication Created");
+        }
+
     }
 
     @Override
@@ -68,26 +86,64 @@ public class NotificationBarService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
-    public void startDownload(){
-        Log.e("asd","asd");
-
-        Notifi_M.notify( 1 , builder.build());
-    }
-    public void setDownLoadMax(int max){
-        this.max =max;
-        builder.setProgress(max,0,true);
-        Notifi_M.notify( 1 , builder.build());
-    }
-
-    public void updateDownload(int process){
-        builder.setProgress(max,process,true);
-        Notifi_M.notify( 1 , builder.build());
-    }
-    public NotificationHandler addService(){
-       return handler;
-    }
 
 
+    public NotificationHandler addService() {
+        return handler;
+    }
+
+    public void makeNotification(String title,String content){
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setChannelId("my_channel_01")
+                    .build();
+        }
+        else{
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .build();
+        }
+    }
+    public void makeNotification(String title,String content,int process,int max,boolean loading){
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            notification = new Notification.Builder(getApplicationContext())
+                    .setProgress(max,process,loading)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setChannelId("my_channel_01")
+                    .build();
+            notification.flags = Notification.FLAG_NO_CLEAR;
+
+        }
+        else{
+            notification = new Notification.Builder(getApplicationContext())
+                    .setProgress(max,process,true)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .build();
+            notification.flags = Notification.FLAG_NO_CLEAR;
+
+        }
+    }
+
+    public void deleteNotification(int id){
+        notifi_M.cancel(id);
+    }
+    public void pushNotification(int id){
+        notifi_M.notify(id, notification);
+
+    }
     public class LocalBinder extends Binder {
         public NotificationBarService getServerInstance() {
             return NotificationBarService.this;

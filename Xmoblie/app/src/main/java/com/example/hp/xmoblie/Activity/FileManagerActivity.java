@@ -248,24 +248,34 @@ public class FileManagerActivity extends AppCompatActivity {
                     selectItem(fileItemHolder);
                     adapterView.setSelection(i);
 
-                    ImageView imageView = view.findViewById(R.id.fileIcon);
+                ImageView imageView = view.findViewById(R.id.fileIcon);
 
-                    // 태그 생성
-                    ClipData.Item item = new ClipData.Item(
-                            (CharSequence) fileItem.getFilename());
+                // 태그 생성
+                ClipData.Item item = new ClipData.Item(
+                        (CharSequence) fileItem.getFilename());
 
+<<<<<<< HEAD
+                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
+                View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+=======
                     String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
                     ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
                     View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
-                    imageView.startDrag(data, // data to be dragged
-                            shadowBuilder, // drag shadow
-                            imageView, // 드래그 드랍할  Vew
-                            0 // 필요없은 플래그
-                    );
+                imageView.startDrag(data, // data to be dragged
+                        shadowBuilder, // drag shadow
+                        imageView, // 드래그 드랍할  Vew
+                        0 // 필요없은 플래그
+                );
 
+<<<<<<< HEAD
+                imageView.setVisibility(View.INVISIBLE);
+=======
                     imageView.setVisibility(View.INVISIBLE);
                 }
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
                 return true;
 
@@ -348,6 +358,10 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
     }
 
     /* 프로토콜 */
@@ -468,6 +482,11 @@ public class FileManagerActivity extends AppCompatActivity {
                             noFIleTxt.setVisibility(View.INVISIBLE);
                         }
 
+<<<<<<< HEAD
+    private void removeFileProtocal(ArrayList<DeleteItem> deleteItemList) {
+        Gson gson = new Gson();
+        String jsonPlace = gson.toJson(deleteItemList);
+=======
                         sortData();
                         adaptList();
                     }
@@ -476,6 +495,7 @@ public class FileManagerActivity extends AppCompatActivity {
                     }
                     startFileProtocol = false;
                 }
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
                 @Override
                 public void onFailure(Call<List<FileItem>> call, Throwable t) {
@@ -513,6 +533,24 @@ public class FileManagerActivity extends AppCompatActivity {
             });
         }
 
+<<<<<<< HEAD
+    private void removeFolderProtocal(final String folderName) {
+        final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), searchData, folderName);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    changeListMode();
+                    searchFile(searchData);
+                } else if (response.code() == 400) {
+                    Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 비어있지 않아 삭제가 불가능 합니다.", Toast.LENGTH_SHORT).show();
+                } else if (response.errorBody() != null) {
+                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+=======
         private void removeFolderProtocol(final String folderName) {
             final Call<ResponseBody> call = apiClient.repoFolderDelete(token, psearchData, folderName);
 
@@ -571,6 +609,7 @@ public class FileManagerActivity extends AppCompatActivity {
                         Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                     }
                     searchFile(searchData);
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
                 }
 
                 @Override
@@ -797,8 +836,14 @@ public class FileManagerActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             View view = viewList.get(i);
             view.setOnClickListener(CFBOnclick);
+<<<<<<< HEAD
+            if (view.getId() == R.id.deleteFileBtn) {
+                view.setOnDragListener(new DragListener());
+            }
+=======
             view.setOnDragListener(new DragListener());
 
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
     }
 
@@ -860,6 +905,13 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         }
         if (deleteItemList.size() > 0) {
+<<<<<<< HEAD
+            removeFileProtocal(deleteItemList);
+        }
+        if (deleteFolderList.size() > 0) {
+            for (int i = 0; i < deleteFolderList.size(); i++) {
+                removeFolderProtocal(deleteFolderList.get(i));
+=======
             Protocol protocol = new Protocol();
             protocol.setProtocol("removeFileProtocol");
             protocol.setSearchData(searchData);
@@ -873,12 +925,16 @@ public class FileManagerActivity extends AppCompatActivity {
                 protocol.setSearchData(searchData);
                 protocol.setFolderName(deleteFolderList.get(i));
                 confirmDialog("'" + deleteFolderList.get(i) + "' 폴더를 삭제 하시겠습니까?", protocol).show();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
             }
         }
     }
 
     private void removeFile(FileItem fileItem) {
+<<<<<<< HEAD
+=======
         Protocol protocol = new Protocol();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         if (fileItem.getType() == 128) {
             ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
             DeleteItem deleteItem = new DeleteItem();
@@ -887,6 +943,11 @@ public class FileManagerActivity extends AppCompatActivity {
             deleteItem.setPath(searchData);
             deleteItemList.add(deleteItem);
 
+<<<<<<< HEAD
+            removeFileProtocal(deleteItemList);
+        } else if (fileItem.getType() == 16) {
+            removeFolderProtocal(fileItem.getFilename());
+=======
             protocol.setProtocol("removeFileProtocol");
             protocol.setSearchData(searchData);
             protocol.setDeleteItemList(deleteItemList);
@@ -896,6 +957,7 @@ public class FileManagerActivity extends AppCompatActivity {
             protocol.setSearchData(searchData);
             protocol.setFolderName(fileItem.getFilename());
             confirmDialog("'" + fileItem.getFilename() + "' 폴더를 삭제 하시겠습니까?", protocol).show();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
     }
 
@@ -1047,15 +1109,58 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
+<<<<<<< HEAD
+
+    public void downloadFinish() {
+
+    }
+}
+=======
     /* 리스너 */
     class DragListener implements View.OnDragListener {
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
-        @Override
-        public boolean onDrag(View v, DragEvent event) {
+class DragListener implements View.OnDragListener {
 
-            // 이벤트 시작
-            switch (event.getAction()) {
+    @Override
+    public boolean onDrag(View v, DragEvent event) {
 
+<<<<<<< HEAD
+        // 이벤트 시작
+        switch (event.getAction()) {
+
+            // 이미지를 드래그 시작될때
+            case DragEvent.ACTION_DRAG_STARTED:
+                Log.d("DragClickListener", "ACTION_DRAG_STARTED");
+                break;
+
+            // 드래그한 이미지를 옮길려는 지역으로 들어왔을때
+            case DragEvent.ACTION_DRAG_ENTERED:
+                Log.d("DragClickListener", "ACTION_DRAG_ENTERED");
+                // 이미지가 들어왔다는 것을 알려주기 위해 배경이미지 변경
+//                    v.setBackground(targetShape);
+                break;
+
+            // 드래그한 이미지가 영역을 빠져 나갈때
+            case DragEvent.ACTION_DRAG_EXITED:
+                Log.d("DragClickListener", "ACTION_DRAG_EXITED");
+//                    v.setBackground(normalShape);
+                break;
+
+            // 이미지를 드래그해서 드랍시켰을때
+            case DragEvent.ACTION_DROP:
+                Log.d("DragClickListener", "ACTION_DROP");
+//
+//                if (v == findViewById(R.id.deleteFileBtn)) {
+//                    View view = (View) event.getLocalState();
+//                    ViewGroup viewgroup = (ViewGroup) view
+//                            .getParent();
+//                    FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
+//                    FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+//                    removeFile(fileItem);
+//                }
+                break;
+=======
                 // 이미지를 드래그해서 드랍시켰을때
                 case DragEvent.ACTION_DROP:
                     Log.d("DragClickListener", "ACTION_DROP");
@@ -1073,18 +1178,32 @@ public class FileManagerActivity extends AppCompatActivity {
                             break;
                     }
                     break;
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
-                case DragEvent.ACTION_DRAG_ENDED:
-                    Log.d("DragClickListener", "ACTION_DRAG_ENDED");
-                    View view = (View) event.getLocalState();
-                    view.setVisibility(View.VISIBLE);
+            case DragEvent.ACTION_DRAG_ENDED:
+                Log.d("DragClickListener", "ACTION_DRAG_ENDED");
+                View view = (View) event.getLocalState();
+                view.setVisibility(View.VISIBLE);
 
+<<<<<<< HEAD
+//                    v.setBackground(normalShape); // go back to normal shape
+
+            default:
+                break;
+=======
                 default:
                     break;
             }
             return true;
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
+        return true;
     }
-
 }
 
+<<<<<<< HEAD
+
+
+
+=======
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5

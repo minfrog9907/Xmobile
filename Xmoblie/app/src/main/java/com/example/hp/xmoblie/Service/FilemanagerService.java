@@ -1,15 +1,23 @@
 package com.example.hp.xmoblie.Service;
 
 import android.util.Log;
+import android.view.View;
 
 import com.example.hp.xmoblie.Activity.FileManagerActivity;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.LogItem;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by HP on 2017-11-10.
@@ -18,6 +26,7 @@ import java.util.ArrayList;
 public class FilemanagerService {
 
     ArrayList<FileItem> fileItemList;
+    private ApiClient apiClient = ApiClient.service;
 
     /* 파일 다운로드 */
     public void downloadFileStart(ArrayList<FileItem> fileItemList){
@@ -57,11 +66,33 @@ public class FilemanagerService {
     }
 
     /* 파일 로그 */
-    public void fileLogStart(ArrayList<FileItem> fileItem) {
+    public void fileLogStart(ArrayList<FileItem> fileItem, String path, String token) {
         Log.d("clicked button", "filelog");
         for(int i = 0; i < fileItem.size(); i++){
-            System.out.println(fileItem.get(i));
+            String filename = fileItem.get(0).getFilename();
+            fileLog(path, filename, token);
+            System.out.println("나 돌아유");
         }
+    }
+
+    private void fileLog(String path, String filename, String token){
+        final Call<List<LogItem>> call = apiClient.repoFileLog(token,path,filename);
+        call.enqueue(new Callback<List<LogItem>>() {
+            @Override
+            public void onResponse(Call<List<LogItem>> call,
+                                   Response<List<LogItem>> response) {
+                if (response.body() != null) {
+                    for (int i = 0; i < response.body().size(); ++i) {
+                        System.out.println(response.body().get(i));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<LogItem>> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
+            }
+        });
     }
 
     /* 파일 정보 */

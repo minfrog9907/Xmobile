@@ -6,6 +6,7 @@ package com.example.hp.xmoblie.Service;
 
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
+import com.example.hp.xmoblie.Items.LogItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
@@ -76,8 +77,8 @@ public interface ApiClient {
             , @Query("dir") String dir
     );
 
-    @GET("/file")
-    Call<List<FileItem>> repoFileLog(
+    @GET("/file/rollbackinfo")
+    Call<List<LogItem>> repoFileLog(
             @Header("token") String token
             , @Query("path") String path
             , @Query("filename") String filename

@@ -119,6 +119,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private ArrayList<FileItem> checkedItems = new ArrayList<FileItem>();
     private ArrayList<FileItem> historyList = new ArrayList<FileItem>();
     private DBHelper dbHelper;
+    private String token = "";
 
 
     private static final MediaType JSON = MediaType.parse("text/plain");
@@ -165,6 +166,7 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
+        token = getIntent().getStringExtra("token");
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
 
         ViewTreeObserver observer = cfbg.getViewTreeObserver();
@@ -324,7 +326,7 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(FileManagerActivity.this, CameraActivity.class).putExtra("token", getIntent().getStringExtra("token")));
+                startActivity(new Intent(FileManagerActivity.this, CameraActivity.class).putExtra("token", token));
             }
         });
 
@@ -450,7 +452,7 @@ public class FileManagerActivity extends AppCompatActivity {
             if (startFileProtocol) return;
             startFileProtocol = true;
             listDataHeader = new ArrayList<>();
-            final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
+            final Call<List<FileItem>> call = apiClient.repoFileNodes(token, path);
             call.enqueue(new Callback<List<FileItem>>() {
                 @Override
                 public void onResponse(Call<List<FileItem>> call,
@@ -488,7 +490,7 @@ public class FileManagerActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String jsonPlace = gson.toJson(deleteItemList);
 
-            final Call<ResponseBody> call = apiClient.repoFileDelete(getIntent().getStringExtra("token"), jsonPlace);
+            final Call<ResponseBody> call = apiClient.repoFileDelete(token, jsonPlace);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -512,7 +514,7 @@ public class FileManagerActivity extends AppCompatActivity {
         }
 
         private void removeFolderProtocol(final String folderName) {
-            final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), psearchData, folderName);
+            final Call<ResponseBody> call = apiClient.repoFolderDelete(token, psearchData, folderName);
 
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -538,7 +540,7 @@ public class FileManagerActivity extends AppCompatActivity {
         }
 
         private void renameFileProtocol(String newName, String oldName) {
-            final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
+            final Call<ResponseBody> call = apiClient.repoRename(token, oldName, searchData, newName);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -559,7 +561,7 @@ public class FileManagerActivity extends AppCompatActivity {
         }
 
         private void mkDir(String dir) {
-            final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
+            final Call<ResponseBody> call = apiClient.repoMkDir(token, dir, searchData);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -812,7 +814,7 @@ public class FileManagerActivity extends AppCompatActivity {
 //                    filemanagerService.shareFileStart();
                     break;
                 case R.id.fileLog:
-                    filemanagerService.fileLogStart(historyList);
+                    filemanagerService.fileLogStart(checkedItems,searchData,token);
                     break;
                 case R.id.changeName:
                     changeName();

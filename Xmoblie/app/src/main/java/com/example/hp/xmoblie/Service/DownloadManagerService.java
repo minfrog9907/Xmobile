@@ -62,15 +62,10 @@ public class DownloadManagerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-<<<<<<< HEAD
-    public boolean downloadFile(DownloadRequestItem dri, FileManagerActivity fma) throws IOException {
-        if (!ServiceControlCenter.getInstance().isAbleDownload()) {
-            fileManagerActivity = fma;
-=======
+
     public boolean downloadFile(DownloadRequestItem dri,FilemanagerService fma) throws IOException {
         if (!ServiceControlCenter.getInstance().isAbleDownload()) {
             filemanagerService= fma;
->>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
             offet = dri.getOffset();
             length = dri.getLength();
@@ -87,20 +82,11 @@ public class DownloadManagerService extends Service {
     }
 
     public void dead() {
-<<<<<<< HEAD
-
-        dlm.interrupt();
-        Log.e("kill", "kill MT");
-
-        ServiceControlCenter.getInstance().downloadFinish();
-        fileManagerActivity.downloadFinish();
-=======
         if (dlm != null && dlm.isAlive()) {
             dlm.interrupt();
             Log.e("kill","kill MT");
         }
         filemanagerService.downloadFinish();
->>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
     }
 
     public class LocalBinder extends Binder {

@@ -21,6 +21,7 @@ import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.FilemanagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.lzyzsd.circleprogress.ArcProgress;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //startActivity(new Intent(MainActivity.this, SettingActivity.class));
                 try {
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FileManagerActivity());
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FilemanagerService());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

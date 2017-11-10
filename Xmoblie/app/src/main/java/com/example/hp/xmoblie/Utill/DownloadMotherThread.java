@@ -158,6 +158,7 @@ public class DownloadMotherThread extends Thread {
     public synchronized void badRepoDie(int id){
         downloadThreads.get(id).interrupt();
         dm.dead();
+        ServiceControlCenter.getInstance().downloadFinish();
         Message message = handler.obtainMessage();
         message.what =333;
         message.arg1=run;

@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         date2AsString = dateFormat.format(date2);
         setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
 
+        ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();

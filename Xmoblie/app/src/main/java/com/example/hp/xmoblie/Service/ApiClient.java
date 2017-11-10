@@ -76,6 +76,14 @@ public interface ApiClient {
             , @Query("dir") String dir
     );
 
+    @GET("/file")
+    Call<List<FileItem>> repoFileLog(
+            @Header("token") String token
+            , @Query("path") String path
+            , @Query("filename") String filename
+
+    );
+
     @GET("/file_list.json")
     Call<List<FileItem>> test();
 

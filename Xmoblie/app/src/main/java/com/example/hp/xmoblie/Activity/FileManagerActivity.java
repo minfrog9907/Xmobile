@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -50,13 +51,17 @@ import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Dialog.InputListener;
 import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
 import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
+import com.example.hp.xmoblie.Helper.DBHelper;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
+import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
@@ -66,11 +71,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.text.Collator;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -106,9 +114,12 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private ApiClient apiClient;
 
-    private List<String> searchHistory = new ArrayList<String>();
-    private List<String> moveDirHistory = new ArrayList<String>();
-    private List<FileItem> checkedItems = new ArrayList<FileItem>();
+    private ArrayList<String> searchHistory = new ArrayList<String>();
+    private ArrayList<String> moveDirHistory = new ArrayList<String>();
+    private ArrayList<FileItem> checkedItems = new ArrayList<FileItem>();
+    private ArrayList<FileItem> historyList = new ArrayList<FileItem>();
+    private DBHelper dbHelper;
+
 
     private static final MediaType JSON = MediaType.parse("text/plain");
 
@@ -154,6 +165,8 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
+        dbHelper = new DBHelper(this, "HISTORY", null, 1);
+
         ViewTreeObserver observer = cfbg.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -209,12 +222,11 @@ public class FileManagerActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 FileItemHolder fileItemHolder = (FileItemHolder) view.getTag();
                 if (!selectMode) {
-                    if (fileItemHolder.fileIcon.getTag().equals("file")) {
-                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    } else {
-                        FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
-                        searchData = checkRoot() + parants.getFilename();
-                        moveDir(searchData);
+                    FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+                    try {
+                        dbHelper.insert(fileItem);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     selectItem(fileItemHolder);
@@ -334,7 +346,6 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     /* 프로토콜 */
@@ -350,21 +361,27 @@ public class FileManagerActivity extends AppCompatActivity {
         void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
             this.deleteItemList = deleteItemList;
         }
+
         void setFolderName(String folderName) {
             this.folderName = folderName;
         }
+
         void setSearchData(String searchData) {
             this.psearchData = searchData;
         }
+
         void setProtocol(String protocol) {
             this.protocol = protocol;
         }
+
         void setNewName(String newName) {
             this.newName = newName;
         }
+
         void setOldName(String oldName) {
             this.oldName = oldName;
         }
+
         void setNewDir(String newDir) {
             this.newDir = newDir;
         }
@@ -414,9 +431,9 @@ public class FileManagerActivity extends AppCompatActivity {
                         }
                         break;
                     case "mkDir":
-                        if(newDir != null){
+                        if (newDir != null) {
                             mkDir(newDir);
-                        }else{
+                        } else {
                             Log.e("Protocol", "you need setNewDir");
                         }
                         break;
@@ -662,7 +679,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private void getSearchHistroy() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String json = prefs.getString("searchHistory", null);
-        List<String> urls = new ArrayList<String>();
+        ArrayList<String> urls = new ArrayList<String>();
         if (json != null) {
             try {
                 JSONArray a = new JSONArray(json);
@@ -786,15 +803,16 @@ public class FileManagerActivity extends AppCompatActivity {
     LinearLayout.OnClickListener CFBOnclick = new CustomFilemanagerBtn.OnClickListener() {
         @Override
         public void onClick(View view) {
+            FilemanagerService filemanagerService = new FilemanagerService();
             switch (view.getId()) {
-                case R.id.selectAll:
-                    selectAll();
+                case R.id.downloadFile:
+                    filemanagerService.downloadFileStart(checkedItems);
                     break;
                 case R.id.shareFile:
-                    shareFile();
+//                    filemanagerService.shareFileStart();
                     break;
                 case R.id.fileLog:
-                    fileLog();
+                    filemanagerService.fileLogStart(historyList);
                     break;
                 case R.id.changeName:
                     changeName();
@@ -803,7 +821,7 @@ public class FileManagerActivity extends AppCompatActivity {
                     addTad();
                     break;
                 case R.id.fileInfo:
-                    fileInfo();
+                    filemanagerService.fileInfoStart();
                     break;
                 case R.id.deleteFileBtn:
                     removeFile();
@@ -812,40 +830,12 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     };
 
-    private void selectAll() {
-
-        int count = listAdapter.getCount();
-
-        for (int i = 0; i < count; i++) {
-            View group = listAdapter.getViewAt(i);
-            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
-            groupItemHolder.checkBox.setChecked(true);
-            if (groupItemHolder.checkBox.isChecked()) {
-                addSelectedItem(groupItemHolder.realFileItem);
-            }
-        }
-        changeCBGMod();
-
-    }
-
-    private void shareFile() {
-        Log.d("clicked button", "share");
-    }
-
-    private void fileLog() {
-        Log.d("clicked button", "filelog");
-    }
-
     private void changeName() {
         createDialog("renamefile");
     }
 
     private void addTad() {
         Log.d("clicked button", "addTag");
-    }
-
-    private void fileInfo() {
-        Log.d("clicked button", "fileinfo");
     }
 
     private void removeFile() {
@@ -920,8 +910,6 @@ public class FileManagerActivity extends AppCompatActivity {
 
                         byte[] stringbyte = newDir.getBytes(Charset.forName("euc-kr"));
                         String eucKrDir = new String(stringbyte, "euc-kr");
-
-                        System.out.println(eucKrDir + "    " + newDir);
 
                         if (newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")) {
 
@@ -1030,7 +1018,6 @@ public class FileManagerActivity extends AppCompatActivity {
         return builder.create();
     }
 
-
     /* 디바이스 버튼 클릭 이벤트 */
 
     @Override
@@ -1058,6 +1045,7 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
+    /* 리스너 */
     class DragListener implements View.OnDragListener {
 
         @Override
@@ -1095,7 +1083,6 @@ public class FileManagerActivity extends AppCompatActivity {
             return true;
         }
     }
-
 
 }
 

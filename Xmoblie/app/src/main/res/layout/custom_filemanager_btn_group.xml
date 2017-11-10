@@ -16,14 +16,14 @@
         android:tag="cfbRow">
 
         <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn
-            android:id="@+id/selectAll"
+            android:id="@+id/downloadFile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             app:cfbBottom="true"
-            app:cfbIcon="@drawable/all"
+            app:cfbIcon="@drawable/upload"
             app:cfbRight="true"
-            app:cfbText="전체 선택" />
+            app:cfbText="다운로드" />
 
 
         <com.example.hp.xmoblie.Custom.CustomFilemanagerBtn

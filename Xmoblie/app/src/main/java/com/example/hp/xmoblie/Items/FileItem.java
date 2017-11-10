@@ -12,7 +12,7 @@ import java.util.Locale;
  * Created by HP on 2017-10-16.
  */
 
-public class FileItem implements Parcelable {
+public class FileItem {
     String filename;
     long size;
     String owner;
@@ -59,13 +59,4 @@ public class FileItem implements Parcelable {
         return owner;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
-    }
 }

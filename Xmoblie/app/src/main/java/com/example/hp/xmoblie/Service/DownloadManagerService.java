@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+
 import android.util.Log;
 
 import com.example.hp.xmoblie.Activity.FileManagerActivity;
@@ -32,11 +32,11 @@ public class DownloadManagerService extends Service {
 
     DownloadMotherThread dlm;
 
-    FileManagerActivity fileManagerActivity;
+    FilemanagerService filemanagerService;
     IBinder mBinder = new DownloadManagerService.LocalBinder();
 
 
-    @Nullable
+    @org.jetbrains.annotations.Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -62,9 +62,9 @@ public class DownloadManagerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public boolean downloadFile(DownloadRequestItem dri,FileManagerActivity fma) throws IOException {
+    public boolean downloadFile(DownloadRequestItem dri,FilemanagerService fma) throws IOException {
         if (!ServiceControlCenter.getInstance().isAbleDownload()) {
-            fileManagerActivity= fma;
+            filemanagerService= fma;
 
             offet = dri.getOffset();
             length = dri.getLength();
@@ -84,7 +84,7 @@ public class DownloadManagerService extends Service {
             dlm.interrupt();
             Log.e("kill","kill MT");
         }
-        fileManagerActivity.downloadFinish();
+        filemanagerService.downloadFinish();
     }
 
     public class LocalBinder extends Binder {

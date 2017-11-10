@@ -27,6 +27,7 @@ import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.FilemanagerService;
 import com.example.hp.xmoblie.Service.UploadService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
@@ -135,7 +136,7 @@ public class CameraResultActivity extends AppCompatActivity {
                 try {
                     if(ServiceControlCenter.getInstance().getDownloadManagerService()==null)
                         Log.e("sibal","sibal");
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FileManagerActivity());
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FilemanagerService());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

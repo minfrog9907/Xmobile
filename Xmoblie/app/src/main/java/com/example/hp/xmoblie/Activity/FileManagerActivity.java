@@ -1,10 +1,14 @@
 package com.example.hp.xmoblie.Activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -47,13 +51,17 @@ import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Dialog.InputListener;
 import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
 import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
+import com.example.hp.xmoblie.Helper.DBHelper;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
+import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
@@ -63,9 +71,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.text.Collator;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -91,7 +104,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private HashMap<FileItem, List<FileItem>> listDataChild;
     private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
-    private boolean selectMode = false, startFileProtocal = false;
+    private boolean selectMode = false, startFileProtocol = false;
     private CustomFilemanagerBtnGroup cfbg;
     private int cfbgHeight;
     private FileManagerListAdapter listAdapter;
@@ -101,9 +114,12 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private ApiClient apiClient;
 
-    private List<String> searchHistory = new ArrayList<String>();
-    private List<String> moveDirHistory = new ArrayList<String>();
-    private List<FileItem> checkedItems = new ArrayList<FileItem>();
+    private ArrayList<String> searchHistory = new ArrayList<String>();
+    private ArrayList<String> moveDirHistory = new ArrayList<String>();
+    private ArrayList<FileItem> checkedItems = new ArrayList<FileItem>();
+    private ArrayList<FileItem> historyList = new ArrayList<FileItem>();
+    private DBHelper dbHelper;
+
 
     private static final MediaType JSON = MediaType.parse("text/plain");
 
@@ -149,6 +165,8 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
+        dbHelper = new DBHelper(this, "HISTORY", null, 1);
+
         ViewTreeObserver observer = cfbg.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -204,12 +222,11 @@ public class FileManagerActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 FileItemHolder fileItemHolder = (FileItemHolder) view.getTag();
                 if (!selectMode) {
-                    if (fileItemHolder.fileIcon.getTag().equals("file")) {
-                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                    } else {
-                        FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
-                        searchData = checkRoot() + parants.getFilename();
-                        moveDir(searchData);
+                    FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+                    try {
+                        dbHelper.insert(fileItem);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     selectItem(fileItemHolder);
@@ -228,7 +245,6 @@ public class FileManagerActivity extends AppCompatActivity {
                     changeSelectMode();
                     selectItem(fileItemHolder);
                     adapterView.setSelection(i);
-                }
 
                 ImageView imageView = view.findViewById(R.id.fileIcon);
 
@@ -236,9 +252,15 @@ public class FileManagerActivity extends AppCompatActivity {
                 ClipData.Item item = new ClipData.Item(
                         (CharSequence) fileItem.getFilename());
 
+<<<<<<< HEAD
                 String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
                 ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+=======
+                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                    ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
                 imageView.startDrag(data, // data to be dragged
                         shadowBuilder, // drag shadow
@@ -246,7 +268,12 @@ public class FileManagerActivity extends AppCompatActivity {
                         0 // 필요없은 플래그
                 );
 
+<<<<<<< HEAD
                 imageView.setVisibility(View.INVISIBLE);
+=======
+                    imageView.setVisibility(View.INVISIBLE);
+                }
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
                 return true;
 
@@ -329,77 +356,182 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
     }
 
     /* 프로토콜 */
+    class Protocol {
+        private String protocol = null;
+        private String psearchData = null;
+        private ArrayList<DeleteItem> deleteItemList = null;
+        private String folderName = null;
+        private String newName = null;
+        private String oldName = null;
+        private String newDir = null;
 
-    private void fileProtocal(String path) {
-        if (startFileProtocal) return;
-        startFileProtocal = true;
-        listDataHeader = new ArrayList<>();
-        final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
-        call.enqueue(new Callback<List<FileItem>>() {
-            @Override
-            public void onResponse(Call<List<FileItem>> call,
-                                   Response<List<FileItem>> response) {
-                if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); ++i) {
-                        listDataHeader.add(response.body().get(i));
-                    }
+        void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
+            this.deleteItemList = deleteItemList;
+        }
 
-                    if (response.body().size() <= 0) {
-                        noFIleTxt.setVisibility(View.VISIBLE);
-                    } else {
-                        noFIleTxt.setVisibility(View.INVISIBLE);
-                    }
+        void setFolderName(String folderName) {
+            this.folderName = folderName;
+        }
 
-                    sortData();
-                    adaptList();
+        void setSearchData(String searchData) {
+            this.psearchData = searchData;
+        }
+
+        void setProtocol(String protocol) {
+            this.protocol = protocol;
+        }
+
+        void setNewName(String newName) {
+            this.newName = newName;
+        }
+
+        void setOldName(String oldName) {
+            this.oldName = oldName;
+        }
+
+        void setNewDir(String newDir) {
+            this.newDir = newDir;
+        }
+
+        void activateProtocol() {
+            if (protocol != null) {
+                switch (protocol) {
+                    case "fileProtocol":
+                        if (psearchData != null) {
+                            fileProtocol(psearchData);
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
+                        }
+                        break;
+                    case "removeFileProtocol":
+                        if (psearchData != null) {
+                            if (deleteItemList != null) {
+                                removeFileProtocol(deleteItemList);
+                            } else {
+                                Log.e("Protocol", "you need setDeleteItemList");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
+                        }
+
+                        break;
+                    case "removeFolderProtocol":
+                        if (psearchData != null) {
+                            if (folderName != null) {
+                                removeFolderProtocol(folderName);
+                            } else {
+                                Log.e("Protocol", "you need setFolderName");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
+                        }
+                        break;
+                    case "renameFileProtocol":
+                        if (newName != null) {
+                            if (oldName != null) {
+                                renameFileProtocol(newName, oldName);
+                            } else {
+                                Log.e("Protocol", "you need setOldName");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setNewName");
+                        }
+                        break;
+                    case "mkDir":
+                        if (newDir != null) {
+                            mkDir(newDir);
+                        } else {
+                            Log.e("Protocol", "you need setNewDir");
+                        }
+                        break;
+                    default:
+                        Log.e("Protocol", " Nonexistent protocol");
+                        break;
                 }
-                if (response.errorBody() != null) {
-                    fileProtocal(searchData);
-                }
-                startFileProtocal = false;
+            } else {
+                Log.e("Protocol", " you need setProtocol");
             }
+        }
 
-            @Override
-            public void onFailure(Call<List<FileItem>> call, Throwable t) {
-                Log.e("jsonResponse", "빼애애앵ㄱ");
-                fileProtocal(searchData);
-                startFileProtocal = false;
-            }
-        });
+        private void fileProtocol(String path) {
+            if (startFileProtocol) return;
+            startFileProtocol = true;
+            listDataHeader = new ArrayList<>();
+            final Call<List<FileItem>> call = apiClient.repoFileNodes(getIntent().getStringExtra("token"), path);
+            call.enqueue(new Callback<List<FileItem>>() {
+                @Override
+                public void onResponse(Call<List<FileItem>> call,
+                                       Response<List<FileItem>> response) {
+                    if (response.body() != null) {
+                        for (int i = 0; i < response.body().size(); ++i) {
+                            listDataHeader.add(response.body().get(i));
+                        }
 
-    }
+                        if (response.body().size() <= 0) {
+                            noFIleTxt.setVisibility(View.VISIBLE);
+                        } else {
+                            noFIleTxt.setVisibility(View.INVISIBLE);
+                        }
 
+<<<<<<< HEAD
     private void removeFileProtocal(ArrayList<DeleteItem> deleteItemList) {
         Gson gson = new Gson();
         String jsonPlace = gson.toJson(deleteItemList);
-
-        final Call<ResponseBody> call = apiClient.repoFileDelete(getIntent().getStringExtra("token"), jsonPlace);
-
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "파일이 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                    changeListMode();
-                    searchFile(searchData);
-                } else if (response.errorBody() != null) {
-                    Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+=======
+                        sortData();
+                        adaptList();
+                    }
+                    if (response.errorBody() != null) {
+                        fileProtocol(psearchData);
+                    }
+                    startFileProtocol = false;
                 }
-            }
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+                @Override
+                public void onFailure(Call<List<FileItem>> call, Throwable t) {
+                    Log.e("jsonResponse", "빼애애앵ㄱ");
+                    fileProtocol(psearchData);
+                    startFileProtocol = false;
+                }
+            });
+        }
 
+        private void removeFileProtocol(ArrayList<DeleteItem> deleteItemList) {
+            Gson gson = new Gson();
+            String jsonPlace = gson.toJson(deleteItemList);
+
+            final Call<ResponseBody> call = apiClient.repoFileDelete(getIntent().getStringExtra("token"), jsonPlace);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "파일이 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                        changeListMode();
+                        searchFile(psearchData);
+                    } else if (response.errorBody() != null) {
+                        Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+<<<<<<< HEAD
     private void removeFolderProtocal(final String folderName) {
         final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), searchData, folderName);
 
@@ -416,14 +548,74 @@ public class FileManagerActivity extends AppCompatActivity {
                     Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
-                }
-            }
+=======
+        private void removeFolderProtocol(final String folderName) {
+            final Call<ResponseBody> call = apiClient.repoFolderDelete(getIntent().getStringExtra("token"), psearchData, folderName);
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
-            }
-        });
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 정상적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                        changeListMode();
+                        searchFile(psearchData);
+                    } else if (response.code() == 400) {
+                        Toast.makeText(FileManagerActivity.this, "'" + folderName + "' 폴더가 비어있지 않아 삭제가 불가능 합니다.", Toast.LENGTH_SHORT).show();
+                    } else if (response.errorBody() != null) {
+                        Toast.makeText(FileManagerActivity.this, "에러가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "뭔데 이거", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "쀄일", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private void renameFileProtocol(String newName, String oldName) {
+            final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                        changeListMode();
+                        searchFile(searchData);
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private void mkDir(String dir) {
+            final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    searchFile(searchData);
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -439,7 +631,10 @@ public class FileManagerActivity extends AppCompatActivity {
         searchEdit.setText(searchData.replace("\\", "/"));
         searchEdit.setSelection(searchEdit.length());
 
-        fileProtocal(searchData);
+        Protocol protocol = new Protocol();
+        protocol.setProtocol("fileProtocol");
+        protocol.setSearchData(searchData);
+        protocol.activateProtocol();
     }
 
     private void moveDir(String path) {
@@ -523,7 +718,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private void getSearchHistroy() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String json = prefs.getString("searchHistory", null);
-        List<String> urls = new ArrayList<String>();
+        ArrayList<String> urls = new ArrayList<String>();
         if (json != null) {
             try {
                 JSONArray a = new JSONArray(json);
@@ -548,7 +743,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private void changeListMode() {
         selectMode = false;
         toggleFloating(selectMode);
-        controllBtnGroup(false);
+        controlBtnGroup(false);
         checkedItems.clear();
         int count = listAdapter.getCount();
 
@@ -568,7 +763,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private void changeSelectMode() {
         selectMode = true;
         toggleFloating(selectMode);
-        controllBtnGroup(true);
+        controlBtnGroup(true);
         int count = listAdapter.getCount();
 
         for (int i = 0; i < count; i++) {
@@ -591,7 +786,7 @@ public class FileManagerActivity extends AppCompatActivity {
         changeCBGMod();
     }
 
-    private void controllBtnGroup(boolean showBtnGroup) {
+    private void controlBtnGroup(boolean showBtnGroup) {
         ResizeAnimation animation = new ResizeAnimation(cfbg);
         cfbg.setMultiMod(false);
         animation.setDuration(250);
@@ -639,24 +834,30 @@ public class FileManagerActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             View view = viewList.get(i);
             view.setOnClickListener(CFBOnclick);
+<<<<<<< HEAD
             if (view.getId() == R.id.deleteFileBtn) {
                 view.setOnDragListener(new DragListener());
             }
+=======
+            view.setOnDragListener(new DragListener());
+
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
     }
 
     LinearLayout.OnClickListener CFBOnclick = new CustomFilemanagerBtn.OnClickListener() {
         @Override
         public void onClick(View view) {
+            FilemanagerService filemanagerService = new FilemanagerService();
             switch (view.getId()) {
-                case R.id.selectAll:
-                    selectAll();
+                case R.id.downloadFile:
+                    filemanagerService.downloadFileStart(checkedItems);
                     break;
                 case R.id.shareFile:
-                    shareFile();
+//                    filemanagerService.shareFileStart();
                     break;
                 case R.id.fileLog:
-                    fileLog();
+                    filemanagerService.fileLogStart(historyList);
                     break;
                 case R.id.changeName:
                     changeName();
@@ -665,7 +866,7 @@ public class FileManagerActivity extends AppCompatActivity {
                     addTad();
                     break;
                 case R.id.fileInfo:
-                    fileInfo();
+                    filemanagerService.fileInfoStart();
                     break;
                 case R.id.deleteFileBtn:
                     removeFile();
@@ -674,40 +875,12 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     };
 
-    private void selectAll() {
-
-        int count = listAdapter.getCount();
-
-        for (int i = 0; i < count; i++) {
-            View group = listAdapter.getViewAt(i);
-            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
-            groupItemHolder.checkBox.setChecked(true);
-            if (groupItemHolder.checkBox.isChecked()) {
-                addSelectedItem(groupItemHolder.realFileItem);
-            }
-        }
-        changeCBGMod();
-
-    }
-
-    private void shareFile() {
-        Log.d("clicked button", "share");
-    }
-
-    private void fileLog() {
-        Log.d("clicked button", "filelog");
-    }
-
     private void changeName() {
         createDialog("renamefile");
     }
 
     private void addTad() {
         Log.d("clicked button", "addTag");
-    }
-
-    private void fileInfo() {
-        Log.d("clicked button", "fileinfo");
     }
 
     private void removeFile() {
@@ -730,16 +903,36 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         }
         if (deleteItemList.size() > 0) {
+<<<<<<< HEAD
             removeFileProtocal(deleteItemList);
         }
         if (deleteFolderList.size() > 0) {
             for (int i = 0; i < deleteFolderList.size(); i++) {
                 removeFolderProtocal(deleteFolderList.get(i));
+=======
+            Protocol protocol = new Protocol();
+            protocol.setProtocol("removeFileProtocol");
+            protocol.setSearchData(searchData);
+            protocol.setDeleteItemList(deleteItemList);
+            confirmDialog("파일을 삭제 하시겠습니까?", protocol).show();
+        }
+        if (deleteFolderList.size() > 0) {
+            for (int i = 0; i < deleteFolderList.size(); i++) {
+                Protocol protocol = new Protocol();
+                protocol.setProtocol("removeFolderProtocol");
+                protocol.setSearchData(searchData);
+                protocol.setFolderName(deleteFolderList.get(i));
+                confirmDialog("'" + deleteFolderList.get(i) + "' 폴더를 삭제 하시겠습니까?", protocol).show();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
             }
         }
     }
 
     private void removeFile(FileItem fileItem) {
+<<<<<<< HEAD
+=======
+        Protocol protocol = new Protocol();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         if (fileItem.getType() == 128) {
             ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
             DeleteItem deleteItem = new DeleteItem();
@@ -748,56 +941,25 @@ public class FileManagerActivity extends AppCompatActivity {
             deleteItem.setPath(searchData);
             deleteItemList.add(deleteItem);
 
+<<<<<<< HEAD
             removeFileProtocal(deleteItemList);
         } else if (fileItem.getType() == 16) {
             removeFolderProtocal(fileItem.getFilename());
+=======
+            protocol.setProtocol("removeFileProtocol");
+            protocol.setSearchData(searchData);
+            protocol.setDeleteItemList(deleteItemList);
+            confirmDialog("파일을 삭제 하시겠습니까?", protocol).show();
+        } else if (fileItem.getType() == 16) {
+            protocol.setProtocol("removeFolderProtocol");
+            protocol.setSearchData(searchData);
+            protocol.setFolderName(fileItem.getFilename());
+            confirmDialog("'" + fileItem.getFilename() + "' 폴더를 삭제 하시겠습니까?", protocol).show();
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
-
-
     }
 
     /* 파일 관리 메소드 */
-
-    private void mkDir(String dir) {
-        final Call<ResponseBody> call = apiClient.repoMkDir(getIntent().getStringExtra("token"), dir, searchData);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "폴더가 정상적으로 생성되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "폴더 생성 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-                searchFile(searchData);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void renameFile(String newName, String oldName) {
-        final Call<ResponseBody> call = apiClient.repoRename(getIntent().getStringExtra("token"), oldName, searchData, newName);
-        System.out.println(oldName + "     " + searchData + "     " + newName);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    Toast.makeText(FileManagerActivity.this, "파일명이 정상적으로 변경되었습니다.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(FileManagerActivity.this, "파일명 변경 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
-                }
-                searchFile(searchData);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private boolean checkFileFormat(String newDir) {
         if (newDir != null) {
@@ -808,14 +970,15 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     try {
 
-                        String eucKrDir = new String(newDir.getBytes("utf-8"), "euc-kr");
+                        byte[] stringbyte = newDir.getBytes(Charset.forName("euc-kr"));
+                        String eucKrDir = new String(stringbyte, "euc-kr");
+
                         if (newDir.equals(eucKrDir) && !eucKrDir.matches(".*[[*]|>|<|:|\"|/|\\\\|[|]|?].*")) {
 
                             return true;
 
                         } else {
                             Toast.makeText(FileManagerActivity.this, "폴더명에 들어갈 수 없는 문자가 포함되어 있습니다.", Toast.LENGTH_SHORT).show();
-                            return false;
                         }
 
                     } catch (UnsupportedEncodingException e) {
@@ -841,16 +1004,25 @@ public class FileManagerActivity extends AppCompatActivity {
 
     private boolean FileManagement(String newDir) {
         if (checkFileFormat(newDir)) {
-            mkDir(newDir);
+            Protocol protocol = new Protocol();
+            protocol.setProtocol("mkDir");
+            protocol.setNewDir(newDir);
+            protocol.activateProtocol();
+            return true;
         }
-        return checkFileFormat(newDir);
+        return false;
     }
 
     private boolean FileManagement(String newName, String oldName) {
         if (checkFileFormat(newName)) {
-            renameFile(newName, oldName);
+            Protocol protocol = new Protocol();
+            protocol.setProtocol("renameFileProtocol");
+            protocol.setNewName(newName);
+            protocol.setOldName(oldName);
+            protocol.activateProtocol();
+            return true;
         }
-        return checkFileFormat(newName);
+        return false;
     }
 
     /* create dialog */
@@ -888,7 +1060,25 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     }
 
-
+    private Dialog confirmDialog(String title, final Protocol protocol) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(FileManagerActivity.this);
+        builder.setMessage(title)
+                .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(FileManagerActivity.this, "확인됨", Toast.LENGTH_SHORT).show();
+                        protocol.activateProtocol();
+                    }
+                })
+                .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(FileManagerActivity.this, "취소됨", Toast.LENGTH_SHORT).show();
+                        dialogInterface.cancel();
+                    }
+                });
+        return builder.create();
+    }
 
     /* 디바이스 버튼 클릭 이벤트 */
 
@@ -917,17 +1107,23 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
+<<<<<<< HEAD
 
     public void downloadFinish() {
 
     }
 }
+=======
+    /* 리스너 */
+    class DragListener implements View.OnDragListener {
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
 class DragListener implements View.OnDragListener {
 
     @Override
     public boolean onDrag(View v, DragEvent event) {
 
+<<<<<<< HEAD
         // 이벤트 시작
         switch (event.getAction()) {
 
@@ -962,21 +1158,50 @@ class DragListener implements View.OnDragListener {
 //                    removeFile(fileItem);
 //                }
                 break;
+=======
+                // 이미지를 드래그해서 드랍시켰을때
+                case DragEvent.ACTION_DROP:
+                    Log.d("DragClickListener", "ACTION_DROP");
+                    switch (v.getId()) {
+                        case R.id.deleteFileBtn:
+                            View view = (View) event.getLocalState();
+                            ViewGroup viewgroup = (ViewGroup) view
+                                    .getParent();
+                            FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
+                            FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
+                            removeFile(fileItem);
+                            break;
+                        case R.id.changeName:
+
+                            break;
+                    }
+                    break;
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
 
             case DragEvent.ACTION_DRAG_ENDED:
                 Log.d("DragClickListener", "ACTION_DRAG_ENDED");
                 View view = (View) event.getLocalState();
                 view.setVisibility(View.VISIBLE);
 
+<<<<<<< HEAD
 //                    v.setBackground(normalShape); // go back to normal shape
 
             default:
                 break;
+=======
+                default:
+                    break;
+            }
+            return true;
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         }
         return true;
     }
 }
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5

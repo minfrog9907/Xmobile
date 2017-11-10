@@ -27,6 +27,7 @@ import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.FilemanagerService;
 import com.example.hp.xmoblie.Service.UploadService;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
@@ -128,6 +129,22 @@ public class CameraResultActivity extends AppCompatActivity {
         LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
         LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
 
+<<<<<<< HEAD
+=======
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    if(ServiceControlCenter.getInstance().getDownloadManagerService()==null)
+                        Log.e("sibal","sibal");
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FilemanagerService());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //.putExtra("length", 4 ));
+            }
+        });
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

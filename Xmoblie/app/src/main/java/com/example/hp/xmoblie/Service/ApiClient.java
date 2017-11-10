@@ -63,9 +63,15 @@ public interface ApiClient {
 
 
     Retrofit filesever = new Retrofit.Builder()
+<<<<<<< HEAD
             //.baseUrl("http://xstream.lfconfig.xyz")
             .baseUrl("http://10.1.21.228:51000")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+=======
+            .baseUrl("http://xstream.lfconfig.xyz")
+            //.baseUrl("https://10.1.21.228")
+            //.client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+>>>>>>> 148b1a10455a317833f6598e861bc51b91e7cef5
             .build();
 
     ApiClient severService =  filesever.create(ApiClient.class);
@@ -85,6 +91,14 @@ public interface ApiClient {
             , @Query("dir") String dir
     );
 
+    @GET("/file")
+    Call<List<FileItem>> repoFileLog(
+            @Header("token") String token
+            , @Query("path") String path
+            , @Query("filename") String filename
+
+    );
+
     @GET("/file_list.json")
     Call<List<FileItem>> test();
 
@@ -100,7 +114,7 @@ public interface ApiClient {
     Call<ResponseBody> repoFolderDelete(
             @Header("token") String token,
             @Field("path") String path,
-            @Field("filename") String filename
+            @Field("dirname") String filename
 
     );
 

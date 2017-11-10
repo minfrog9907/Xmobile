@@ -122,7 +122,7 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     public List<View> getBtns(){
         List<View> viewList = new ArrayList<>();
-        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.selectAll));
+        viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.downloadFile));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.shareFile));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.fileLog));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.changeName));

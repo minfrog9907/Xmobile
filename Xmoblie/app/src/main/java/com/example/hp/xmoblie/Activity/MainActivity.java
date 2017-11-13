@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //startActivity(new Intent(MainActivity.this, SettingActivity.class));
                 try {
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287),new FilemanagerService());
+                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

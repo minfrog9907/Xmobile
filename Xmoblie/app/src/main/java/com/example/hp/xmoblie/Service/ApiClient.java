@@ -64,7 +64,7 @@ public interface ApiClient {
 
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://xstream.lfconfig.xyz")
+            .baseUrl("https://xstream.lfconfig.xyz")
             //.baseUrl("https://10.1.21.228")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
@@ -209,6 +209,8 @@ public interface ApiClient {
             @Field("path")String path,
             @Field("filename")String filename
     );
+
+
 
 
 }

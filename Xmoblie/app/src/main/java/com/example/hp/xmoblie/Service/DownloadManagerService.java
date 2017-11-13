@@ -32,7 +32,6 @@ public class DownloadManagerService extends Service {
 
     DownloadMotherThread dlm;
 
-    FilemanagerService filemanagerService;
     IBinder mBinder = new DownloadManagerService.LocalBinder();
 
 
@@ -63,9 +62,8 @@ public class DownloadManagerService extends Service {
     }
 
 
-    public boolean downloadFile(DownloadRequestItem dri,FilemanagerService fma) throws IOException {
+    public boolean downloadFile(DownloadRequestItem dri) throws IOException {
         if (!ServiceControlCenter.getInstance().isAbleDownload()) {
-            filemanagerService= fma;
 
             offet = dri.getOffset();
             length = dri.getLength();
@@ -86,7 +84,8 @@ public class DownloadManagerService extends Service {
             dlm.interrupt();
             Log.e("kill","kill MT");
         }
-        filemanagerService.downloadFinish();
+        ServiceControlCenter.getInstance().downloadFinish();
+        //FilemanagerService.getInstance().downloadFinish();
     }
 
     public class LocalBinder extends Binder {

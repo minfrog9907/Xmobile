@@ -18,6 +18,7 @@ public class ServiceControlCenter {
     DownloadManagerService downloadManagerService;
     NotificationBarService notificationBarService;
     Context context;
+
     public static ServiceControlCenter getInstance() {
         if (instance == null)
             return instance = new ServiceControlCenter();

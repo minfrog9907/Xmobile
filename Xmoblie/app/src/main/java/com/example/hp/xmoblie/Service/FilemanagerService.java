@@ -24,7 +24,13 @@ import retrofit2.Response;
  */
 
 public class FilemanagerService {
-
+    private static FilemanagerService instance;
+    public static FilemanagerService getInstance() {
+        if (instance == null)
+            return instance = new FilemanagerService();
+        else
+            return instance;
+    }
     ArrayList<FileItem> fileItemList;
     private ApiClient apiClient = ApiClient.service;
 
@@ -41,7 +47,7 @@ public class FilemanagerService {
             ServiceControlCenter
                     .getInstance()
                     .getDownloadManagerService()
-                    .downloadFile(new DownloadRequestItem(1, fileName, "", 0, fileSize),new FilemanagerService());
+                    .downloadFile(new DownloadRequestItem(1, fileName, "", 0, fileSize));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -119,7 +119,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
         fulldata[2] = "";
         fulldata[3] = "";
 
-        apiClient = ApiClient.serviceTest;
+        apiClient = ApiClient.service;
 
         bounding = new ArrayList<BoundingBoxItem>();
         throwBound = new ArrayList<BoundingBoxItem>();
@@ -295,7 +295,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
     private void OCR() {
         if (bounding.size() == 0) {
             Log.e("OCR", "active");
-            final Call<OCRDataItem> call = apiClient.repoOCRT();//getIntent().getStringExtra("token"), base64String
+            final Call<OCRDataItem> call = apiClient.repoOCR(getIntent().getStringExtra("token"), base64String);//
             call.enqueue(new Callback<OCRDataItem>() {
                 @Override
                 public void onResponse(Call<OCRDataItem> call,

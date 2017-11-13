@@ -11,6 +11,7 @@ import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
+import com.example.hp.xmoblie.Items.TagItem;
 import com.example.hp.xmoblie.Utill.PersistentCookieStore;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
@@ -52,15 +53,6 @@ public interface ApiClient {
             .build();
 
     ApiClient service = retrofit.create(ApiClient.class);
-
-    Retrofit retrofitTest = new Retrofit.Builder()
-            .baseUrl("http://lfconfig.xyz")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-    ApiClient serviceTest = retrofitTest.create(ApiClient.class);
-
-
 
 
     Retrofit filesever = new Retrofit.Builder()
@@ -162,10 +154,6 @@ public interface ApiClient {
 
     );
 
-    @GET("/xmobile/awef.json.txt")
-    Call<OCRDataItem> repoOCRT();
-
-
     @POST("/file")
     Call<ResponseBody> repoDownload(
             @Body RequestBody bytes
@@ -187,7 +175,7 @@ public interface ApiClient {
             @Query("limit") int limit
     );
 
-    @GET("/file/rollbackinfo\n")
+    @GET("/file/rollbackinfo")
     Call<ResponseBody>repoRollback(
             @Header("token")String token,
             @Query("path")String path,
@@ -210,7 +198,20 @@ public interface ApiClient {
             @Field("filename")String filename
     );
 
+    @FormUrlEncoded
+    @POST("/file/tag")
+    Call<ResponseBody>repoAddTag(
+      @Header("token")String token,
+      @Field("tag")String tag,
+      @Field("filename")String filename,
+      @Field("path")String path
+    );
 
+    @GET("/file/tag")
+    Call<List<TagItem>>repoFindTag(
+            @Header("token")String token,
+            @Query("tag")String tag
+    );
 
 
 }

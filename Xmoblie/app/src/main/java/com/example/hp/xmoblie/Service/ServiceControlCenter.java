@@ -1,10 +1,8 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Service;
 
 import android.content.Context;
 
-import com.example.hp.xmoblie.Activity.MainActivity;
-import com.example.hp.xmoblie.Service.DownloadManagerService;
-import com.example.hp.xmoblie.Service.NotificationBarService;
+import org.opencv.core.Point;
 
 /**
  * Created by HP on 2017-11-02.
@@ -14,10 +12,11 @@ public class ServiceControlCenter {
     private static ServiceControlCenter instance;
 
     public boolean downloadNow=false;
-    String token;
-    DownloadManagerService downloadManagerService;
-    NotificationBarService notificationBarService;
-    Context context;
+    private String token;
+    private DownloadManagerService downloadManagerService;
+    private NotificationBarService notificationBarService;
+    private Context context;
+    private Point conner_l,conner_r;
 
     public static ServiceControlCenter getInstance() {
         if (instance == null)
@@ -64,5 +63,21 @@ public class ServiceControlCenter {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public void setConner_l(Point conner_l) {
+        this.conner_l = conner_l;
+    }
+
+    public void setConner_r(Point conner_r) {
+        this.conner_r = conner_r;
+    }
+
+    public Point getConner_l() {
+        return conner_l;
+    }
+
+    public Point getConner_r() {
+        return conner_r;
     }
 }

@@ -74,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.2"
-        android:weightSum="4"
+        android:weightSum="3"
         android:layout_marginLeft="-15dp"
         android:layout_marginRight="-15dp"
         android:layout_marginTop="15dp"
@@ -98,15 +98,7 @@
             android:layout_weight="1"
             app:symbol="@drawable/upload"
             app:text="업로드" />
-        <com.example.hp.xmoblie.Custom.SideStick_BTN
-            android:id="@+id/cameraResult_NameEdit"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:symbol="@drawable/edit"
-            app:text="이름 변경">
 
-        </com.example.hp.xmoblie.Custom.SideStick_BTN>
 
         <com.example.hp.xmoblie.Custom.SideStick_BTN
             android:id="@+id/cameraResult_Share"

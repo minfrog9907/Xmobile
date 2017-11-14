@@ -42,6 +42,10 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Utill.BaseActivity;
+
+import org.opencv.core.Point;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,6 +68,9 @@ public class CameraActivity extends BaseActivity {
     LinearLayout autofocus;
     ImageView focus;
     AbsoluteLayout absoluteLayout;
+
+    ImageView conner_r;
+    ImageView conner_l;
     float x;
     float y;
     private final static int PERMISSIONS_REQUEST_CODE = 100;
@@ -202,6 +209,8 @@ public class CameraActivity extends BaseActivity {
         focus =(ImageView) findViewById(R.id.camera_focus);
         absoluteLayout =(AbsoluteLayout)findViewById(R.id.camera_absolute);
 
+        conner_l = (ImageView)findViewById(R.id.camera_conner_l);
+        conner_r = (ImageView)findViewById(R.id.camera_conner_r);
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 
@@ -368,7 +377,13 @@ public class CameraActivity extends BaseActivity {
 
 
     }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        ServiceControlCenter.getInstance().setConner_l(new Point(conner_l.getX(),conner_l.getY()));
+        ServiceControlCenter.getInstance().setConner_r(new Point(conner_r.getX(),conner_r.getY()));
 
+    }
     /**
      *
      * @param activity

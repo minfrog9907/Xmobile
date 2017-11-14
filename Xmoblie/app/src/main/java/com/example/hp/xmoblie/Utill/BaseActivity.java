@@ -1,4 +1,4 @@
-package com.example.hp.xmoblie.Activity;
+package com.example.hp.xmoblie.Utill;
 
 import android.app.Activity;
 import android.os.Bundle;

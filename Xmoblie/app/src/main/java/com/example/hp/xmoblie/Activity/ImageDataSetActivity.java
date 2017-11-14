@@ -1,14 +1,11 @@
 package com.example.hp.xmoblie.Activity;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,12 +16,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
+import com.example.hp.xmoblie.Dialog.AreYouSureDialog;
+import com.example.hp.xmoblie.Dialog.EditDataDialog;
 import com.example.hp.xmoblie.Items.BoundingBoxItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.OCRLineDataItem;
@@ -268,7 +266,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
 
     private void setCommit() {
         if (btnMode[1] == 0 && btnMode[2] == 0 && btnMode[3] == 0) {
-            startActivityForResult(new Intent(ImageDataSetActivity.this, AreYouSurePopUp.class).putExtra("name", fulldata[1])
+            startActivityForResult(new Intent(ImageDataSetActivity.this, AreYouSureDialog.class).putExtra("name", fulldata[1])
                     .putExtra("price", fulldata[2])
                     .putExtra("place", fulldata[3]), 2222);
         }
@@ -288,7 +286,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
             btnMode[mode] = 0;
             resetSymbol();
             throwBound.clear();
-            startActivityForResult(new Intent(ImageDataSetActivity.this, EditDataPopUp.class).putExtra("data", fulldata[mode]), 1111);
+            startActivityForResult(new Intent(ImageDataSetActivity.this, EditDataDialog.class).putExtra("data", fulldata[mode]), 1111);
         }
     }
 

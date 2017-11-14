@@ -76,10 +76,10 @@
 
         </activity>
         <activity android:name=".Activity.ImageDataSetActivity"/>
-        <activity android:name=".Activity.EditDataPopUp"
+        <activity android:name=".Dialog.EditDataDialog"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
-        <activity android:name=".Activity.AreYouSurePopUp"
+        <activity android:name=".Dialog.AreYouSureDialog"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
 

@@ -1,17 +1,12 @@
 package com.example.hp.xmoblie.Service;
 
 import android.util.Log;
-import android.view.View;
 
-import com.example.hp.xmoblie.Activity.FileManagerActivity;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.LogItem;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 

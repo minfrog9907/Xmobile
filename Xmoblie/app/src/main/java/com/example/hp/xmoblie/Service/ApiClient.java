@@ -12,17 +12,11 @@ import com.example.hp.xmoblie.Items.OCRDataItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.Items.TagItem;
-import com.example.hp.xmoblie.Utill.PersistentCookieStore;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-import com.example.hp.xmoblie.Utill.UnsafeOkHttpClient;
+import com.example.hp.xmoblie.Http.UnsafeOkHttpClient;
 
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.util.List;
 
-import okhttp3.JavaNetCookieJar;
 import okhttp3.MultipartBody;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,7 +27,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 
-import retrofit2.http.HEAD;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;

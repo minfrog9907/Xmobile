@@ -7,7 +7,6 @@ package com.example.hp.xmoblie.Activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,18 +14,10 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.R;
-import com.example.hp.xmoblie.Service.ApiClient;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Utill.BaseActivity;
 
 /**
  * Created by triti on 2017-07-13.

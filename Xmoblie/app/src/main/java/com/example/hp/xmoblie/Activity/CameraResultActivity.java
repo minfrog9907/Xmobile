@@ -4,15 +4,12 @@ package com.example.hp.xmoblie.Activity;
  * Created by HP on 2017-09-27.
  */
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,19 +17,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hp.xmoblie.Custom.SideStick_BTN;
-import com.example.hp.xmoblie.Items.DownloadRequestItem;
+import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
+import com.example.hp.xmoblie.Dialog.InputListener;
+import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
+import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
-import com.example.hp.xmoblie.Service.DownloadManagerService;
-import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Service.UploadService;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,20 +57,23 @@ public class CameraResultActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    int IMAGE_DATA = 1050;
+    private int IMAGE_DATA = 1050;
 
-    ImageView preview;
+    private ImageView preview;
 
-    ApiClient apiClient;
+    private ApiClient apiClient;
 
-    String node;
-    String name;
-    String price;
+    private String node;
+    private String name;
+    private String price;
+    private String resizeFileName;
 
     private Mat img_input;
     private Mat img_output;
 
-    Bitmap bitmapOutput;
+    private Bitmap bitmapOutput;
+
+    private TextView resultNode;
 
     private void copyFile(String filename) {
         String baseDir = Environment.getExternalStorageDirectory().getPath();
@@ -111,6 +114,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
         apiClient = ApiClient.service;
         preview = (ImageView) findViewById(R.id.cameraResult_Image);
+        resultNode = (TextView) findViewById(R.id.cameraResult_node);
 
         actionBar.setDisplayShowCustomEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(false);            //액션바 아이콘을 업 네비게이션 형태로 표시합니다.
@@ -120,6 +124,7 @@ public class CameraResultActivity extends AppCompatActivity {
         actionBar.setCustomView(mCustomView);
 
 
+
         //이미 사용자에게 퍼미션 허가를 받음.
         read_image_file();
         imageprocess_and_showResult();
@@ -127,7 +132,7 @@ public class CameraResultActivity extends AppCompatActivity {
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
         LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
-        LinearLayout nameEdit = (LinearLayout) findViewById(R.id.cameraResult_NameEdit);
+
 
 
         upload.setOnClickListener(new View.OnClickListener() {
@@ -136,18 +141,13 @@ public class CameraResultActivity extends AppCompatActivity {
                 uploadBills(node);
             }
         });
-        nameEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startService(new Intent(CameraResultActivity.this, UploadService.class)
-                        .putExtra("token", getIntent().getStringExtra("token"))
-                        .putExtra("path", "/storage/emulated/0/Download/bills")
-                        .putExtra("filename", "asdfasdf.jpg")
-                        .putExtra("target", "\\"));
 
+//                startService(new Intent(CameraResultActivity.this, UploadService.class)
+//                        .putExtra("token", getIntent().getStringExtra("token"))
+//                        .putExtra("path", "/storage/emulated/0/Download/bills")
+//                        .putExtra("filename", "asdfasdf.jpg")
+//                        .putExtra("target", "\\"));
 
-            }
-        });
 
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,24 +170,27 @@ public class CameraResultActivity extends AppCompatActivity {
 
     private void imageprocess_and_showResult() {
 
-        imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr());
+        ServiceControlCenter sc = ServiceControlCenter.getInstance();
+        imageprocessing(img_input.getNativeObjAddr(), img_output.getNativeObjAddr(), sc.getConner_l().x, sc.getConner_l().y, sc.getConner_r().x, sc.getConner_r().y);
 
         bitmapOutput = Bitmap.createBitmap(img_output.cols(), img_output.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(img_output, bitmapOutput);
-        saveImage(bitmapOutput, String.format("%d.png   ", System.currentTimeMillis()));
+        resizeFileName = String.format("%d.png   ", System.currentTimeMillis());
+        saveImage(bitmapOutput, resizeFileName);
 
         preview.setImageBitmap(bitmapOutput);
+
     }
 
     private void read_image_file() {
         node = getIntent().getStringExtra("node");
-        copyFile(node);
-        //copyFile("/Download/bills/asdfasdf.jpg");
+        //copyFile(node);
+        copyFile("/Download/bills/asdfasdf.jpg");
         img_input = new Mat();
         img_output = new Mat();
 
-        loadImage(node, img_input.getNativeObjAddr());
-       // loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
+        //loadImage(node, img_input.getNativeObjAddr());
+        loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
     }
 
     private void saveImage(Bitmap finalBitmap, String image_name) {
@@ -261,7 +264,7 @@ public class CameraResultActivity extends AppCompatActivity {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-        Call<ResponseBody> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace(" ", "")));
+        Call<ResponseBody> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace("\n", "").replace(" ", "")));
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call,
@@ -278,12 +281,13 @@ public class CameraResultActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
     public native void loadImage(String imageFileName, long img);
 
-    public native void imageprocessing(long inputImage, long outputImage);
+    public native void imageprocessing(long inputImage, long outputImage, double leftx, double lefty, double rightx, double righty);
+
+
 }

@@ -1,13 +1,13 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Thread;
 
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Utill.NotificationHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;

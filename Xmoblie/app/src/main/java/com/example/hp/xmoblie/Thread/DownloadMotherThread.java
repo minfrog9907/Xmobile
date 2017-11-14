@@ -24,19 +24,19 @@ import okio.BufferedSource;
  */
 
 public class DownloadMotherThread extends Thread {
-    int LENGTH =37268;
-    int MAXTHREAD=1;
-    int len;
-    int left;
-    int run = 0;
-    int thCnt = 0;
-    int nowRunning = 0;
-    String filename;
-    DownloadManagerService dm;
-    NotificationHandler handler;
+    private int LENGTH =37268;
+    private int MAXTHREAD=1;
+    private int len;
+    private int left;
+    private int run = 0;
+    private int thCnt = 0;
+    private int nowRunning = 0;
+    private String filename;
+    private DownloadManagerService dm;
+    private NotificationHandler handler;
 
-    ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
-    ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
+    private ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
+    private ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
 
     public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
         this.filename = filename;

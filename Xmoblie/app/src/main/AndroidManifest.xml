@@ -43,7 +43,7 @@
                 <data android:scheme="sharedlink" android:host="filemanager"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.CheerPopUp">
+        <activity android:name=".Activity.CheerDialog">
             <!--android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"-->
         </activity>
         <activity

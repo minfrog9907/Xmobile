@@ -22,7 +22,7 @@ import java.util.Locale;
  * Created by HP on 2017-09-20.
  */
 
-public class CheerPopUp extends SettingActivity {
+public class CheerDialog extends SettingActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

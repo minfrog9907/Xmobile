@@ -53,8 +53,7 @@ public class DownloadManagerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        token = intent.getStringExtra("token");
-
+        token = ServiceControlCenter.getInstance().getToken();
 
         return super.onStartCommand(intent, flags, startId);
     }

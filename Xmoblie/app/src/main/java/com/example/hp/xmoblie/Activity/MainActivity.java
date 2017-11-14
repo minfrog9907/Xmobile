@@ -21,6 +21,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Service.UploadService;
 import com.example.hp.xmoblie.Utill.DoubleCloseHandler;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         date2AsString = dateFormat.format(date2);
         setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
-
+        ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
         ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
@@ -90,14 +91,14 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("open", this.isOpen);
             editor.commit();
 
-            Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+            Intent intent = new Intent(MainActivity.this, CheerDialog.class);
             startActivity(intent);
 
         } else {
             this.todayDate = date.getString("today", "");
             if (this.todayDate.equals(this.date2AsString)) {
                 if (this.isOpen == true) {
-                    Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+                    Intent intent = new Intent(MainActivity.this, CheerDialog.class);
                     startActivity(intent);
 
                     this.isOpen = false;
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("today", this.date2AsString);
                 editor.commit();
 
-                Intent intent = new Intent(MainActivity.this, CheerPopUp.class);
+                Intent intent = new Intent(MainActivity.this, CheerDialog.class);
                 startActivity(intent);
             }
         }
@@ -132,12 +133,7 @@ public class MainActivity extends AppCompatActivity {
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //startActivity(new Intent(MainActivity.this, SettingActivity.class));
-                try {
-                    ServiceControlCenter.getInstance().getDownloadManagerService().downloadFile(new DownloadRequestItem(1,"vdisk.PNG","\\",0,97287));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
             }
         });
 
@@ -157,11 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
         offWorkProgressClass();
 
-        Intent intent =new Intent(MainActivity.this, NotificationBarService.class);
-        bindService(intent,mConnection,BIND_AUTO_CREATE);
-        bindService(new Intent(MainActivity.this, DownloadManagerService.class)
-                .putExtra("token", getIntent().getStringExtra("token"))
-                ,mDownConnection,BIND_AUTO_CREATE);
+        bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
+        bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
+        bindService(new Intent(MainActivity.this,UploadService.class),mUploadConnection,BIND_AUTO_CREATE);
+
     }
 
     public void offWorkProgressClass(){
@@ -255,6 +250,21 @@ public class MainActivity extends AppCompatActivity {
             DownloadManagerService.LocalBinder mLocalBinder = (DownloadManagerService.LocalBinder) service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
             serviceControlCenter.setDownloadManagerService(mLocalBinder.getServerInstance());
+
+        }
+    };
+    ServiceConnection mUploadConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("connected", "failed");
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e("connected", "success");
+            UploadService.LocalBinder mLocalBinder = (UploadService.LocalBinder) service;
+            ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
+            serviceControlCenter.setUploadService(mLocalBinder.getServerInstance());
 
         }
     };

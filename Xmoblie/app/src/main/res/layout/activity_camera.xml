@@ -30,6 +30,15 @@
                 android:background="@drawable/focusdot"
                 android:visibility="invisible"/>
         </AbsoluteLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="15dp"
+            android:textSize="10dp"
+            android:textColor="#73f1e2"
+            android:text="영수증의 왼쪽 상단을 모서리에 맞춰주세요"
+            />
         <ImageView
             android:id="@+id/camera_conner_l"
             android:layout_width="50dp"

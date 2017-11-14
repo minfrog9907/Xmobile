@@ -7,6 +7,7 @@ package com.example.hp.xmoblie.Activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -80,10 +81,26 @@ public class SplashActivity extends BaseActivity {
             }, SPLASH_DISPLAY_LENGTH);
 
         }
+        firstSetting();
 
 
     }
+    private void firstSetting(){
+        SharedPreferences saveText = getSharedPreferences("setting", MODE_PRIVATE);
+        SharedPreferences.Editor editor = saveText.edit();
+        if(saveText.getInt("startHour",-1)==-1&&
+                saveText.getInt("endHour",-1)==-1&&
+                saveText.getInt("startMinute",-1)==-1&&
+                saveText.getInt("endMinute",-1)==-1&&
+                saveText.getInt("dProgress",-1)==-1){
+            editor.putInt("startHour", 8);
+            editor.putInt("endHour", 17);
+            editor.putInt("startMinute", 0);
+            editor.putInt("endMinute", 0);
+            editor.putInt("dProgress", 0);
+        }
 
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

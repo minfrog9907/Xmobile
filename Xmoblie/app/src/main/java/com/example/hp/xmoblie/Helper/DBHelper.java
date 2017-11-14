@@ -51,10 +51,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "', " + fileItem.getSize()
                 + ", '" + fileItem.getOwner()
                 + "', " + fileItem.getGgid()
-                + "', " + fileItem.getGid()
-                + "', " + fileItem.getCreateDate()
-                + "', " + fileItem.getLastWriteDate()
-                + "', " + fileItem.getType() + "');");
+                + ", " + fileItem.getGid()
+                + ", '" + fileItem.getCreateDate()
+                + "', '" + fileItem.getLastWriteDate()
+                + "', " + fileItem.getType() + ");");
 
         db.close();
     }

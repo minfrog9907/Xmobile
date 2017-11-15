@@ -28,6 +28,9 @@ GetAngle(Point a, Point b, Point c);
 JNIEXPORT string JNICALL
 CurrentDateTime();
 
+Point *pRight;
+Point *pLeft;
+
 JNIEXPORT void JNICALL
 Java_com_example_hp_xmoblie_Activity_CameraResultActivity_loadImage(
         JNIEnv *env,
@@ -52,7 +55,12 @@ Java_com_example_hp_xmoblie_Activity_CameraResultActivity_imageprocessing(
         JNIEnv *env,
         jobject,
         jlong addrInputImage,
-        jlong addrOutputImage) {
+        jlong addrOutputImage,
+        double leftx,double lefty,
+        double rightx,double righty) {
+
+    pLeft = new Point(leftx,lefty);
+    pRight = new Point(rightx,righty);
 
     Mat &img_input = *(Mat *) addrInputImage;
     Mat &img_output = *(Mat *) addrOutputImage;
@@ -98,7 +106,7 @@ FindFirstCorner(vector<vector<Point>> contours) {
     double maxlen = 100000000;
 
     for (int i = 0; i < contours.size(); ++i) {
-        if (PointDistance(Point(0, 0), contours[i][0]) < maxlen) {
+        if (PointDistance(*pLeft, contours[i][0]) < maxlen) {
             maxlen = PointDistance(Point(0, 0), contours[i][0]);
             corner[0] = contours[i][0];
         }
@@ -109,12 +117,13 @@ JNIEXPORT void JNICALL
 FindSecondCorner(vector<vector<Point>> contours) {
     double maxlen = 0;
     for (int i = 0; i < contours.size(); ++i) {
-        double tmp = PointDistance(corner[0], contours[i][0]);
-        if (maxlen < tmp) {
-            maxlen = tmp;
-            corner[1] = contours[i][0];
+        if(contours[i][0].x< (*pRight).x &&contours[i][0].y< (*pRight).y ) {
+            double tmp = PointDistance(corner[0], contours[i][0]);
+            if (maxlen < tmp) {
+                maxlen = tmp;
+                corner[1] = contours[i][0];
+            }
         }
-
     }
 }
 JNIEXPORT void JNICALL

@@ -1,13 +1,11 @@
-package com.example.hp.xmoblie.Activity;
+package com.example.hp.xmoblie.Dialog;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.Window;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Custom.SideStick_BTN;
@@ -17,12 +15,12 @@ import com.example.hp.xmoblie.R;
  * Created by HP on 2017-10-26.
  */
 
-public class AreYouSurePopUp extends Activity {
+public class AreYouSureDialog extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.popup_areyousure);
+        setContentView(R.layout.dialog_areyousure);
 
         TextView editText = (TextView) findViewById(R.id.editdata_edit);
 

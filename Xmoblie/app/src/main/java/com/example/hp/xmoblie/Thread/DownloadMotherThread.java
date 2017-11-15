@@ -1,13 +1,13 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Thread;
 
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Utill.NotificationHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,19 +24,19 @@ import okio.BufferedSource;
  */
 
 public class DownloadMotherThread extends Thread {
-    int LENGTH =37268;
-    int MAXTHREAD=1;
-    int len;
-    int left;
-    int run = 0;
-    int thCnt = 0;
-    int nowRunning = 0;
-    String filename;
-    DownloadManagerService dm;
-    NotificationHandler handler;
+    private int LENGTH =37268;
+    private int MAXTHREAD=1;
+    private int len;
+    private int left;
+    private int run = 0;
+    private int thCnt = 0;
+    private int nowRunning = 0;
+    private String filename;
+    private DownloadManagerService dm;
+    private NotificationHandler handler;
 
-    ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
-    ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
+    private ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
+    private ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
 
     public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
         this.filename = filename;

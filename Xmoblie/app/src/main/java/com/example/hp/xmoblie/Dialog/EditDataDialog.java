@@ -1,4 +1,4 @@
-package com.example.hp.xmoblie.Activity;
+package com.example.hp.xmoblie.Dialog;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,12 +15,12 @@ import com.example.hp.xmoblie.R;
  * Created by HP on 2017-10-26.
  */
 
-public class EditDataPopUp extends Activity {
+public class EditDataDialog extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.popup_editdata);
+        setContentView(R.layout.dialog_editdata);
 
         final EditText editText = (EditText)findViewById(R.id.editdata_edit);
 

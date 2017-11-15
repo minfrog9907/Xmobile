@@ -1,7 +1,11 @@
 {
     "logs": [
         {
+<<<<<<< HEAD
             "outputFile": "C:\\Users\\HP\\AndroidStudioProjects\\Xmoblie\\openCVLibrary330\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+=======
+            "outputFile": "C:\\Users\\HP\\Desktop\\Xmoblie\\Xmoblie\\openCVLibrary330\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values\\values.xml",
+>>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
             "map": []
         }
     ]

@@ -3,24 +3,18 @@ package com.example.hp.xmoblie.Service;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.hp.xmoblie.Activity.MainActivity;
 import com.example.hp.xmoblie.R;
-import com.example.hp.xmoblie.Utill.DownloadMotherThread;
 import com.example.hp.xmoblie.Utill.NotificationHandler;
 
 /**

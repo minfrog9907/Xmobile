@@ -3,7 +3,7 @@ package com.example.hp.xmoblie.Utill;
 import android.os.Handler;
 import android.os.Message;
 
-import com.example.hp.xmoblie.Service.NotificationBarService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 
 /**
  * Created by HP on 2017-11-06.

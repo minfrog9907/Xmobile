@@ -1,6 +1,10 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
+<<<<<<< HEAD
  * Original file: C:\\Users\\HP\\AndroidStudioProjects\\Xmoblie\\openCVLibrary330\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+=======
+ * Original file: C:\\Users\\HP\\Desktop\\Xmoblie\\Xmoblie\\openCVLibrary330\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+>>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
  */
 package org.opencv.engine;
 /**

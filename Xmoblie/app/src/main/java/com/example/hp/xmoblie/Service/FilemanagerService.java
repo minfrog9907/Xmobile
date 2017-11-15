@@ -4,8 +4,12 @@ import android.util.Log;
 
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
+<<<<<<< HEAD
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
+=======
+import com.example.hp.xmoblie.Items.LogItem;
+>>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
 
 import java.io.IOException;
 import java.util.ArrayList;

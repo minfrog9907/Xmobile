@@ -1,4 +1,4 @@
-package com.example.hp.xmoblie.Utill;
+package com.example.hp.xmoblie.Thread;
 
 import android.util.Log;
 
@@ -21,18 +21,19 @@ import retrofit2.Response;
  */
 
 public class DownloadThread extends Thread {
-    int type;
-    int id;
-    int length;
-    int recallTime=0;
-    long offset;
+    private int type;
+    private int id;
+    private int length;
+    private int recallTime=0;
 
-    String filename;
-    String path;
-    String token;
+    private long offset;
 
-    DownloadMotherThread dm;
-    ApiClient apiClient= ApiClient.severService;
+    private String filename;
+    private String path;
+    private String token;
+
+    private DownloadMotherThread dm;
+    private ApiClient apiClient= ApiClient.severService;
 
     public void run() {
 
@@ -97,13 +98,13 @@ public class DownloadThread extends Thread {
         return buff.array();
     }
 
-    public byte[] longToBytes(long x) {
+    private  byte[] longToBytes(long x) {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(x);
         return buffer.array();
     }
 
-    public byte[] reverse(byte[] array) {
+    private  byte[] reverse(byte[] array) {
         if (array == null) {
             return array;
         }

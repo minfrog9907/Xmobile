@@ -7,10 +7,8 @@ import android.os.IBinder;
 
 import android.util.Log;
 
-import com.example.hp.xmoblie.Activity.FileManagerActivity;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
-import com.example.hp.xmoblie.Utill.DownloadMotherThread;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
+import com.example.hp.xmoblie.Thread.DownloadMotherThread;
 
 import java.io.IOException;
 
@@ -55,8 +53,7 @@ public class DownloadManagerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        token = intent.getStringExtra("token");
-
+        token = ServiceControlCenter.getInstance().getToken();
 
         return super.onStartCommand(intent, flags, startId);
     }

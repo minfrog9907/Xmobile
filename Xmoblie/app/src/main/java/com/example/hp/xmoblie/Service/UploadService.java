@@ -3,6 +3,7 @@ package com.example.hp.xmoblie.Service;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,11 +25,12 @@ import retrofit2.Response;
 
 public class UploadService extends Service {
     ApiClient apiClient;
-    Intent intent;
+    IBinder mBinder = new UploadService.LocalBinder();
+    String token;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
@@ -39,8 +41,8 @@ public class UploadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.intent  = intent;
-        uploadFile(intent.getStringExtra("path"),intent.getStringExtra("filename"),intent.getStringExtra("target"));
+        token = ServiceControlCenter.getInstance().getToken();
+        //uploadFile(intent.getStringExtra("path"),intent.getStringExtra("filename"),intent.getStringExtra("target"));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -48,7 +50,24 @@ public class UploadService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
-    private void uploadFile(String path,String filename,String target) {
+
+    private void shareLinkUploader(String path){
+
+    }
+
+    public void uploadFile(String path,String filename,String target,long size){
+        if(!ServiceControlCenter.getInstance().isUploadNow()) {
+
+            if (size > 10485760) {
+                ServiceControlCenter.getInstance().uploadStart();
+            } else if (size <= 1048576) {
+                ServiceControlCenter.getInstance().uploadStart();
+                uploadFile_under10MB(path, filename, target);
+            }
+        }
+    }
+
+    private void uploadFile_under10MB(String path,String filename,String target) {
         // create upload service client
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
@@ -74,7 +93,7 @@ public class UploadService extends Service {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-        Call<ResponseBody> call = apiClient.repoUpload(intent.getStringExtra("token"), description, body,target);
+        Call<ResponseBody> call = apiClient.repoUpload(token, description, body,target);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call,
@@ -87,5 +106,11 @@ public class UploadService extends Service {
                 Log.e("Upload error:", t.getMessage());
             }
         });
+    }
+    public class LocalBinder extends Binder {
+        public UploadService getServerInstance() {
+            return UploadService.this;
+
+        }
     }
 }

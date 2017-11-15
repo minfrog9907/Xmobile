@@ -17,6 +17,14 @@ android {
         }
         multiDexEnabled true
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi', 'armeabi-v7a'
+            universalApk false
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

@@ -15,18 +15,10 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.R;
-import com.example.hp.xmoblie.Service.ApiClient;
-import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Utill.BaseActivity;
 
 /**
  * Created by triti on 2017-07-13.
@@ -89,10 +81,26 @@ public class SplashActivity extends BaseActivity {
             }, SPLASH_DISPLAY_LENGTH);
 
         }
+        firstSetting();
 
 
     }
+    private void firstSetting(){
+        SharedPreferences saveText = getSharedPreferences("setting", MODE_PRIVATE);
+        SharedPreferences.Editor editor = saveText.edit();
+        if(saveText.getInt("startHour",-1)==-1&&
+                saveText.getInt("endHour",-1)==-1&&
+                saveText.getInt("startMinute",-1)==-1&&
+                saveText.getInt("endMinute",-1)==-1&&
+                saveText.getInt("dProgress",-1)==-1){
+            editor.putInt("startHour", 8);
+            editor.putInt("endHour", 17);
+            editor.putInt("startMinute", 0);
+            editor.putInt("endMinute", 0);
+            editor.putInt("dProgress", 0);
+        }
 
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

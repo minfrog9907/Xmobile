@@ -1,17 +1,13 @@
 package com.example.hp.xmoblie.Service;
 
 import android.util.Log;
-import android.view.View;
 
-import com.example.hp.xmoblie.Activity.FileManagerActivity;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.LogItem;
+import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,81 +20,64 @@ import retrofit2.Response;
  */
 
 public class FilemanagerService {
+    private List<RollbackItem> logItems = new ArrayList<RollbackItem>();
     private static FilemanagerService instance;
+    private int cnt = 0;
+
     public static FilemanagerService getInstance() {
         if (instance == null)
             return instance = new FilemanagerService();
         else
             return instance;
     }
+
     ArrayList<FileItem> fileItemList;
     private ApiClient apiClient = ApiClient.service;
 
-    /* 파일 다운로드 */
-    public void downloadFileStart(ArrayList<FileItem> fileItemList){
-        this.fileItemList = fileItemList;
-        downloadFile(fileItemList.get(0));
-    }
 
-    private void downloadFile(FileItem fileItem){
-        String fileName = fileItem.getFilename();
-        int fileSize = (int)fileItem.getSize();
+    /* 파일 다운로드 */
+    public void downloadFileStart(ArrayList<FileItem> fileItemList) {
+        cnt = 0;
+        this.fileItemList = fileItemList;
+        System.out.println(fileItemList);
         try {
-            ServiceControlCenter
-                    .getInstance()
-                    .getDownloadManagerService()
-                    .downloadFile(new DownloadRequestItem(1, fileName, "", 0, fileSize));
-        } catch (IOException e) {
-            e.printStackTrace();
+            downloadFile(fileItemList.get(cnt));
+        } catch (IndexOutOfBoundsException e) {
         }
     }
 
-    public void downloadFinish(){
-        if( fileItemList.contains(fileItemList.get(0)) ){
-            fileItemList.remove(fileItemList.get(0));
-            if(fileItemList.size() > 0){
-                downloadFile(fileItemList.get(0));
+    private void downloadFile(FileItem fileItem) {
+        String fileName = fileItem.getFilename();
+        if (fileItem.getType() == 128) {
+            System.out.println("나 다운로드 해오 : " + fileName);
+            int fileSize = (int) fileItem.getSize();
+            try {
+                ServiceControlCenter
+                        .getInstance()
+                        .getDownloadManagerService()
+                        .downloadFile(new DownloadRequestItem(1, fileName, "", 0, fileSize));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
+    }
+
+    public void downloadFinish() {
+        cnt++;
+        try {
+            downloadFile(fileItemList.get(cnt));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("다운로드 끝");
         }
     }
 
     /* 파일 공유 */
-    public void shareFileStart(FileItem fileItem) {
+    public void shareFileStart() {
         Log.d("clicked button", "share");
     }
 
-    private void shareFile(FileItem fileItem){
+    private void shareFile(FileItem fileItem) {
 
-    }
-
-    /* 파일 로그 */
-    public void fileLogStart(ArrayList<FileItem> fileItem, String path, String token) {
-        Log.d("clicked button", "filelog");
-        for(int i = 0; i < fileItem.size(); i++){
-            String filename = fileItem.get(0).getFilename();
-            fileLog(path, filename, token);
-            System.out.println("나 돌아유");
-        }
-    }
-
-    private void fileLog(String path, String filename, String token){
-        final Call<List<LogItem>> call = apiClient.repoFileLog(token,path,filename);
-        call.enqueue(new Callback<List<LogItem>>() {
-            @Override
-            public void onResponse(Call<List<LogItem>> call,
-                                   Response<List<LogItem>> response) {
-                if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); ++i) {
-                        System.out.println(response.body().get(i));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<LogItem>> call, Throwable t) {
-                Log.e("jsonResponse", "빼애애앵ㄱ");
-            }
-        });
     }
 
     /* 파일 정보 */

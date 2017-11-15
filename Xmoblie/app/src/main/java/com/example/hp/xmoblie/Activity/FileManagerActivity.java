@@ -51,12 +51,14 @@ import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Dialog.InputListener;
 import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
 import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
+import com.example.hp.xmoblie.Dialog.ShowLogDialogFragment;
 import com.example.hp.xmoblie.Helper.DBHelper;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
+import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -225,10 +227,18 @@ public class FileManagerActivity extends AppCompatActivity {
                 FileItemHolder fileItemHolder = (FileItemHolder) view.getTag();
                 if (!selectMode) {
                     FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
-                    try {
-                        dbHelper.insert(fileItem);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+
+                    if (fileItemHolder.fileIcon.getTag().equals("file")) {
+                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
+                        try {
+                            dbHelper.insert(fileItem);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
+                        searchData = checkRoot() + parants.getFilename();
+                        moveDir(searchData);
                     }
                 } else {
                     selectItem(fileItemHolder);
@@ -275,8 +285,10 @@ public class FileManagerActivity extends AppCompatActivity {
         expListView.setOverScrollListener(new OverScrollListView.OverScrolledListener() {
             @Override
             public void overScrolled(int scrollY, int maxY, boolean exceededOffset, boolean didFinishOverScroll) {
-                if (exceededOffset) {
-                    searchFile(searchData);
+                if (!selectMode) {
+                    if (exceededOffset) {
+                        searchFile(searchData);
+                    }
                 }
             }
         });
@@ -333,7 +345,7 @@ public class FileManagerActivity extends AppCompatActivity {
         uploadFileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                showFileChooser();
             }
         });
 
@@ -359,6 +371,7 @@ public class FileManagerActivity extends AppCompatActivity {
         private String newName = null;
         private String oldName = null;
         private String newDir = null;
+        private String fileName = null;
 
         void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
             this.deleteItemList = deleteItemList;
@@ -540,7 +553,7 @@ public class FileManagerActivity extends AppCompatActivity {
         }
 
         private void renameFileProtocol(String newName, String oldName) {
-            final Call<ResponseBody> call = apiClient.repoRename(token, oldName, searchData, newName);
+            final Call<ResponseBody> call = apiClient.repoRename(token, oldName, psearchData, newName);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -579,6 +592,8 @@ public class FileManagerActivity extends AppCompatActivity {
                 }
             });
         }
+
+
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -805,35 +820,42 @@ public class FileManagerActivity extends AppCompatActivity {
     LinearLayout.OnClickListener CFBOnclick = new CustomFilemanagerBtn.OnClickListener() {
         @Override
         public void onClick(View view) {
-            FilemanagerService filemanagerService = new FilemanagerService();
-            switch (view.getId()) {
-                case R.id.downloadFile:
-                    filemanagerService.downloadFileStart(checkedItems);
-                    break;
-                case R.id.shareFile:
-//                    filemanagerService.shareFileStart();
-                    break;
-                case R.id.fileLog:
-                    filemanagerService.fileLogStart(checkedItems,searchData,token);
-                    break;
-                case R.id.changeName:
-                    changeName();
-                    break;
-                case R.id.addTag:
-                    addTad();
-                    break;
-                case R.id.fileInfo:
-                    filemanagerService.fileInfoStart();
-                    break;
-                case R.id.deleteFileBtn:
-                    removeFile();
-                    break;
+            if (!checkedItems.isEmpty()) {
+                switch (view.getId()) {
+                    case R.id.downloadFile:
+                        FilemanagerService.getInstance().downloadFileStart(checkedItems);
+                        break;
+                    case R.id.shareFile:
+                        FilemanagerService.getInstance().shareFileStart();
+                        break;
+                    case R.id.fileLog:
+                        showFilelog();
+                        break;
+                    case R.id.changeName:
+                        changeName();
+                        break;
+                    case R.id.addTag:
+                        addTad();
+                        break;
+                    case R.id.fileInfo:
+                        FilemanagerService.getInstance().fileInfoStart();
+                        break;
+                    case R.id.deleteFileBtn:
+                        removeFile();
+                        break;
+                }
+            } else {
+                Toast.makeText(FileManagerActivity.this, "해당 작업을 할 파일을 선택해주세요.", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
     private void changeName() {
         createDialog("renamefile");
+    }
+
+    private void showFilelog() {
+        createDialog("fileLog");
     }
 
     private void addTad() {
@@ -874,28 +896,6 @@ public class FileManagerActivity extends AppCompatActivity {
                 protocol.setFolderName(deleteFolderList.get(i));
                 confirmDialog("'" + deleteFolderList.get(i) + "' 폴더를 삭제 하시겠습니까?", protocol).show();
             }
-        }
-    }
-
-    private void removeFile(FileItem fileItem) {
-        Protocol protocol = new Protocol();
-        if (fileItem.getType() == 128) {
-            ArrayList<DeleteItem> deleteItemList = new ArrayList<>();
-            DeleteItem deleteItem = new DeleteItem();
-            String fileName = fileItem.getFilename();
-            deleteItem.setFilename(fileName);
-            deleteItem.setPath(searchData);
-            deleteItemList.add(deleteItem);
-
-            protocol.setProtocol("removeFileProtocol");
-            protocol.setSearchData(searchData);
-            protocol.setDeleteItemList(deleteItemList);
-            confirmDialog("파일을 삭제 하시겠습니까?", protocol).show();
-        } else if (fileItem.getType() == 16) {
-            protocol.setProtocol("removeFolderProtocol");
-            protocol.setSearchData(searchData);
-            protocol.setFolderName(fileItem.getFilename());
-            confirmDialog("'" + fileItem.getFilename() + "' 폴더를 삭제 하시겠습니까?", protocol).show();
         }
     }
 
@@ -965,6 +965,20 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
+    private void showFileChooser() {
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");      //all files
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), 1000);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /* create dialog */
 
     private void createDialog(String dialogType) {
@@ -981,6 +995,16 @@ public class FileManagerActivity extends AppCompatActivity {
                 };
                 dialog = MkdirDialogFragment.newInstance(inputListener, searchData.replace("\\", "/"));
                 break;
+            case "shareFile":
+
+                break;
+
+            case "fileLog":
+//                List<RollbackItem> logItems = FilemanagerService.getInstance().fileLogStart(checkedItems,searchData,token)
+                dialog = ShowLogDialogFragment.newInstance(checkedItems, searchData, token, this);
+//                dialog = ShowLogDialogFragment.newInstance(logItems);
+
+                break;
             case "renamefile":
                 final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
                 inputListener = new InputListener() {
@@ -992,6 +1016,12 @@ public class FileManagerActivity extends AppCompatActivity {
                 dialog = RenameDialogFragment.newInstance(inputListener, oldName);
                 break;
 
+            case "fileTag":
+                break;
+
+            case "fileInfo":
+
+                break;
         }
         if (dialog != null) {
             dialog.show(getSupportFragmentManager(), "addDialog");
@@ -1058,24 +1088,20 @@ public class FileManagerActivity extends AppCompatActivity {
 
                 // 이미지를 드래그해서 드랍시켰을때
                 case DragEvent.ACTION_DROP:
-                    Log.d("DragClickListener", "ACTION_DROP");
                     switch (v.getId()) {
                         case R.id.deleteFileBtn:
-                            View view = (View) event.getLocalState();
-                            ViewGroup viewgroup = (ViewGroup) view
-                                    .getParent();
-                            FileItemHolder fileItemHolder = (FileItemHolder) viewgroup.getTag();
-                            FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
-                            removeFile(fileItem);
+                            removeFile();
                             break;
                         case R.id.changeName:
+                            changeName();
+                            break;
+                        case R.id.fileLog:
 
                             break;
                     }
                     break;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    Log.d("DragClickListener", "ACTION_DRAG_ENDED");
                     View view = (View) event.getLocalState();
                     view.setVisibility(View.VISIBLE);
 

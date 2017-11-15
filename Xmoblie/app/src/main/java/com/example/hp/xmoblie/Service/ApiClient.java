@@ -6,10 +6,9 @@ package com.example.hp.xmoblie.Service;
 
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.JustRequestItem;
-import com.example.hp.xmoblie.Items.LogItem;
+import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.Items.OCRDataItem;
-import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.Utill.PersistentCookieStore;
 import com.example.hp.xmoblie.Utill.ServiceControlCenter;
@@ -87,7 +86,7 @@ public interface ApiClient {
     );
 
     @GET("/file/rollbackinfo")
-    Call<List<LogItem>> repoFileLog(
+    Call<List<RollbackItem>> repoFileLog(
             @Header("token") String token
             , @Query("path") String path
             , @Query("filename") String filename

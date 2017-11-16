@@ -2,8 +2,10 @@ package com.example.hp.xmoblie.Utill;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.HistoryItem;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.google.gson.Gson;
 
@@ -29,15 +31,15 @@ public class HistorySharedPreferenceManager {
         }
     }
 
-    public boolean addHistroy(FileItem fileItem) {
+    public boolean addHistroy(String path, FileItem fileItem) {
         cnt = history.getInt("cnt", -1);
-        pushFront(convertItemToString(fileItem));
+        pushFront(convertItemToString(new HistoryItem(path,fileItem)));
         return true;
     }
 
-    public String convertItemToString(FileItem fileItem) {
+    public String convertItemToString(HistoryItem historyItem) {
         Gson gson = new Gson();
-        return gson.toJson(fileItem);
+        return gson.toJson(historyItem);
     }
 
     private void pushFront(String convertString){
@@ -52,6 +54,11 @@ public class HistorySharedPreferenceManager {
         editor.putString("hs0",convertString);
         editor.putInt("cnt", cnt++);
         editor.commit();
+    }
+    public void printAll(){
+        for(int i =0; i<10; ++i){
+            Log.e("PA",history.getString("hs"+i,"empty"));
+        }
     }
 
     public static HistorySharedPreferenceManager getInstance() {

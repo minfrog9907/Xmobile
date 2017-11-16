@@ -49,6 +49,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Utill.HistorySharedPreferenceManager;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
@@ -209,11 +210,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     if (fileItemHolder.fileIcon.getTag().equals("file")) {
                         Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
-                        try {
-                            dbHelper.insert(fileItem);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        HistorySharedPreferenceManager.getInstance().addHistroy(searchData, fileItemHolder.realFileItem);
                     } else {
                         FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
                         searchData = checkRoot() + parants.getFilename();

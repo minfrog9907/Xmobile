@@ -20,6 +20,8 @@ public class FileItem {
     String CreateDate;
     String LastWriteDate;
     int type;
+    String path;
+    String tag;
 
     public int getGgid() {
         return ggid;
@@ -59,4 +61,11 @@ public class FileItem {
         return owner;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public String getTag() {
+        return tag;
+    }
 }

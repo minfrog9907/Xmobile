@@ -151,7 +151,7 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
         token = getIntent().getStringExtra("token");
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
-        if(getIntent().getStringExtra("path") != null){
+        if (getIntent().getStringExtra("path") != null) {
             searchData = getIntent().getStringExtra("path");
         }
 
@@ -307,9 +307,11 @@ public class FileManagerActivity extends AppCompatActivity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setSearchHistory(searchEdit.getText().toString());
+
+                String searchTxt = searchEdit.getText().toString();
+                setSearchHistory(searchTxt);
                 searchEdit.clearFocus();
-                moveDir(searchEdit.getText().toString());
+                moveDir(searchTxt);
             }
         });
 
@@ -400,6 +402,13 @@ public class FileManagerActivity extends AppCompatActivity {
                             Log.e("Protocol", "you need setSearchData");
                         }
                         break;
+                    case "tagFileProtocol":
+                        if (psearchData != null) {
+                            tagFileProtocol(psearchData);
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
+                        }
+                        break;
                     case "removeFileProtocol":
                         if (psearchData != null) {
                             if (deleteItemList != null) {
@@ -482,7 +491,45 @@ public class FileManagerActivity extends AppCompatActivity {
                         }
 
                         sortData();
-                        adaptList();
+                        adaptList("path");
+                    }
+                    if (response.errorBody() != null) {
+                        fileProtocol(psearchData);
+                    }
+                    startFileProtocol = false;
+                }
+
+                @Override
+                public void onFailure(Call<List<FileItem>> call, Throwable t) {
+                    Log.e("jsonResponse", "빼애애앵ㄱ");
+                    fileProtocol(psearchData);
+                    startFileProtocol = false;
+                }
+            });
+        }
+
+        private void tagFileProtocol(String tag) {
+            if (startFileProtocol) return;
+            startFileProtocol = true;
+            listDataHeader = new ArrayList<>();
+            final Call<List<FileItem>> call = apiClient.repoFindTag(token, tag);
+            call.enqueue(new Callback<List<FileItem>>() {
+                @Override
+                public void onResponse(Call<List<FileItem>> call,
+                                       Response<List<FileItem>> response) {
+                    if (response.body() != null) {
+                        for (int i = 0; i < response.body().size(); ++i) {
+                            listDataHeader.add(response.body().get(i));
+                        }
+
+                        if (response.body().size() <= 0) {
+                            noFIleTxt.setVisibility(View.VISIBLE);
+                        } else {
+                            noFIleTxt.setVisibility(View.INVISIBLE);
+                        }
+
+                        sortData();
+                        adaptList("tag");
                     }
                     if (response.errorBody() != null) {
                         fileProtocol(psearchData);
@@ -601,7 +648,7 @@ public class FileManagerActivity extends AppCompatActivity {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.code() == 200) {
                         Toast.makeText(FileManagerActivity.this, fileName + "에 " + showTag + " 태그를 성공적으로 추가하였습니다..", Toast.LENGTH_SHORT).show();
-                    } else if(response.code() == 400){
+                    } else if (response.code() == 400) {
                         Toast.makeText(FileManagerActivity.this, "이미 존재하는 태그입니다.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(FileManagerActivity.this, "태그 추가 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
@@ -621,18 +668,24 @@ public class FileManagerActivity extends AppCompatActivity {
     /* 경로 이동 및 파일 실행 */
 
     private void searchFile(String path) {
+        Protocol protocol = new Protocol();
         searchData = path;
-        if (searchData.isEmpty() || searchData.equals("")) {
+
+        if (searchData == null || searchData.isEmpty() || searchData.equals("")) {
             searchData = "\\";
         } else if (searchData.length() > 1 && (searchData.charAt(searchData.length() - 1) == '/' || searchData.charAt(searchData.length() - 1) == '\\')) {
             searchData = searchData.substring(0, path.length() - 1);
         }
-        searchData = searchData.replace("/", "\\");
-        searchEdit.setText(searchData.replace("\\", "/"));
-        searchEdit.setSelection(searchEdit.length());
 
-        Protocol protocol = new Protocol();
-        protocol.setProtocol("fileProtocol");
+        if (path.charAt(0) == '#') {
+            protocol.setProtocol("tagFileProtocol");
+        } else {
+            searchData = searchData.replace("/", "\\");
+            searchEdit.setText(searchData.replace("\\", "/"));
+            searchEdit.setSelection(searchEdit.length());
+            protocol.setProtocol("fileProtocol");
+        }
+
         protocol.setSearchData(searchData);
         protocol.activateProtocol();
     }
@@ -646,7 +699,7 @@ public class FileManagerActivity extends AppCompatActivity {
         searchFile(path);
     }
 
-    private void adaptList() {
+    private void adaptList(String type) {
         if (listAdapter != new FileManagerListAdapter(this, listDataHeader)) {
             listAdapter = new FileManagerListAdapter(this, listDataHeader);
         }
@@ -683,6 +736,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private String checkRoot() {
         return searchData.equals("\\") ? searchData : searchData + "\\";
     }
+
 
     /* 검색 기록 */
 
@@ -987,7 +1041,7 @@ public class FileManagerActivity extends AppCompatActivity {
                     return true;
                 }
                 break;
-            case "addTag" :
+            case "addTag":
                 if (checkFileFormat(str1)) {
                     protocol.setProtocol("addTagProtocol");
                     protocol.setNewTag(str1);
@@ -1049,16 +1103,16 @@ public class FileManagerActivity extends AppCompatActivity {
                 break;
 
             case "addTag":
-                if(checkedItems.get(0).getType() == 128){
+                if (checkedItems.get(0).getType() == 128) {
                     final String fileName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
                     inputListener = new InputListener() {
                         @Override
                         public boolean onInputComplete(String name) {
-                            return FileManagement(name,fileName,"addTag");
+                            return FileManagement(name, fileName, "addTag");
                         }
                     };
                     dialog = AddTagDialogFragment.newInstance(inputListener, fileName);
-                }else{
+                } else {
                     Toast.makeText(this, "태그는 파일에만 추가 가능합니다.", Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -1104,7 +1158,6 @@ public class FileManagerActivity extends AppCompatActivity {
                 Toast.makeText(this, "마지막 페이지 입니다 \n \'뒤로\'버튼 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
             }
             if (moveDirHistory.isEmpty()) {
-                HistorySharedPreferenceManager.getInstance().printAll();
                 finish();
                 return;
             }

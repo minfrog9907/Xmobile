@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         apiClient = ApiClient.service;
         shortcutlist = (ListView) findViewById(R.id.shortcutlist);
-        token = getIntent().getStringExtra("token");
+        token = ServiceControlCenter.getInstance().getToken();
 
 
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
@@ -247,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeShortCut(ArrayList<ShortCutItem> listDataHeader){
+        System.out.println("asdftqewrqe");
         ShortCutListAdapter shortCutListAdapter = new ShortCutListAdapter(this, listDataHeader);
         shortcutlist.setAdapter(shortCutListAdapter);
     }

@@ -72,8 +72,8 @@ public class ShortCutListAdapter extends BaseAdapter {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View view = infalInflater.inflate(R.layout.shortcut_list_low, null);
-            shortCutItemHolder.fFileName = (TextView) view.findViewById(R.id.fileName);
-            shortCutItemHolder.fFileIcon = (ImageView) view.findViewById(R.id.fileIcon);
+            shortCutItemHolder.fFileName = (TextView) view.findViewById(R.id.fFileName);
+            shortCutItemHolder.fFileIcon = (ImageView) view.findViewById(R.id.fFileIcon);
             shortCutItemHolder.realShortCutItem = getItem(i);
             view.setTag(shortCutItemHolder);
 

@@ -82,7 +82,7 @@
         <activity android:name=".Dialog.AreYouSureDialog"
             android:theme="@android:style/Theme.DeviceDefault.Light.Dialog">
         </activity>
-
+        <activity android:name=".Activity.HistoryActivity"/>
         <service android:name=".Service.DownloadManagerService"/>
         <service android:name=".Service.NotificationBarService"/>
     </application>

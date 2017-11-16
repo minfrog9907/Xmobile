@@ -23,14 +23,16 @@ public class HistorySharedPreferenceManager {
     private int cnt;
 
     public HistorySharedPreferenceManager() {
-        history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("history", Activity.MODE_PRIVATE);
+        history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("historyTest", Activity.MODE_PRIVATE);
         editor = history.edit();
+
         if (history.getInt("cnt", -1) == -1) {
             editor.putInt("cnt", 0);
             for (int i = 0; i < 10; ++i)
                 editor.putString("hs" + i, "empty");
             editor.commit();
         }
+        cnt = history.getInt("cnt", -1);
     }
 
     public boolean addHistroy(String path, FileItem fileItem) {
@@ -44,13 +46,15 @@ public class HistorySharedPreferenceManager {
     }
 
     private void pushFront(String convertString) {
-        cnt = history.getInt("cnt", -1);
         if (!findSameHistory(convertString)) {
-            push(convertString);
+            Log.e("PA", "INSERT");
+            Log.e("PA", "--------------------------------------------------------");
+            push(convertString,1);
+            printAll();
         }
     }
 
-    private void push(String convertString) {
+    private void push(String convertString,int oRc) {
         for (int i = cnt; i > 0; --i) {
             if (i < 10) {
                 String tmp = history.getString(new String("hs" + (i - 1)), "empty");
@@ -61,16 +65,19 @@ public class HistorySharedPreferenceManager {
             }
 
         }
+        cnt+=oRc;
+        Log.e("cnt", cnt+"");
         editor.putString("hs0", convertString);
-        editor.putInt("cnt", ++cnt);
+        editor.putInt("cnt",cnt );
         editor.commit();
+
     }
 
     private boolean findSameHistory(String convertString) {
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < cnt; ++i) {
             if (convertString.equals(history.getString("hs" + i, "empty"))) {
-                push(convertString);
-                grabageCollect(i + 1);
+                push(convertString,1);
+                grabageCollect(i+1);
                 return true;
             }
         }
@@ -78,12 +85,15 @@ public class HistorySharedPreferenceManager {
     }
 
     private void grabageCollect(int now) {
-        cnt = history.getInt("cnt", -1);
-        for (int i = now; i < cnt - 1; ++i) {
+        Log.e("PA", "COLLECTED");
+        Log.e("PA", "--------------------------------------------------------");
+        for (int i = now; i < cnt; ++i) {
             editor.putString("hs" + i, history.getString("hs" + (i + 1), "empty"));
         }
-        editor.putInt("cnt", cnt-1);
+        editor.putInt("cnt",--cnt);
         editor.commit();
+        printAll();
+
     }
 
     public boolean deleteHistory(String path,FileItem fileItem){
@@ -97,19 +107,26 @@ public class HistorySharedPreferenceManager {
         return false;
     }
     public void printAll() {
-        for (int i = 0; i < 10; ++i) {
-            Log.e("PA", history.getString("hs" + i, "empty"));
+        for (int i = 0; i <cnt; ++i) {
+            Log.e("PA",i+" :  "+ history.getString("hs" + i, "empty"));
         }
+        Log.e("PA", "--------------------------------------------------------");
+
     }
 
     public ArrayList<HistoryItem> getHistory(){
         ArrayList<HistoryItem> historyItems = new ArrayList<HistoryItem>();
-        cnt = history.getInt("cnt", -1);
+        int aa=0;
         for (int i=0; i<cnt; ++i){
-            Gson gson = new Gson();
-            HistoryItem hi = gson.fromJson(history.getString("hs"+i,"empty"),HistoryItem.class);
-            historyItems.add(hi);
+            String json=history.getString("hs"+i,"empty");
+            if(!json.equals("empty")) {
+                Gson gson = new Gson();
+                HistoryItem hi = gson.fromJson(json, HistoryItem.class);
+                historyItems.add(hi);
+                aa++;
+            }
         }
+        editor.putInt("cnt",aa);
         return historyItems;
     }
 

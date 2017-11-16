@@ -5,8 +5,8 @@ package com.example.hp.xmoblie.Items;
  */
 
 public class HistoryItem {
-    String path;
     FileItem fileItem;
+    String path;
 
     public HistoryItem(String path, FileItem fileItem) {
         this.path=path;

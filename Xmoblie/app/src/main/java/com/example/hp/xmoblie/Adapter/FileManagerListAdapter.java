@@ -18,8 +18,6 @@ import com.example.hp.xmoblie.R;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by HP on 2017-10-31.
@@ -28,10 +26,10 @@ import java.util.List;
 public class FileManagerListAdapter extends BaseAdapter {
 
     private Context _context;
-    private List<FileItem> _listDataHeader; // header titles
-    private List<View> listSaver = new ArrayList<>();
+    private ArrayList<FileItem> _listDataHeader; // header titles
+    private ArrayList<View> listSaver = new ArrayList<>();
 
-    public FileManagerListAdapter(Context context, List<FileItem> listDataHeader) {
+    public FileManagerListAdapter(Context context, ArrayList<FileItem> listDataHeader) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         mackView();

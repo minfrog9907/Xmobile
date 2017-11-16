@@ -15,17 +15,17 @@ import com.example.hp.xmoblie.R;
 
 public class AddTagDialogFragment extends CreateDialogFragment{
     private static final String ARG_DIALOG_RENAMEFILE = "dialog_main_renamefile";
-    private EditText etRenameFile;
-    private String oldName;
+    private EditText etTagFile;
+    private String fileName;
     private InputListener listener;
 
 
-    public static AddTagDialogFragment newInstance(InputListener listener, String oldName) {
+    public static AddTagDialogFragment newInstance(InputListener listener, String fileName) {
         Bundle bundle = new Bundle();
         AddTagDialogFragment fragment = new AddTagDialogFragment ();
 
         fragment.listener = listener;
-        bundle.putString(ARG_DIALOG_RENAMEFILE, oldName);
+        bundle.putString(ARG_DIALOG_RENAMEFILE, fileName);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -33,17 +33,16 @@ public class AddTagDialogFragment extends CreateDialogFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        oldName = getArguments().getString(ARG_DIALOG_RENAMEFILE);
+        fileName = getArguments().getString(ARG_DIALOG_RENAMEFILE);
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_mkdir, null);
-        etRenameFile = (EditText) view.findViewById(R.id.editdata_edit);
-        etRenameFile.setText(oldName);
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_addtag, null);
+        etTagFile = (EditText) view.findViewById(R.id.editdata_edit);
 
-        ((TextView) view.findViewById(R.id.tvTarget)).setText("'" + oldName + "' 의 이름을 변경합니다..");
+        ((TextView) view.findViewById(R.id.tvTarget)).setText("'" + fileName + "' 에 태그를 추가합니다.");
         view.findViewById(R.id.editdata_cancel).setOnClickListener(this);
         view.findViewById(R.id.editdata_commit).setOnClickListener(this);
         builder.setView(view);
@@ -57,7 +56,7 @@ public class AddTagDialogFragment extends CreateDialogFragment{
                 dismissDialog();
                 break;
             case R.id.editdata_commit:
-                if (listener.onInputComplete(etRenameFile.getText().toString())) {
+                if (listener.onInputComplete(etTagFile.getText().toString())) {
                     dismissDialog();
                 }
                 break;

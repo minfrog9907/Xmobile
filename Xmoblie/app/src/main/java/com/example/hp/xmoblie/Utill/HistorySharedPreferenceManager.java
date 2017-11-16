@@ -20,7 +20,11 @@ public class HistorySharedPreferenceManager {
     private int cnt;
 
     public HistorySharedPreferenceManager() {
+<<<<<<< HEAD
         history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("date", Activity.MODE_PRIVATE);
+=======
+        history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("historyTest", Activity.MODE_PRIVATE);
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
         editor = history.edit();
 
         if (history.getInt("cnt", -1) == -1) {
@@ -29,6 +33,7 @@ public class HistorySharedPreferenceManager {
                 editor.putString("hs" + i, "empty");
 
         }
+        cnt = history.getInt("cnt", -1);
     }
 
     public boolean addHistroy(String path, FileItem fileItem) {
@@ -42,23 +47,107 @@ public class HistorySharedPreferenceManager {
         return gson.toJson(historyItem);
     }
 
+<<<<<<< HEAD
     private void pushFront(String convertString){
         for(int i=cnt; i>0; --i){
             if(i<10) {
                 String tmp = history.getString("hs" + (i - 1), "empty");
                 if (tmp != "empty") {
+=======
+    private void pushFront(String convertString) {
+        if (!findSameHistory(convertString)) {
+            Log.e("PA", "INSERT");
+            Log.e("PA", "--------------------------------------------------------");
+            push(convertString,1);
+            printAll();
+        }
+    }
+
+    private void push(String convertString,int oRc) {
+        for (int i = cnt; i > 0; --i) {
+            if (i < 10) {
+                String tmp = history.getString(new String("hs" + (i - 1)), "empty");
+                if (!tmp.equals("empty")) {
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
                     editor.putString("hs" + i, tmp);
                 }
             }
         }
+<<<<<<< HEAD
         editor.putString("hs0",convertString);
         editor.putInt("cnt", cnt++);
+=======
+        cnt+=oRc;
+        Log.e("cnt", cnt+"");
+        editor.putString("hs0", convertString);
+        editor.putInt("cnt",cnt );
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
         editor.commit();
+
     }
+<<<<<<< HEAD
     public void printAll(){
         for(int i =0; i<10; ++i){
             Log.e("PA",history.getString("hs"+i,"empty"));
         }
+=======
+
+    private boolean findSameHistory(String convertString) {
+        for (int i = 0; i < cnt; ++i) {
+            if (convertString.equals(history.getString("hs" + i, "empty"))) {
+                push(convertString,1);
+                grabageCollect(i+1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void grabageCollect(int now) {
+        Log.e("PA", "COLLECTED");
+        Log.e("PA", "--------------------------------------------------------");
+        for (int i = now; i < cnt; ++i) {
+            editor.putString("hs" + i, history.getString("hs" + (i + 1), "empty"));
+        }
+        editor.putInt("cnt",--cnt);
+        editor.commit();
+        printAll();
+
+    }
+
+    public boolean deleteHistory(String path,FileItem fileItem){
+        String convertString = convertItemToString(new HistoryItem(path,fileItem));
+        for (int i = 0; i < 10; ++i) {
+            if (convertString.equals(history.getString("hs" + i, "empty"))) {
+                grabageCollect(i + 1);
+                return true;
+            }
+        }
+        return false;
+    }
+    public void printAll() {
+        for (int i = 0; i <cnt; ++i) {
+            Log.e("PA",i+" :  "+ history.getString("hs" + i, "empty"));
+        }
+        Log.e("PA", "--------------------------------------------------------");
+
+    }
+
+    public ArrayList<HistoryItem> getHistory(){
+        ArrayList<HistoryItem> historyItems = new ArrayList<HistoryItem>();
+        int aa=0;
+        for (int i=0; i<cnt; ++i){
+            String json=history.getString("hs"+i,"empty");
+            if(!json.equals("empty")) {
+                Gson gson = new Gson();
+                HistoryItem hi = gson.fromJson(json, HistoryItem.class);
+                historyItems.add(hi);
+                aa++;
+            }
+        }
+        editor.putInt("cnt",aa);
+        return historyItems;
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
     }
 
     public static HistorySharedPreferenceManager getInstance() {

@@ -20,6 +20,7 @@ import com.example.hp.xmoblie.Adapter.ShortCutListAdapter;
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.HistoryItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         historyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(MainActivity.this, HistoryActivity.class));
             }
         });
 

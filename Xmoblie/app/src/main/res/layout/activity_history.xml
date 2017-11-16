@@ -8,7 +8,7 @@
     tools:context="com.example.hp.xmoblie.Activity.FileManagerActivity">
 
     <LinearLayout
-        android:id="@+id/noFIleTxt"
+        android:id="@+id/history_noFIleTxt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/sortForm"
@@ -42,7 +42,7 @@
             android:paddingRight="15dp">
 
             <com.example.hp.xmoblie.ScrollView.OverScrollListView
-                android:id="@+id/fileList"
+                android:id="@+id/history_fileList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:childDivider="#1f1f1f"

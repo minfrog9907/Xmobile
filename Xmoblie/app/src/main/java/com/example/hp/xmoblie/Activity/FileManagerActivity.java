@@ -35,6 +35,7 @@ import com.example.hp.xmoblie.Adapter.FileManagerListAdapter;
 import com.example.hp.xmoblie.Animation.ResizeAnimation;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtn;
 import com.example.hp.xmoblie.Custom.CustomFilemanagerBtnGroup;
+import com.example.hp.xmoblie.Dialog.AddTagDialogFragment;
 import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Dialog.InputListener;
 import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
@@ -82,7 +83,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private ImageView showSortWay;
     private AutoCompleteTextView searchEdit;
     private OverScrollListView expListView;
-    private List<FileItem> listDataHeader;
+    private ArrayList<FileItem> listDataHeader;
     private HashMap<FileItem, List<FileItem>> listDataChild;
     private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
@@ -150,6 +151,9 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
         token = getIntent().getStringExtra("token");
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
+        if(getIntent().getStringExtra("path") != null){
+            searchData = getIntent().getStringExtra("path");
+        }
 
         ViewTreeObserver observer = cfbg.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -597,9 +601,12 @@ public class FileManagerActivity extends AppCompatActivity {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.code() == 200) {
                         Toast.makeText(FileManagerActivity.this, fileName + "에 " + showTag + " 태그를 성공적으로 추가하였습니다..", Toast.LENGTH_SHORT).show();
+                    } else if(response.code() == 400){
+                        Toast.makeText(FileManagerActivity.this, "이미 존재하는 태그입니다.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(FileManagerActivity.this, "태그 추가 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
                     }
+                    changeListMode();
                     searchFile(searchData);
                 }
 
@@ -983,8 +990,8 @@ public class FileManagerActivity extends AppCompatActivity {
             case "addTag" :
                 if (checkFileFormat(str1)) {
                     protocol.setProtocol("addTagProtocol");
-                    protocol.setFileName(str1);
-                    protocol.setOldName(str2);
+                    protocol.setNewTag(str1);
+                    protocol.setFileName(str2);
                     protocol.activateProtocol();
                     return true;
                 }
@@ -1042,7 +1049,18 @@ public class FileManagerActivity extends AppCompatActivity {
                 break;
 
             case "addTag":
-
+                if(checkedItems.get(0).getType() == 128){
+                    final String fileName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
+                    inputListener = new InputListener() {
+                        @Override
+                        public boolean onInputComplete(String name) {
+                            return FileManagement(name,fileName,"addTag");
+                        }
+                    };
+                    dialog = AddTagDialogFragment.newInstance(inputListener, fileName);
+                }else{
+                    Toast.makeText(this, "태그는 파일에만 추가 가능합니다.", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case "fileInfo":

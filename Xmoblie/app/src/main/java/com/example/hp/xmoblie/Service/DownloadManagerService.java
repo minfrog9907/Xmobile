@@ -82,7 +82,7 @@ public class DownloadManagerService extends Service {
             Log.e("kill","kill MT");
         }
         ServiceControlCenter.getInstance().downloadFinish();
-        //FilemanagerService.getInstance().downloadFinish();
+        FilemanagerService.getInstance().downloadFinish();
     }
 
     public class LocalBinder extends Binder {

@@ -13,11 +13,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.hp.xmoblie.Adapter.ShortCutListAdapter;
 import com.example.hp.xmoblie.Custom.Main_BTN;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
+import com.example.hp.xmoblie.Items.FileItem;
+import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
@@ -28,8 +33,14 @@ import com.github.lzyzsd.circleprogress.ArcProgress;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private DateFormat dateFormat;
     private Date date1, date2;
     private SharedPreferences setting;
+    private ApiClient apiClient;
+    private ListView shortcutlist;
+    private String token;
 
     private static boolean isOpen = true;
     private static boolean isFirst = true;
@@ -65,12 +79,20 @@ public class MainActivity extends AppCompatActivity {
 
         date2AsString = dateFormat.format(date2);
         setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+<<<<<<< HEAD
+        apiClient = ApiClient.service;
+        shortcutlist = (ListView) findViewById(R.id.shortcutlist);
+        token = getIntent().getStringExtra("token");
+
+=======
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
+>>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
         ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
         editor.putBoolean("first", this.isFirst);
+        shortCutProtocol(token, 0,10);
 
         boolean first = date.getBoolean("first", this.isFirst);
         boolean open = date.getBoolean("open", this.isOpen);
@@ -198,6 +220,36 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(runnable, 0);
     }
 
+    private void shortCutProtocol(final String token, final int offset, final int limit) {
+        final ArrayList<ShortCutItem> listDataHeader = new ArrayList<>();
+        final Call<List<ShortCutItem>> call = apiClient.repoShortCut(token,offset, limit);
+        call.enqueue(new Callback<List<ShortCutItem>>() {
+            @Override
+            public void onResponse(Call<List<ShortCutItem>> call,
+                                   Response<List<ShortCutItem>> response) {
+                if (response.body() != null) {
+                    for (int i = 0; i < response.body().size(); ++i) {
+                        listDataHeader.add(response.body().get(i));
+                    }
+                    makeShortCut(listDataHeader);
+                }
+                if (response.errorBody() != null) {
+                    shortCutProtocol(token, offset, limit);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ShortCutItem>> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
+                shortCutProtocol(token, offset, limit);
+            }
+        });
+    }
+
+    private void makeShortCut(ArrayList<ShortCutItem> listDataHeader){
+        ShortCutListAdapter shortCutListAdapter = new ShortCutListAdapter(this, listDataHeader);
+        shortcutlist.setAdapter(shortCutListAdapter);
+    }
 
 
     @Override
@@ -209,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         offWorkProgressClass();
+        shortCutProtocol(token, 0,10);
     }
 
     @Override

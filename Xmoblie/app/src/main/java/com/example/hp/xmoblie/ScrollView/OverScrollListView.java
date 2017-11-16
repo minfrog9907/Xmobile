@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.AbsListView;
 import android.widget.EdgeEffect;
@@ -74,7 +73,6 @@ public class OverScrollListView extends ListView {
             mTopEdgeEffect = getTopEdgeEffect();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-            Log.e(TAG, "The Reflection Failed! Check if the field name changed in AbsListView.java inside the AOSP!");
         }
     }
 
@@ -130,7 +128,6 @@ public class OverScrollListView extends ListView {
         if (mListener != null && scrollY < 1) {
             mListener.overScrolled(Math.abs(scrollY), mMaxOverScrollY, clampedY, didFinishOverScroll);
         } else {
-            Log.v(TAG, "No scroll listener set");
         }
     }
 

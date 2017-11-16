@@ -1086,6 +1086,7 @@ public class FileManagerActivity extends AppCompatActivity {
                 Toast.makeText(this, "마지막 페이지 입니다 \n \'뒤로\'버튼 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
             }
             if (moveDirHistory.isEmpty()) {
+                HistorySharedPreferenceManager.getInstance().printAll();
                 finish();
                 return;
             }

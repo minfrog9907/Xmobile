@@ -79,14 +79,14 @@ public class MainActivity extends AppCompatActivity {
 
         date2AsString = dateFormat.format(date2);
         setting = getSharedPreferences("setting", Activity.MODE_PRIVATE);
-<<<<<<< HEAD
+
         apiClient = ApiClient.service;
         shortcutlist = (ListView) findViewById(R.id.shortcutlist);
         token = getIntent().getStringExtra("token");
 
-=======
+
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
->>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
+
         ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);

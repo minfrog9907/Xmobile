@@ -44,11 +44,7 @@ import com.example.hp.xmoblie.Helper.DBHelper;
 import com.example.hp.xmoblie.Holder.FileItemHolder;
 import com.example.hp.xmoblie.Items.DeleteItem;
 import com.example.hp.xmoblie.Items.FileItem;
-<<<<<<< HEAD
-import com.example.hp.xmoblie.Items.JustRequestItem;
-import com.example.hp.xmoblie.Items.RollbackItem;
-=======
->>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
+
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -355,6 +351,7 @@ public class FileManagerActivity extends AppCompatActivity {
         private String oldName = null;
         private String newDir = null;
         private String fileName = null;
+        private String newTag = null;
 
         void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
             this.deleteItemList = deleteItemList;
@@ -382,6 +379,14 @@ public class FileManagerActivity extends AppCompatActivity {
 
         void setNewDir(String newDir) {
             this.newDir = newDir;
+        }
+
+        public void setNewTag(String newTag) {
+            this.newTag = newTag;
+        }
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
         }
 
         void activateProtocol() {
@@ -428,11 +433,22 @@ public class FileManagerActivity extends AppCompatActivity {
                             Log.e("Protocol", "you need setNewName");
                         }
                         break;
-                    case "mkDir":
+                    case "mkDirProtocol":
                         if (newDir != null) {
-                            mkDir(newDir);
+                            mkDirProtocol(newDir);
                         } else {
                             Log.e("Protocol", "you need setNewDir");
+                        }
+                        break;
+                    case "addTagProtocol":
+                        if (fileName != null) {
+                            if (newTag != null) {
+                                addTagProtocol(newTag);
+                            } else {
+                                Log.e("Protocol", "you need setNewTag");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setFileName");
                         }
                         break;
                     default:
@@ -556,7 +572,7 @@ public class FileManagerActivity extends AppCompatActivity {
             });
         }
 
-        private void mkDir(String dir) {
+        private void mkDirProtocol(String dir) {
             final Call<ResponseBody> call = apiClient.repoMkDir(token, dir, searchData);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -576,7 +592,26 @@ public class FileManagerActivity extends AppCompatActivity {
             });
         }
 
+        private void addTagProtocol(String newTag) {
+            final String showTag = newTag;
+            final Call<ResponseBody> call = apiClient.repoAddTag(token, newTag, fileName, searchData);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(FileManagerActivity.this, fileName + "에 " + showTag + " 태그를 성공적으로 추가하였습니다..", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(FileManagerActivity.this, "태그 추가 중 오류가 발생하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    searchFile(searchData);
+                }
 
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -818,7 +853,7 @@ public class FileManagerActivity extends AppCompatActivity {
                         changeName();
                         break;
                     case R.id.addTag:
-                        addTad();
+                        addTag();
                         break;
                     case R.id.fileInfo:
                         FilemanagerService.getInstance().fileInfoStart();
@@ -834,15 +869,15 @@ public class FileManagerActivity extends AppCompatActivity {
     };
 
     private void changeName() {
-        createDialog("renamefile");
+        createDialog("renameFile");
     }
 
     private void showFilelog() {
         createDialog("fileLog");
     }
 
-    private void addTad() {
-        Log.d("clicked button", "addTag");
+    private void addTag() {
+        createDialog("addTag");
     }
 
     private void removeFile() {
@@ -928,7 +963,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private boolean FileManagement(String newDir) {
         if (checkFileFormat(newDir)) {
             Protocol protocol = new Protocol();
-            protocol.setProtocol("mkDir");
+            protocol.setProtocol("mkDirProtocol");
             protocol.setNewDir(newDir);
             protocol.activateProtocol();
             return true;
@@ -936,14 +971,27 @@ public class FileManagerActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean FileManagement(String newName, String oldName) {
-        if (checkFileFormat(newName)) {
-            Protocol protocol = new Protocol();
-            protocol.setProtocol("renameFileProtocol");
-            protocol.setNewName(newName);
-            protocol.setOldName(oldName);
-            protocol.activateProtocol();
-            return true;
+    private boolean FileManagement(String str1, String str2, String type) {
+        Protocol protocol = new Protocol();
+        switch (type) {
+            case "renameFile":
+                if (checkFileFormat(str1)) {
+                    protocol.setProtocol("renameFileProtocol");
+                    protocol.setNewName(str1);
+                    protocol.setOldName(str2);
+                    protocol.activateProtocol();
+                    return true;
+                }
+                break;
+            case "addTag" :
+                if (checkFileFormat(str1)) {
+                    protocol.setProtocol("addTagProtocol");
+                    protocol.setFileName(str1);
+                    protocol.setOldName(str2);
+                    protocol.activateProtocol();
+                    return true;
+                }
+                break;
         }
         return false;
     }
@@ -983,23 +1031,21 @@ public class FileManagerActivity extends AppCompatActivity {
                 break;
 
             case "fileLog":
-//                List<RollbackItem> logItems = FilemanagerService.getInstance().fileLogStart(checkedItems,searchData,token)
                 dialog = ShowLogDialogFragment.newInstance(checkedItems, searchData, token, this);
-//                dialog = ShowLogDialogFragment.newInstance(logItems);
-
                 break;
-            case "renamefile":
+            case "renameFile":
                 final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
                 inputListener = new InputListener() {
                     @Override
                     public boolean onInputComplete(String newDir) {
-                        return FileManagement(newDir, oldName);
+                        return FileManagement(newDir, oldName, "renameFile");
                     }
                 };
                 dialog = RenameDialogFragment.newInstance(inputListener, oldName);
                 break;
 
-            case "fileTag":
+            case "addTag":
+
                 break;
 
             case "fileInfo":

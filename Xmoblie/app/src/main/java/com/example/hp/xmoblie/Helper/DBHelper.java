@@ -46,20 +46,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insert(FileItem fileItem) throws ParseException {
         SQLiteDatabase db = getWritableDatabase();
-<<<<<<< HEAD
-        if(fileItem.getType() == 128) {
-            db.execSQL("INSERT INTO HISTORY VALUES(null, '" + fileItem.getFilename()
-                    + "', " + fileItem.getSize()
-                    + ", '" + fileItem.getOwner()
-                    + "', " + fileItem.getGgid()
-                    + "', " + fileItem.getGid()
-                    + "', " + fileItem.getCreateDate()
-                    + "', " + fileItem.getLastWriteDate()
-                    + "', " + fileItem.getType() + "');");
-
-            db.close();
-        }
-=======
 
         db.execSQL("INSERT INTO HISTORY VALUES(null, '" + fileItem.getFilename()
                 + "', " + fileItem.getSize()
@@ -71,7 +57,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "', " + fileItem.getType() + ");");
 
         db.close();
->>>>>>> a6211ed54d162f47fc5865c1c417b394df7a5e85
     }
 
     private void delete(String item) {

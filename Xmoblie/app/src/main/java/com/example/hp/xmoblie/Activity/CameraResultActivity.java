@@ -4,6 +4,9 @@ package com.example.hp.xmoblie.Activity;
  * Created by HP on 2017-09-27.
  */
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -148,6 +151,13 @@ public class CameraResultActivity extends AppCompatActivity {
 //                        .putExtra("filename", "asdfasdf.jpg")
 //                        .putExtra("target", "\\"));
 
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServiceControlCenter.getInstance().getUploadService().shareURL("\\image_receipt");
+            }
+        });
+
 
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -255,7 +265,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
-                MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
         // add another part within the multipart request
         String descriptionString = "hello, this is description speaking";

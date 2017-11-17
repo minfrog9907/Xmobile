@@ -50,6 +50,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.HistorySharedPreferenceManager;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -149,7 +150,7 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
-        token = getIntent().getStringExtra("token");
+        token = ServiceControlCenter.getInstance().getToken();
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
         if(getIntent().getStringExtra("path") != null){
             searchData = getIntent().getStringExtra("path");

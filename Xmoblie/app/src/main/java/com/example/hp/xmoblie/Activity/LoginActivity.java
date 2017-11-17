@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.hp.xmoblie.Items.LoginItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 
 import java.io.IOException;
 import java.util.List;
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (auto)
                                 Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
-
+                            ServiceControlCenter.getInstance().setToken(response.body().getToken());
                             startActivity(intent);
                             finish();
                         } else if (getIntent().getBooleanExtra("pb", false) == true) {
@@ -116,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (auto)
                                 Toast.makeText(getApplicationContext(), "자동로그인되었습니다.", Toast.LENGTH_SHORT).show();
-
+                            ServiceControlCenter.getInstance().setToken(response.body().getToken());
                             startActivity(intent);
                             finish();
                         }

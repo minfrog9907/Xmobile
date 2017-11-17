@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
 
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
 
-        ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
-
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
         editor.putBoolean("first", this.isFirst);

@@ -65,8 +65,7 @@ public class FileManagerListAdapter extends BaseAdapter {
         for(int i = 0; i < count; i++){
             FileItemHolder fileItemHolder = new FileItemHolder();
             String headerTitle = (String) getItem(i).getFilename();
-            int type = (int) getItem(i).getType();
-
+            int type = (int) getItem(i).getType() != 0 ? getItem(i).getType() : 128;
 
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

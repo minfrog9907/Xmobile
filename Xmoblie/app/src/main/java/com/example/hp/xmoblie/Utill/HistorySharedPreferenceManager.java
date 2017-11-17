@@ -8,9 +8,6 @@ import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.HistoryItem;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.google.gson.Gson;
-import com.google.gson.JsonParser;
-
-import java.util.ArrayList;
 
 /**
  * Created by HP on 2017-11-14.
@@ -23,28 +20,40 @@ public class HistorySharedPreferenceManager {
     private int cnt;
 
     public HistorySharedPreferenceManager() {
+<<<<<<< HEAD
+        history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("date", Activity.MODE_PRIVATE);
+=======
         history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("historyTest", Activity.MODE_PRIVATE);
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
         editor = history.edit();
 
         if (history.getInt("cnt", -1) == -1) {
             editor.putInt("cnt", 0);
             for (int i = 0; i < 10; ++i)
                 editor.putString("hs" + i, "empty");
-            editor.commit();
+
         }
         cnt = history.getInt("cnt", -1);
     }
 
     public boolean addHistroy(String path, FileItem fileItem) {
-        pushFront(convertItemToString(new HistoryItem(path, fileItem)));
+        cnt = history.getInt("cnt", -1);
+        pushFront(convertItemToString(new HistoryItem(path,fileItem)));
         return true;
     }
 
-    private String convertItemToString(HistoryItem historyItem) {
+    public String convertItemToString(HistoryItem historyItem) {
         Gson gson = new Gson();
         return gson.toJson(historyItem);
     }
 
+<<<<<<< HEAD
+    private void pushFront(String convertString){
+        for(int i=cnt; i>0; --i){
+            if(i<10) {
+                String tmp = history.getString("hs" + (i - 1), "empty");
+                if (tmp != "empty") {
+=======
     private void pushFront(String convertString) {
         if (!findSameHistory(convertString)) {
             Log.e("PA", "INSERT");
@@ -59,19 +68,29 @@ public class HistorySharedPreferenceManager {
             if (i < 10) {
                 String tmp = history.getString(new String("hs" + (i - 1)), "empty");
                 if (!tmp.equals("empty")) {
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
                     editor.putString("hs" + i, tmp);
                 }
-
             }
-
         }
+<<<<<<< HEAD
+        editor.putString("hs0",convertString);
+        editor.putInt("cnt", cnt++);
+=======
         cnt+=oRc;
         Log.e("cnt", cnt+"");
         editor.putString("hs0", convertString);
         editor.putInt("cnt",cnt );
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
         editor.commit();
 
     }
+<<<<<<< HEAD
+    public void printAll(){
+        for(int i =0; i<10; ++i){
+            Log.e("PA",history.getString("hs"+i,"empty"));
+        }
+=======
 
     private boolean findSameHistory(String convertString) {
         for (int i = 0; i < cnt; ++i) {
@@ -128,6 +147,7 @@ public class HistorySharedPreferenceManager {
         }
         editor.putInt("cnt",aa);
         return historyItems;
+>>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
     }
 
     public static HistorySharedPreferenceManager getInstance() {

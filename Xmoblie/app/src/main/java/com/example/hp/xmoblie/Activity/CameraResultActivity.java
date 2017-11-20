@@ -4,9 +4,6 @@ package com.example.hp.xmoblie.Activity;
  * Created by HP on 2017-09-27.
  */
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -23,19 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
-import com.example.hp.xmoblie.Dialog.InputListener;
-import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
-import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
-import com.example.hp.xmoblie.Service.UploadService;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -145,7 +135,7 @@ public class CameraResultActivity extends AppCompatActivity {
             }
         });
 
-//                startService(new Intent(CameraResultActivity.this, UploadService.class)
+//                startService(new Intent(CameraResultActivity.this, UploadManagerService.class)
 //                        .putExtra("token", getIntent().getStringExtra("token"))
 //                        .putExtra("path", "/storage/emulated/0/Download/bills")
 //                        .putExtra("filename", "asdfasdf.jpg")
@@ -154,7 +144,7 @@ public class CameraResultActivity extends AppCompatActivity {
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ServiceControlCenter.getInstance().getUploadService().shareURL("\\image_receipt");
+                ServiceControlCenter.getInstance().getUploadManagerService().shareURL("\\image_receipt");
             }
         });
 

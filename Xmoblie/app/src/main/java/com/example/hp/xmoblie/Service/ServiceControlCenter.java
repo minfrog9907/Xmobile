@@ -13,7 +13,7 @@ public class ServiceControlCenter {
 
     public boolean downloadNow=false, uploadNow =false;
     private String token;
-    private UploadService uploadService;
+    private UploadManagerService uploadManagerService;
     private DownloadManagerService downloadManagerService;
     private NotificationBarService notificationBarService;
     private Context context;
@@ -51,8 +51,8 @@ public class ServiceControlCenter {
         this.context = context;
     }
 
-    public void setUploadService(UploadService uploadService) {
-        this.uploadService = uploadService;
+    public void setUploadManagerService(UploadManagerService uploadManagerService) {
+        this.uploadManagerService = uploadManagerService;
     }
 
     public void setDownloadManagerService(DownloadManagerService downloadManagerService) {
@@ -84,8 +84,8 @@ public class ServiceControlCenter {
         return conner_r;
     }
 
-    public UploadService getUploadService() {
-        return uploadService;
+    public UploadManagerService getUploadManagerService() {
+        return uploadManagerService;
     }
 
     public DownloadManagerService getDownloadManagerService() {

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-<<<<<<< HEAD
-=======
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,26 +18,23 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Utill.HistorySharedPreferenceManager;
 
 import java.util.ArrayList;
->>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
+
 
 /**
  * Created by HP on 2017-11-10.
  */
 
 public class HistoryActivity extends AppCompatActivity{
-<<<<<<< HEAD
-=======
+
     ListView listView;
     ArrayList<HistoryItem> historyItems;
     ArrayList<FileItem> fileItems = new ArrayList<FileItem>();
     FileManagerListAdapter fileManagerListAdapter;
->>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-<<<<<<< HEAD
-=======
+
         setContentView(R.layout.activity_history);
         ActionBar actionBar = getSupportActionBar();
 
@@ -66,6 +61,5 @@ public class HistoryActivity extends AppCompatActivity{
                 startActivity(new Intent(HistoryActivity.this,FileManagerActivity.class).putExtra("path",historyItems.get(position).getPath()));
             }
         });
->>>>>>> 0bf0c8c5ab14f8819e4ca7b2e8517ae9af1e2d76
     }
 }

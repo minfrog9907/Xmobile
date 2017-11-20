@@ -205,6 +205,16 @@ public interface ApiClient {
             @Query("tag")String tag
     );
 
+    @POST("/")
+    Call<ResponseBody> repoUpload(
+            @Body RequestBody bytes
+    );
+
+
+    @POST("/")
+    Call<ResponseBody> repoUploadService(
+            @Body RequestBody bytes
+    );
 
 }
 

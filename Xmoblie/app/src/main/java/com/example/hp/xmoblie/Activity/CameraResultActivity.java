@@ -20,19 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
-import com.example.hp.xmoblie.Dialog.InputListener;
-import com.example.hp.xmoblie.Dialog.MkdirDialogFragment;
-import com.example.hp.xmoblie.Dialog.RenameDialogFragment;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
-import com.example.hp.xmoblie.Service.UploadService;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -142,11 +135,18 @@ public class CameraResultActivity extends AppCompatActivity {
             }
         });
 
-//                startService(new Intent(CameraResultActivity.this, UploadService.class)
+//                startService(new Intent(CameraResultActivity.this, UploadManagerService.class)
 //                        .putExtra("token", getIntent().getStringExtra("token"))
 //                        .putExtra("path", "/storage/emulated/0/Download/bills")
 //                        .putExtra("filename", "asdfasdf.jpg")
 //                        .putExtra("target", "\\"));
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServiceControlCenter.getInstance().getUploadManagerService().shareURL("\\image_receipt");
+            }
+        });
 
 
         preview.setOnClickListener(new View.OnClickListener() {
@@ -255,7 +255,7 @@ public class CameraResultActivity extends AppCompatActivity {
 
         // MultipartBody.Part is used to send also the actual file name
         MultipartBody.Part body =
-                MultipartBody.Part.createFormData("picture", file.getName(), requestFile);
+                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
         // add another part within the multipart request
         String descriptionString = "hello, this is description speaking";

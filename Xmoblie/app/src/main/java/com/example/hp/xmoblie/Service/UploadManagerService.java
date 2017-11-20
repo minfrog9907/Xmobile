@@ -1,6 +1,9 @@
 package com.example.hp.xmoblie.Service;
 
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
@@ -9,7 +12,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hp.xmoblie.Thread.UploadMotherThread;
+
 import java.io.File;
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -23,10 +29,12 @@ import retrofit2.Response;
  * Created by HP on 2017-11-07.
  */
 
-public class UploadService extends Service {
+public class UploadManagerService extends Service {
     ApiClient apiClient;
-    IBinder mBinder = new UploadService.LocalBinder();
+    IBinder mBinder = new UploadManagerService.LocalBinder();
+    UploadMotherThread uploadMotherThread;
     String token;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -51,34 +59,31 @@ public class UploadService extends Service {
         super.onDestroy();
     }
 
-    private void shareLinkUploader(String path){
-
-    }
-
-    public void uploadFile(String path,String filename,String target,long size){
-        if(!ServiceControlCenter.getInstance().isUploadNow()) {
-
-            if (size > 10485760) {
+    public void uploadFile(String path, String filename, String target,long size) throws IOException {
+        if (!ServiceControlCenter.getInstance().isUploadNow()) {
+            if (size > 20971520) {
+                uploadMotherThread = new UploadMotherThread();
+                uploadMotherThread.run(target,filename,path);
                 ServiceControlCenter.getInstance().uploadStart();
-            } else if (size <= 1048576) {
+            } else if (size <= 20971520) {
                 ServiceControlCenter.getInstance().uploadStart();
-                uploadFile_under10MB(path, filename, target);
+                uploadFile_under20MB(path, filename, target);
             }
         }
     }
 
-    private void uploadFile_under10MB(String path,String filename,String target) {
+    private void uploadFile_under20MB(String path, String filename, String target) {
         // create upload service client
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
         Log.e("path", Uri.parse(path) + "");
-        File file = new File(path+"/"+filename);
+        File file = new File(path + "/" + filename);
 
         // create RequestBody instance from file
         RequestBody requestFile =
                 RequestBody.create(
-                        MediaType.parse(path+"/"+filename),
+                        MediaType.parse(path + "/" + filename),
                         file
                 );
 
@@ -93,12 +98,12 @@ public class UploadService extends Service {
                         okhttp3.MultipartBody.FORM, descriptionString);
 
         // finally, execute the request
-        Call<ResponseBody> call = apiClient.repoUpload(token, description, body,target);
+        Call<ResponseBody> call = apiClient.repoUpload(token, description, body, target);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call,
                                    Response<ResponseBody> response) {
-                Toast.makeText(getApplicationContext(),"업로드 완료",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "업로드 완료", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -107,9 +112,23 @@ public class UploadService extends Service {
             }
         });
     }
+
+    public void shareURL(String path) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Copied Text", "https://xmobile.lfconfig.xyz/share?path=" + path);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(getApplicationContext(), "공유링크가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show();
+    }
+    public void dead() {
+        if (uploadMotherThread != null && uploadMotherThread.isAlive()) {
+            uploadMotherThread.interrupt();
+            Log.e("kill","kill UT");
+        }
+        ServiceControlCenter.getInstance().uploadFinish();
+    }
     public class LocalBinder extends Binder {
-        public UploadService getServerInstance() {
-            return UploadService.this;
+        public UploadManagerService getServerInstance() {
+            return UploadManagerService.this;
 
         }
     }

@@ -18,20 +18,16 @@ import android.widget.TextView;
 
 import com.example.hp.xmoblie.Adapter.ShortCutListAdapter;
 import com.example.hp.xmoblie.Custom.Main_BTN;
-import com.example.hp.xmoblie.Items.DownloadRequestItem;
-import com.example.hp.xmoblie.Items.FileItem;
-import com.example.hp.xmoblie.Items.HistoryItem;
 import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
-import com.example.hp.xmoblie.Service.UploadService;
+import com.example.hp.xmoblie.Service.UploadManagerService;
 import com.example.hp.xmoblie.Utill.DoubleCloseHandler;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
-
-        ServiceControlCenter.getInstance().setToken(getIntent().getStringExtra("token"));
 
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
@@ -177,8 +171,13 @@ public class MainActivity extends AppCompatActivity {
 
         bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
+<<<<<<< HEAD
         bindService(new Intent(MainActivity.this,UploadService.class),mUploadConnection,BIND_AUTO_CREATE);
         shortCutProtocol(token, 0,10);
+=======
+        bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
+
+>>>>>>> 0879befc073054d1fac23787edce7d76d3015892
     }
 
     public void offWorkProgressClass(){
@@ -312,9 +311,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.e("connected", "success");
-            UploadService.LocalBinder mLocalBinder = (UploadService.LocalBinder) service;
+            UploadManagerService.LocalBinder mLocalBinder = (UploadManagerService.LocalBinder) service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
-            serviceControlCenter.setUploadService(mLocalBinder.getServerInstance());
+            serviceControlCenter.setUploadManagerService(mLocalBinder.getServerInstance());
 
         }
     };

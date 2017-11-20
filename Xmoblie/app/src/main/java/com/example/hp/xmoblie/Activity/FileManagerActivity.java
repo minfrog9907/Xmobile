@@ -63,6 +63,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Collator;
@@ -1095,14 +1096,18 @@ public class FileManagerActivity extends AppCompatActivity {
                     String FilePath = data.getData().getPath();
                     File file = new File(FilePath);
                     int file_size = Integer.parseInt(String.valueOf(file.length()/1024));
-                    System.out.println(
-                            file.getName() + "\n"
-                            + file_size +"\n"
-                            + file.getPath() + "\n"
-                            + file.getAbsolutePath()+ "\n"
-                    );
+                    try {
+                        ServiceControlCenter.getInstance().getUploadManagerService().uploadFile(FilePath, file.getName(), searchData, 0);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+//                    System.out.println(
+//                            file.getName() + "\n"
+//                            + file_size +"\n"
+//                            + file.getPath() + "\n"
+//                            + file.getAbsolutePath()+ "\n"
+//                    );
 
-                    //FilePath is your file as a string
                 }
         }
     }

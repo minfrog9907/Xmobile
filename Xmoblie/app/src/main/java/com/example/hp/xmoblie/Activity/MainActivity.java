@@ -173,7 +173,10 @@ public class MainActivity extends AppCompatActivity {
         bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
         shortCutProtocol(token, 0,10);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 50530f11065b9daaae93dce89796532880c1a213
 
     }
 

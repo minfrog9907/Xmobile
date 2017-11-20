@@ -171,13 +171,9 @@ public class MainActivity extends AppCompatActivity {
 
         bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
-<<<<<<< HEAD
-        bindService(new Intent(MainActivity.this,UploadService.class),mUploadConnection,BIND_AUTO_CREATE);
-        shortCutProtocol(token, 0,10);
-=======
         bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
+        shortCutProtocol(token, 0,10);
 
->>>>>>> 0879befc073054d1fac23787edce7d76d3015892
     }
 
     public void offWorkProgressClass(){

@@ -5,10 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-<<<<<<< HEAD
-
-=======
->>>>>>> 0879befc073054d1fac23787edce7d76d3015892
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,10 +18,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Utill.HistorySharedPreferenceManager;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-=======
 
->>>>>>> 0879befc073054d1fac23787edce7d76d3015892
 
 /**
  * Created by HP on 2017-11-10.

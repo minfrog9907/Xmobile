@@ -167,8 +167,16 @@ public interface ApiClient {
             @Query("limit") int limit
     );
 
-    @GET("/file/rollbackinfo")
-    Call<ResponseBody>repoRollback(
+    @GET("/file/info")
+    Call<FileItem>repoFileInfo(
+            @Header("token")String token,
+            @Query("path")String path,
+            @Query("filename")String filename,
+            @Query("type")int type
+    );
+
+    @GET("/file/tag")
+    Call<FileItem>repoFileTags(
             @Header("token")String token,
             @Query("path")String path,
             @Query("filename")String filename

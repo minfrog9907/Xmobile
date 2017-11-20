@@ -1,28 +1,15 @@
 package com.example.hp.xmoblie.Items;
 
+import java.util.ArrayList;
+
 /**
- * Created by HP on 2017-11-13.
+ * Created by HP on 2017-11-20.
  */
 
 public class TagItem {
-    String filename;
-    String path;
-    long size;
-    String tag;
+    ArrayList<String> tags;
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public String getTag() {
-        return tag;
+    public ArrayList<String> getTags() {
+        return tags;
     }
 }

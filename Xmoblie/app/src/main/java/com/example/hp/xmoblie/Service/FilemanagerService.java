@@ -1,7 +1,12 @@
 package com.example.hp.xmoblie.Service;
 
+import android.app.DialogFragment;
+import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
+import com.example.hp.xmoblie.Dialog.FileInfoDiralogFragment;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 
@@ -40,7 +45,6 @@ public class FilemanagerService {
     public void downloadFileStart(ArrayList<FileItem> fileItemList) {
         cnt = 0;
         this.fileItemList = fileItemList;
-        System.out.println(fileItemList);
         try {
             downloadFile(fileItemList.get(cnt));
         } catch (IndexOutOfBoundsException e) {
@@ -82,7 +86,31 @@ public class FilemanagerService {
     }
 
     /* 파일 정보 */
-    public void fileInfoStart() {
-        Log.d("clicked button", "fileinfo");
+    public void fileInfoStart(String token, String path, FileItem fileItem, Context context, FragmentManager manager) {
+        String fileName = fileItem.getFilename();
+        int fileType = fileItem.getType();
+        fileInfoProtocol(token,path,fileName,fileType, context, manager);
     }
+
+    private void fileInfoProtocol(String token, String path, String fileName, int fileType, final Context context, final FragmentManager manager) {
+        final Call<FileItem> call = apiClient.repoFileInfo(token, path, fileName, fileType);
+        call.enqueue(new Callback<FileItem>() {
+            @Override
+            public void onResponse(Call<FileItem> call,
+                                   Response<FileItem> response) {
+                if (response.body() != null) {
+                    FileItem fileItem = (FileItem) response.body();
+                    CreateDialogFragment dialog = FileInfoDiralogFragment.newInstance(fileItem,context);
+                    dialog.show(manager, "fileInfo");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FileItem> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
+            }
+        });
+    }
+
+
 }

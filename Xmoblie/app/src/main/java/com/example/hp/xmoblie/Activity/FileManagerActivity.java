@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -50,6 +52,7 @@ import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.ScrollView.OverScrollListView;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.FilemanagerService;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.HistorySharedPreferenceManager;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -59,6 +62,7 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Collator;
@@ -149,7 +153,7 @@ public class FileManagerActivity extends AppCompatActivity {
         takePhotoBtn = (FloatingActionButton) findViewById(R.id.takePhotoBtn);
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
-        token = getIntent().getStringExtra("token");
+        token = ServiceControlCenter.getInstance().getToken();
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
         if (getIntent().getStringExtra("path") != null) {
             searchData = getIntent().getStringExtra("path");
@@ -246,7 +250,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
                     ClipData data = new ClipData(fileItem.getFilename(), mimeTypes, item);
-                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(imageView);
+                    View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
 
                     imageView.startDrag(data, // data to be dragged
                             shadowBuilder, // drag shadow
@@ -254,7 +258,6 @@ public class FileManagerActivity extends AppCompatActivity {
                             0 // 필요없은 플래그
                     );
 
-                    imageView.setVisibility(View.INVISIBLE);
                 }
 
                 return true;
@@ -384,11 +387,11 @@ public class FileManagerActivity extends AppCompatActivity {
             this.newDir = newDir;
         }
 
-        public void setNewTag(String newTag) {
+        void setNewTag(String newTag) {
             this.newTag = newTag;
         }
 
-        public void setFileName(String fileName) {
+        void setFileName(String fileName) {
             this.fileName = fileName;
         }
 
@@ -491,7 +494,8 @@ public class FileManagerActivity extends AppCompatActivity {
                         }
 
                         sortData();
-                        adaptList("path");
+                        adaptList();
+                        changeListMode();
                     }
                     if (response.errorBody() != null) {
                         fileProtocol(psearchData);
@@ -512,6 +516,7 @@ public class FileManagerActivity extends AppCompatActivity {
             if (startFileProtocol) return;
             startFileProtocol = true;
             listDataHeader = new ArrayList<>();
+            tag = tag.replace("#", "");
             final Call<List<FileItem>> call = apiClient.repoFindTag(token, tag);
             call.enqueue(new Callback<List<FileItem>>() {
                 @Override
@@ -529,7 +534,8 @@ public class FileManagerActivity extends AppCompatActivity {
                         }
 
                         sortData();
-                        adaptList("tag");
+                        adaptList();
+                        changeListMode();
                     }
                     if (response.errorBody() != null) {
                         fileProtocol(psearchData);
@@ -663,6 +669,8 @@ public class FileManagerActivity extends AppCompatActivity {
                 }
             });
         }
+
+
     }
 
     /* 경로 이동 및 파일 실행 */
@@ -677,7 +685,7 @@ public class FileManagerActivity extends AppCompatActivity {
             searchData = searchData.substring(0, path.length() - 1);
         }
 
-        if (path.charAt(0) == '#') {
+        if (searchData.charAt(0) == '#') {
             protocol.setProtocol("tagFileProtocol");
         } else {
             searchData = searchData.replace("/", "\\");
@@ -699,10 +707,8 @@ public class FileManagerActivity extends AppCompatActivity {
         searchFile(path);
     }
 
-    private void adaptList(String type) {
-        if (listAdapter != new FileManagerListAdapter(this, listDataHeader)) {
-            listAdapter = new FileManagerListAdapter(this, listDataHeader);
-        }
+    private void adaptList() {
+        listAdapter = new FileManagerListAdapter(this, listDataHeader);
         expListView.setAdapter(listAdapter);
     }
 
@@ -751,7 +757,7 @@ public class FileManagerActivity extends AppCompatActivity {
         }
         searchHistory.add(history);
 
-        if (searchHistory.size() > 6) {
+        if (searchHistory.size() > 100) {
             searchHistory.remove(0);
         }
         setSearchAdapter();
@@ -766,7 +772,6 @@ public class FileManagerActivity extends AppCompatActivity {
         }
         editor.apply();
         Collections.reverse(searchHistory);
-
     }
 
     private void getSearchHistroy() {
@@ -795,38 +800,44 @@ public class FileManagerActivity extends AppCompatActivity {
     /* 선택 모드 */
 
     private void changeListMode() {
-        selectMode = false;
-        toggleFloating(selectMode);
-        controlBtnGroup(false);
-        checkedItems.clear();
-        int count = listAdapter.getCount();
+        if (selectMode) {
+            selectMode = false;
+            toggleFloating(selectMode);
+            controlBtnGroup(false);
+            checkedItems.clear();
+            int count = listAdapter.getCount();
 
-        for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++) {
 
-            View group = listAdapter.getViewAt(i);
-            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
-            groupItemHolder.checkBox.setChecked(false);
-            groupItemHolder.checkBox.setVisibility(View.INVISIBLE);
+                View group = listAdapter.getViewAt(i);
+                FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+                groupItemHolder.checkBox.setChecked(false);
+                groupItemHolder.checkBox.setVisibility(View.INVISIBLE);
 
-            if (groupItemHolder.fileIcon.getTag().equals("folder"))
-                groupItemHolder.showMoreMenu.setVisibility(View.VISIBLE);
+                if (groupItemHolder.fileIcon.getTag().equals("folder"))
+                    groupItemHolder.showMoreMenu.setVisibility(View.VISIBLE);
 
+            }
         }
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
     }
 
     private void changeSelectMode() {
-        selectMode = true;
-        toggleFloating(selectMode);
-        controlBtnGroup(true);
-        int count = listAdapter.getCount();
+        if (!selectMode) {
+            selectMode = true;
+            toggleFloating(selectMode);
+            controlBtnGroup(true);
+            int count = listAdapter.getCount();
 
-        for (int i = 0; i < count; i++) {
-            View group = listAdapter.getViewAt(i);
-            FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
-            groupItemHolder.checkBox.setVisibility(View.VISIBLE);
+            for (int i = 0; i < count; i++) {
+                View group = listAdapter.getViewAt(i);
+                FileItemHolder groupItemHolder = (FileItemHolder) group.getTag();
+                groupItemHolder.checkBox.setVisibility(View.VISIBLE);
 
-            if (groupItemHolder.fileIcon.getTag().equals("folder"))
-                groupItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
+                if (groupItemHolder.fileIcon.getTag().equals("folder"))
+                    groupItemHolder.showMoreMenu.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -914,7 +925,7 @@ public class FileManagerActivity extends AppCompatActivity {
                         addTag();
                         break;
                     case R.id.fileInfo:
-                        FilemanagerService.getInstance().fileInfoStart();
+                        fileInfo();
                         break;
                     case R.id.deleteFileBtn:
                         removeFile();
@@ -973,6 +984,11 @@ public class FileManagerActivity extends AppCompatActivity {
                 confirmDialog("'" + deleteFolderList.get(i) + "' 폴더를 삭제 하시겠습니까?", protocol).show();
             }
         }
+    }
+
+    private void fileInfo(){
+        FileItem fileItem = (FileItem) checkedItems.get(0);
+        FilemanagerService.getInstance().fileInfoStart(token, searchData,fileItem,this, getSupportFragmentManager());
     }
 
     /* 파일 관리 메소드 */
@@ -1065,6 +1081,29 @@ public class FileManagerActivity extends AppCompatActivity {
         } catch (android.content.ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
             Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Fix no activity available
+        if (data == null)
+            return;
+        switch (requestCode) {
+            case 1000:
+                if (resultCode == RESULT_OK) {
+                    String FilePath = data.getData().getPath();
+                    File file = new File(FilePath);
+                    int file_size = Integer.parseInt(String.valueOf(file.length()/1024));
+                    System.out.println(
+                            file.getName() + "\n"
+                            + file_size +"\n"
+                            + file.getPath() + "\n"
+                            + file.getAbsolutePath()+ "\n"
+                    );
+
+                    //FilePath is your file as a string
+                }
         }
     }
 
@@ -1200,8 +1239,6 @@ public class FileManagerActivity extends AppCompatActivity {
                     break;
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    View view = (View) event.getLocalState();
-                    view.setVisibility(View.VISIBLE);
 
                 default:
                     break;

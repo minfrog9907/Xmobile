@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
         apiClient = ApiClient.service;
         shortcutlist = (ListView) findViewById(R.id.shortcutlist);
-        token = ServiceControlCenter.getInstance().getToken();
 
 
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences date = getSharedPreferences("date", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = date.edit();
         editor.putBoolean("first", this.isFirst);
-        shortCutProtocol(token, 0,10);
 
         boolean first = date.getBoolean("first", this.isFirst);
         boolean open = date.getBoolean("open", this.isOpen);
@@ -136,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
+        token = ServiceControlCenter.getInstance().getToken();
 
         /*doubleCloseHandler = new DoubleCloseHandler(this);*/
         doubleCloseHandler = new DoubleCloseHandler(this);
@@ -179,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this,UploadService.class),mUploadConnection,BIND_AUTO_CREATE);
-
+        shortCutProtocol(token, 0,10);
     }
 
     public void offWorkProgressClass(){
@@ -234,9 +233,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     makeShortCut(listDataHeader);
                 }
-                if (response.errorBody() != null) {
-                    shortCutProtocol(token, offset, limit);
-                }
             }
 
             @Override
@@ -248,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makeShortCut(ArrayList<ShortCutItem> listDataHeader){
-        System.out.println("asdftqewrqe");
         ShortCutListAdapter shortCutListAdapter = new ShortCutListAdapter(this, listDataHeader);
         shortcutlist.setAdapter(shortCutListAdapter);
     }

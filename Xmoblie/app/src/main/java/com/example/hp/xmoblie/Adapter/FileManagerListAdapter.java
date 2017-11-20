@@ -77,7 +77,6 @@ public class FileManagerListAdapter extends BaseAdapter {
             fileItemHolder.realFileItem = getItem(i);
             view.setTag(fileItemHolder);
 
-
             fileItemHolder.fileName.setText(headerTitle);
             fileItemHolder.fileName.setTypeface(null, Typeface.BOLD);
 

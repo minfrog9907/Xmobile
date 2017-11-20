@@ -99,6 +99,7 @@ public class SplashActivity extends BaseActivity {
             editor.putInt("endMinute", 0);
             editor.putInt("dProgress", 0);
         }
+        editor.commit();
 
     }
     @Override

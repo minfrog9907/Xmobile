@@ -88,7 +88,6 @@ public class ShowLogDialogFragment extends CreateDialogFragment {
                                    Response<List<RollbackItem>> response) {
                 if (response.body() != null) {
                     for (int i = 0; i < response.body().size(); ++i) {
-                        System.out.println(response.body().get(i));
                         logItems.add(response.body().get(i));
                     }
                     LogListAdapter logListAdapter = new LogListAdapter(context,logItems);

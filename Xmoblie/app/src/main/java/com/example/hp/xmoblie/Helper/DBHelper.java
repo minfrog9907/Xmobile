@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("INSERT INTO HISTORY VALUES(null, '" + fileItem.getFilename()
                 + "', " + fileItem.getSize()
-                + ", '" + fileItem.getOwner()
+                + ", '" + fileItem.getUserid()
                 + "', " + fileItem.getGgid()
                 + ", " + fileItem.getGid()
                 + ", '" + fileItem.getCreateDate()

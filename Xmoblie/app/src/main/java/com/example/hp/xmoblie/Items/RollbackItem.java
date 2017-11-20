@@ -21,8 +21,7 @@ public class RollbackItem {
     }
     public String getReadAbleSize(){return FileUtils.byteCountToDisplaySize((long)getSize());}
     public String getPastDate() {
-        date = date.replace("T"," ");
-        System.out.println(date);
+        String pdate = date.replace("T"," ");
 
         SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -31,7 +30,7 @@ public class RollbackItem {
         formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
         try{
-            Date gmttime = dateFormatGmt.parse(date);
+            Date gmttime = dateFormatGmt.parse(pdate);
             String formatterd = formatter.format(gmttime);
 
             return formatterd;

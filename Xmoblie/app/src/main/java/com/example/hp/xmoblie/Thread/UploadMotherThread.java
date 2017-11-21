@@ -32,7 +32,7 @@ public class UploadMotherThread extends Thread {
     ApiClient apiClient = ApiClient.severService;
     private int LENGTH =10485760;
     private int MAXTHREAD=1;
-    private int left;
+    private long left;
     private int run = 0;
     private int thCnt = 0;
     private int nowRunning = 0;
@@ -47,10 +47,12 @@ public class UploadMotherThread extends Thread {
     private ArrayList<UploadThread> uploadThreads = new ArrayList<UploadThread>();
 
 
-    public void run(String filename, String toPath, String realPath) throws IOException {
+    public void run(String filename, String toPath, String realPath,long size) throws IOException {
+        Log.e("Upload", "업로드");
+
         this.filename = filename;
         this.path = toPath;
-
+        left = size;
         filebyte = fileToByte(realPath);
 
         sendServerToState(8);
@@ -77,13 +79,7 @@ public class UploadMotherThread extends Thread {
         handler.sendMessage(message);
 
 
-        Log.e("Uploading", "start");
-        for (int i = nowRunning; i < MAXTHREAD; ++i) {
-            if (run < thCnt) {
-                uploadThreads.get(run++).run();
-                nowRunning++;
-            }
-        }
+
     }
 
     private byte[] stringToByte(int type, String a) {
@@ -91,7 +87,7 @@ public class UploadMotherThread extends Thread {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
-            outputStream.write(type);
+            outputStream.write(reverse(intToByteArray(type)));
             outputStream.write(a.getBytes(Charset.forName("euc-kr")));
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,7 +102,8 @@ public class UploadMotherThread extends Thread {
         byte[] bytesArray = null;
 
         File file = new File(realPath+"/"+filename);
-        length =file.length();
+
+        length =file.length()/1024;
 
         bytesArray = new byte[(int) file.length()];
 
@@ -180,6 +177,10 @@ public class UploadMotherThread extends Thread {
 
         if (run == thCnt&&nowRunning==0) {
             sendServerToState(10);
+            ServiceControlCenter.getInstance().getUploadManagerService().dead();
+            message = handler.obtainMessage();
+            message.what =9999;
+            handler.sendMessage(message);
         } else if(run<thCnt){
             uploadThreads.get(run++).run();
             nowRunning++;
@@ -202,14 +203,23 @@ public class UploadMotherThread extends Thread {
     }
 
     private void sendServerToState(final int type) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), stringToByte(type, filename + "\0" + path + "\0"));
+        Log.e("Upload", "업로드 send");
+        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), stringToByte(type, filename        + "\0" + path + "\0"));
 
         Call<ResponseBody> call = apiClient.repoUploadService(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (type == 8)
+                if (type == 8) {
                     Log.e("Upload", "업로드 시작");
+                    Log.e("Uploading", "start");
+                    for (int i = nowRunning; i < MAXTHREAD; ++i) {
+                        if (run < thCnt) {
+                            uploadThreads.get(run++).run();
+                            nowRunning++;
+                        }
+                    }
+                }
                 if (type == 10)
                     Log.e("Upload", "업로드 종료");
             }

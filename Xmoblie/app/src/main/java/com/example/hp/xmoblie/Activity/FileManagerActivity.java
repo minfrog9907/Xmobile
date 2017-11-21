@@ -71,6 +71,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -122,12 +123,18 @@ public class FileManagerActivity extends AppCompatActivity {
 
     };
 
-    private final static Comparator<String> comparatorH = new Comparator<String>() {
+    private final static Comparator<FileItem> comparatorD = new Comparator<FileItem>() {
         private final Collator collator = Collator.getInstance();
 
         @Override
-        public int compare(String o, String t1) {
-            return collator.compare(o, t1);
+        public int compare(FileItem o, FileItem t1) {
+            if(o.getLastWriteDate().before(t1.getLastWriteDate())){
+                return 1;
+            }else if(o.getLastWriteDate().after(t1.getLastWriteDate())){
+                return  -1;
+            }else{
+                return 0;
+            }
         }
 
     };
@@ -193,17 +200,18 @@ public class FileManagerActivity extends AppCompatActivity {
         showSortWay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                spinnerList.clearAnimation();
                 int wrap = 60;
-                ResizeAnimation resizeAnimation = new ResizeAnimation(spinnerList);
-                resizeAnimation.setDuration(500);
+                ResizeAnimation resizeAnimationq = new ResizeAnimation(spinnerList);
+                resizeAnimationq.setDuration(500);
 
                 if (showSortWay.getRotation() == 180) {
-                    resizeAnimation.setParams(wrap, 0);
-                    spinnerList.startAnimation(resizeAnimation);
+                    resizeAnimationq.setParams(wrap, 0);
+                    spinnerList.startAnimation(resizeAnimationq);
                     showSortWay.setRotation(0);
                 } else {
-                    resizeAnimation.setParams(0, wrap);
-                    spinnerList.startAnimation(resizeAnimation);
+                    resizeAnimationq.setParams(0, wrap);
+                    spinnerList.startAnimation(resizeAnimationq);
                     showSortWay.setRotation(180);
                 }
             }
@@ -297,6 +305,22 @@ public class FileManagerActivity extends AppCompatActivity {
             }
         });
 
+        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (++orderCheck > 1) {
+                    sortData = i;
+                    moveDirwithoutHistory(searchData);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         searchEdit.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -338,11 +362,11 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (searchData == "\\") {
-                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
-                } else {
+//                if (searchData == "\\") {
+//                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
+//                } else {
                     createDialog("mkdir");
-                }
+//                }
             }
         });
 
@@ -726,16 +750,26 @@ public class FileManagerActivity extends AppCompatActivity {
     }
 
     private void sortData() {
+        Comparator<FileItem> comparate = comparator;
+
+        switch(sortData){
+            case 0 :
+                comparate = comparator;
+                break;
+            case 1 :
+                comparate = comparatorD;
+                break;
+
+        }
+
+        Collections.sort(listDataHeader, comparate);
+
         switch (orderData) {
             case 0:
-                Collections.sort(listDataHeader, comparator);
+                // no function
                 break;
             case 1:
-                Collections.sort(listDataHeader, comparator);
                 Collections.reverse(listDataHeader);
-                break;
-            default:
-                Collections.sort(listDataHeader, comparator);
                 break;
         }
     }
@@ -911,7 +945,9 @@ public class FileManagerActivity extends AppCompatActivity {
             if (!checkedItems.isEmpty()) {
                 switch (view.getId()) {
                     case R.id.downloadFile:
-                        FilemanagerService.getInstance().downloadFileStart(checkedItems);
+
+                            FilemanagerService.getInstance().downloadFileStart(checkedItems);
+
                         break;
                     case R.id.shareFile:
                         FilemanagerService.getInstance().shareFileStart();
@@ -987,9 +1023,9 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     }
 
-    private void fileInfo(){
+    private void fileInfo() {
         FileItem fileItem = (FileItem) checkedItems.get(0);
-        FilemanagerService.getInstance().fileInfoStart(token, searchData,fileItem,this, getSupportFragmentManager());
+        FilemanagerService.getInstance().fileInfoStart(token, searchData, fileItem, this, getSupportFragmentManager());
     }
 
     /* 파일 관리 메소드 */
@@ -1095,10 +1131,10 @@ public class FileManagerActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     String FilePath = data.getData().getPath();
                     File file = new File(FilePath);
-                    int file_size = Integer.parseInt(String.valueOf(file.length()/1024));
+                    int file_size = Integer.parseInt(String.valueOf(file.length() / 1024));
                     try {
                         ServiceControlCenter.getInstance().getUploadManagerService().uploadFile(FilePath, file.getName(), searchData, 0);
-                    }catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
 //                    System.out.println(

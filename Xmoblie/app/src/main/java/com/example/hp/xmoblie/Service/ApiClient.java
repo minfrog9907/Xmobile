@@ -13,6 +13,7 @@ import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.Items.TagItem;
 import com.example.hp.xmoblie.Http.UnsafeOkHttpClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -175,8 +176,8 @@ public interface ApiClient {
             @Query("type")int type
     );
 
-    @GET("/file/tag")
-    Call<FileItem>repoFileTags(
+    @GET("/file/tag/file")
+    Call<ArrayList<String>>repoFileTags(
             @Header("token")String token,
             @Query("path")String path,
             @Query("filename")String filename

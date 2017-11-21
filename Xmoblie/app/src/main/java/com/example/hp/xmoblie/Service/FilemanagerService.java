@@ -14,6 +14,7 @@ import com.example.hp.xmoblie.Items.RollbackItem;
 
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class FilemanagerService {
     private List<RollbackItem> logItems = new ArrayList<RollbackItem>();
     private static FilemanagerService instance;
     private int cnt = 0;
+    private Context fcontext;
+    private FragmentManager fragmentManager;
 
     public static FilemanagerService getInstance() {
         if (instance == null)
@@ -92,7 +95,7 @@ public class FilemanagerService {
         fileInfoProtocol(token,path,fileName,fileType, context, manager);
     }
 
-    private void fileInfoProtocol(String token, String path, String fileName, int fileType, final Context context, final FragmentManager manager) {
+    private void fileInfoProtocol(final String token, final String path, final String fileName, int fileType, final Context context, final FragmentManager manager) {
         final Call<FileItem> call = apiClient.repoFileInfo(token, path, fileName, fileType);
         call.enqueue(new Callback<FileItem>() {
             @Override
@@ -100,13 +103,38 @@ public class FilemanagerService {
                                    Response<FileItem> response) {
                 if (response.body() != null) {
                     FileItem fileItem = (FileItem) response.body();
-                    CreateDialogFragment dialog = FileInfoDiralogFragment.newInstance(fileItem,context);
-                    dialog.show(manager, "fileInfo");
+                    fcontext = context;
+                    fragmentManager = manager;
+                    fileTagsProtocol(token, path,fileName, fileItem);
                 }
             }
 
             @Override
             public void onFailure(Call<FileItem> call, Throwable t) {
+                Log.e("jsonResponse", "빼애애앵ㄱ");
+            }
+        });
+    }
+
+    private void fileTagsProtocol(String token, String path, String fileName, final FileItem fileItem){
+        final ArrayList<String> tags = new ArrayList<String>();
+        final Call<ArrayList<String>> call = apiClient.repoFileTags(token, path, fileName);
+        call.enqueue(new Callback<ArrayList<String>>() {
+            @Override
+            public void onResponse(Call<ArrayList<String>> call,
+                                   Response<ArrayList<String>> response) {
+                if (response.body() != null) {
+                    for(int i = 0; i < response.body().size(); i++){
+                        tags.add(response.body().get(i));
+                        fileItem.setTags(tags);
+                    }
+                    CreateDialogFragment dialog = FileInfoDiralogFragment.newInstance(fileItem,fcontext);
+                    dialog.show(fragmentManager, "fileInfo");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<String>> call, Throwable t) {
                 Log.e("jsonResponse", "빼애애앵ㄱ");
             }
         });

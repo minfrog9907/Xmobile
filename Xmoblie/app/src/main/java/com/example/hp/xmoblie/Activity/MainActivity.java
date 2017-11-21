@@ -168,15 +168,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         offWorkProgressClass();
-
+        bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, DownloadManagerService.class),mDownConnection,BIND_AUTO_CREATE);
-        bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
         shortCutProtocol(token, 0,10);
-<<<<<<< HEAD
-
-=======
->>>>>>> 50530f11065b9daaae93dce89796532880c1a213
 
     }
 
@@ -280,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("connected","success");
+            Log.e("connected","notification success");
             NotificationBarService.LocalBinder mLocalBinder = (NotificationBarService.LocalBinder)service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
             serviceControlCenter.setNotificationBarService(mLocalBinder.getServerInstance());
@@ -295,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("connected", "success");
+            Log.e("connected", "download success");
             DownloadManagerService.LocalBinder mLocalBinder = (DownloadManagerService.LocalBinder) service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
             serviceControlCenter.setDownloadManagerService(mLocalBinder.getServerInstance());
@@ -304,18 +299,18 @@ public class MainActivity extends AppCompatActivity {
     };
     ServiceConnection mUploadConnection = new ServiceConnection() {
         @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.e("connected", "failed");
-        }
-
-        @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("connected", "success");
+            Log.e("connected", "upload success");
             UploadManagerService.LocalBinder mLocalBinder = (UploadManagerService.LocalBinder) service;
             ServiceControlCenter serviceControlCenter = ServiceControlCenter.getInstance();
             serviceControlCenter.setUploadManagerService(mLocalBinder.getServerInstance());
 
         }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.e("connected", "failed");
+        }
+
     };
 }
 

@@ -85,6 +85,9 @@
         <activity android:name=".Activity.HistoryActivity"/>
         <service android:name=".Service.DownloadManagerService"/>
         <service android:name=".Service.NotificationBarService"/>
+        <service android:name=".Service.UploadManagerService"/>
+
+
     </application>
 
 </manifest>

@@ -31,6 +31,7 @@ import retrofit2.Response;
 
 public class UploadManagerService extends Service {
     ApiClient apiClient;
+    ApiClient apiClient2;
     IBinder mBinder = new UploadManagerService.LocalBinder();
     UploadMotherThread uploadMotherThread;
     String token;
@@ -62,8 +63,9 @@ public class UploadManagerService extends Service {
     public void uploadFile(String path, String filename, String target,long size) throws IOException {
         if (!ServiceControlCenter.getInstance().isUploadNow()) {
             if (size > 20971520) {
+                Log.e("upload","start");
                 uploadMotherThread = new UploadMotherThread();
-                uploadMotherThread.run(target,filename,path);
+                uploadMotherThread.run(filename,target,path,size);
                 ServiceControlCenter.getInstance().uploadStart();
             } else if (size <= 20971520) {
                 ServiceControlCenter.getInstance().uploadStart();
@@ -77,7 +79,7 @@ public class UploadManagerService extends Service {
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
-        Log.e("path", Uri.parse(path) + "");
+        Log.e("path", (path) + "/"+filename);
         File file = new File(path + "/" + filename);
 
         // create RequestBody instance from file

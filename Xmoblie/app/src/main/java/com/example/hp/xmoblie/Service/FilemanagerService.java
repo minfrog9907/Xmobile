@@ -126,7 +126,7 @@ public class FilemanagerService {
         cnt++;
         try {
             ckdownloadFile(fileItemList.get(cnt));
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             System.out.println("다운로드 끝");
         }
     }

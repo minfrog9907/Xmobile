@@ -199,7 +199,7 @@ public class NotificationBarService extends Service {
         if (fileExtend.equalsIgnoreCase("mp3")) {
             fileLinkIntent.setDataAndType(uri, "audio/*");
         } else if (fileExtend.equalsIgnoreCase("mp4")) {
-            fileLinkIntent.setDataAndType(uri, "vidio/*");
+            fileLinkIntent.setDataAndType(uri, "video/*");
         } else if (fileExtend.equalsIgnoreCase("jpg")
                 || fileExtend.equalsIgnoreCase("jpeg")
                 || fileExtend.equalsIgnoreCase("gif")

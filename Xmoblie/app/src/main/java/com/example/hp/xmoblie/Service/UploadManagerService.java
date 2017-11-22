@@ -31,7 +31,6 @@ import retrofit2.Response;
 
 public class UploadManagerService extends Service {
     ApiClient apiClient;
-    ApiClient apiClient2;
     IBinder mBinder = new UploadManagerService.LocalBinder();
     UploadMotherThread uploadMotherThread;
     String token;
@@ -61,6 +60,8 @@ public class UploadManagerService extends Service {
     }
 
     public void uploadFile(String path, String filename, String target,long size) throws IOException {
+        Log.e("offset len",size+"");
+
         if (!ServiceControlCenter.getInstance().isUploadNow()) {
             if (size > 20971520) {
                 Log.e("upload","start");

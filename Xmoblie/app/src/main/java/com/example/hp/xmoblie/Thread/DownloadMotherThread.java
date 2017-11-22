@@ -1,5 +1,6 @@
 package com.example.hp.xmoblie.Thread;
 
+import android.content.Context;
 import android.os.Environment;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -95,7 +96,7 @@ public class DownloadMotherThread extends Thread {
     }
 
     private void saveImage() {
-        String root = Environment.getExternalStorageDirectory().toString() + "/XMobileDownLoad/";
+        String root = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad/";
         File myDir = new File(root);
         myDir.mkdirs();
 
@@ -116,6 +117,8 @@ public class DownloadMotherThread extends Thread {
 
             Message message = handler.obtainMessage();
             message.what =222;
+            handler.setPath(root);
+            handler.setName(filename);
             handler.sendMessage(message);
         } catch (FileNotFoundException e) {
             e.printStackTrace();

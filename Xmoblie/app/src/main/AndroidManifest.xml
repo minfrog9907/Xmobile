@@ -23,6 +23,15 @@
         android:roundIcon="@mipmap/ic_xmobile_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.example.hp.xmoblie.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
         <activity
             android:name=".Activity.MainActivity"
             android:theme="@style/AppTheme.Dark.NoActionBar">

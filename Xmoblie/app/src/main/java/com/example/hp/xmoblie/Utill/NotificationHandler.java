@@ -11,6 +11,7 @@ import com.example.hp.xmoblie.Service.ServiceControlCenter;
 
 public class NotificationHandler extends Handler {
     String filename="";
+    String path="";
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {
@@ -27,7 +28,7 @@ public class NotificationHandler extends Handler {
                 ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
             case  222:// 다운완료
-                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 완료");
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 완료",filename,path);
                 ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
             case 333://실패
@@ -55,5 +56,9 @@ public class NotificationHandler extends Handler {
     }
     public void setName(String name){
        filename =name;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

@@ -120,6 +120,7 @@ public class UploadMotherThread extends Thread {
     }
 
     private RequestBody makeRequestBody(String filename, String path,long offset,long length){
+        Log.e("offset len",offset+" "+length);
         byte[] euckrStringBuffer;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
@@ -127,7 +128,7 @@ public class UploadMotherThread extends Thread {
             outputStream.write(reverse(intToByteArray(5)));
             outputStream.write((filename + "\0" + path + "\0").getBytes(Charset.forName("euc-kr")));
             outputStream.write(reverse(longToBytes(offset)));
-            outputStream.write(reverse(longToBytes(length)));
+            outputStream.write(reverse(intToByteArray((int)length)));
             outputStream.write(getFilebyteWithOffset((int)offset,(int)length));
         } catch (IOException e) {
             e.printStackTrace();

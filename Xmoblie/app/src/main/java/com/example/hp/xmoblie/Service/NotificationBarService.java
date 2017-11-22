@@ -3,19 +3,32 @@ package com.example.hp.xmoblie.Service;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Utill.NotificationHandler;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Created by HP on 2017-11-02.
@@ -60,7 +73,6 @@ public class NotificationBarService extends Service {
             notifi_M.createNotificationChannel(mChannel);
 
 
-
             Log.e("Created", "Nofitication Created O");
 
         } else {
@@ -86,7 +98,7 @@ public class NotificationBarService extends Service {
         return handler;
     }
 
-    public void makeNotification(String title,String content){
+    public void makeNotification(String title, String content) {
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
@@ -95,8 +107,7 @@ public class NotificationBarService extends Service {
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setChannelId("my_channel_01")
                     .build();
-        }
-        else{
+        } else {
             notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
                     .setContentText(content)
@@ -105,10 +116,37 @@ public class NotificationBarService extends Service {
                     .build();
         }
     }
-    public void makeNotification(String title,String content,int process,int max,boolean loading){
+
+    public void makeNotification(String title, String content, String filename, String path) {
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            Intent intent = viewFile(path, filename);
+            PendingIntent pending = PendingIntent.getActivity(ServiceControlCenter.getInstance().getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setContentIntent(pending)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setChannelId("my_channel_01")
+                    .build();
+        } else {
+            Intent intent = viewFile(path, filename);
+            PendingIntent pending = PendingIntent.getActivity(ServiceControlCenter.getInstance().getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            notification = new Notification.Builder(getApplicationContext())
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setContentIntent(pending)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .build();
+        }
+    }
+
+    public void makeNotification(String title, String content, int process, int max, boolean loading) {
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             notification = new Notification.Builder(getApplicationContext())
-                    .setProgress(max,process,loading)
+                    .setProgress(max, process, loading)
                     .setContentTitle(title)
                     .setContentText(content)
                     .setWhen(System.currentTimeMillis())
@@ -117,10 +155,9 @@ public class NotificationBarService extends Service {
                     .build();
             notification.flags = Notification.FLAG_NO_CLEAR;
 
-        }
-        else{
+        } else {
             notification = new Notification.Builder(getApplicationContext())
-                    .setProgress(max,process,true)
+                    .setProgress(max, process, true)
                     .setContentTitle(title)
                     .setContentText(content)
                     .setWhen(System.currentTimeMillis())
@@ -131,13 +168,79 @@ public class NotificationBarService extends Service {
         }
     }
 
-    public void deleteNotification(int id){
+    public void deleteNotification(int id) {
         notifi_M.cancel(id);
     }
-    public void pushNotification(int id){
+
+    public void pushNotification(int id) {
         notifi_M.notify(id, notification);
 
     }
+
+
+    private Intent viewFile(String filePath, String fileName) {
+
+        Context ctx = this;
+        Intent fileLinkIntent = new Intent(Intent.ACTION_VIEW);
+        fileLinkIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//        File file = new File(filePath+fileName);
+//        fileLinkIntent.setDataAndType(Uri.fromFile(file), "*/*");
+//        return fileLinkIntent;
+        fileLinkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        fileLinkIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad",fileName);
+        Log.e("asd", filePath+ fileName);
+        Log.e("asd", Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad");
+        Uri uri = Uri.fromFile(new File(filePath+fileName));//FileProvider.getUriForFile(this,"com.example.hp.xmoblie.provider", file);
+        //확장자 구하기
+        String fileExtend = getExtension(file.getAbsolutePath());
+        // 파일 확장자 별로 mime type 지정해 준다.
+        if (fileExtend.equalsIgnoreCase("mp3")) {
+            fileLinkIntent.setDataAndType(uri, "audio/*");
+        } else if (fileExtend.equalsIgnoreCase("mp4")) {
+            fileLinkIntent.setDataAndType(uri, "vidio/*");
+        } else if (fileExtend.equalsIgnoreCase("jpg")
+                || fileExtend.equalsIgnoreCase("jpeg")
+                || fileExtend.equalsIgnoreCase("gif")
+                || fileExtend.equalsIgnoreCase("png")
+                || fileExtend.equalsIgnoreCase("bmp")) {
+            fileLinkIntent.setDataAndType(uri, "image/*");
+        } else if (fileExtend.equalsIgnoreCase("txt")) {
+            fileLinkIntent.setDataAndType(uri, "text/*");
+        } else if (fileExtend.equalsIgnoreCase("doc")
+                || fileExtend.equalsIgnoreCase("docx")) {
+            fileLinkIntent.setDataAndType(uri, "application/msword");
+        } else if (fileExtend.equalsIgnoreCase("xls")
+                || fileExtend.equalsIgnoreCase("xlsx")) {
+            fileLinkIntent.setDataAndType(uri,
+                    "application/vnd.ms-excel");
+        } else if (fileExtend.equalsIgnoreCase("ppt")
+                || fileExtend.equalsIgnoreCase("pptx")) {
+            fileLinkIntent.setDataAndType(uri,
+                    "application/vnd.ms-powerpoint");
+        } else if (fileExtend.equalsIgnoreCase("pdf")) {
+            fileLinkIntent.setDataAndType(uri, "application/pdf");
+        } else if (fileExtend.equalsIgnoreCase("hwp")) {
+            fileLinkIntent.setDataAndType(uri,
+                    "application/haansofthwp");
+        }
+        PackageManager pm = ctx.getPackageManager();
+        List<ResolveInfo> list = pm.queryIntentActivities(fileLinkIntent,
+                PackageManager.GET_META_DATA);
+        if (list.size() == 0) {
+            Toast.makeText(ctx, fileName + "을 확인할 수 있는 앱이 설치되지 않았습니다.",
+                    Toast.LENGTH_SHORT).show();
+            return null;
+        } else {
+            return fileLinkIntent;
+        }
+    }
+
+    private String getExtension(String fileStr) {
+        return fileStr.substring(fileStr.lastIndexOf(".") + 1, fileStr.length());
+    }
+
     public class LocalBinder extends Binder {
         public NotificationBarService getServerInstance() {
             return NotificationBarService.this;

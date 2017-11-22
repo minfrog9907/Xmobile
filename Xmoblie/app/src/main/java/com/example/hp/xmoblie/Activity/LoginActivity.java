@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        String deviceid = "Mobile1";
+        String deviceid = "Mobile2";
         //mgr.getDeviceId();
         final Call<LoginItem> call = apiClient.repoContributors(userid, password, deviceid);
         call.enqueue(new Callback<LoginItem>() {

@@ -1,5 +1,7 @@
 package com.example.hp.xmoblie.Service;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +9,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -24,6 +27,7 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.hp.xmoblie.Activity.FileManagerActivity;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Utill.NotificationHandler;
 
@@ -119,7 +123,7 @@ public class NotificationBarService extends Service {
 
     public void makeNotification(String title, String content, String filename, String path) {
         if (android.os.Build.VERSION.SDK_INT >= 26) {
-            Intent intent = viewFile(path, filename);
+            Intent intent = viewFile(filename);
             PendingIntent pending = PendingIntent.getActivity(ServiceControlCenter.getInstance().getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             notification = new Notification.Builder(getApplicationContext())
@@ -131,7 +135,7 @@ public class NotificationBarService extends Service {
                     .setChannelId("my_channel_01")
                     .build();
         } else {
-            Intent intent = viewFile(path, filename);
+            Intent intent = viewFile(filename);
             PendingIntent pending = PendingIntent.getActivity(ServiceControlCenter.getInstance().getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             notification = new Notification.Builder(getApplicationContext())
                     .setContentTitle(title)
@@ -178,21 +182,17 @@ public class NotificationBarService extends Service {
     }
 
 
-    private Intent viewFile(String filePath, String fileName) {
+    private Intent viewFile(String fileName) {
 
         Context ctx = this;
-        Intent fileLinkIntent = new Intent(Intent.ACTION_VIEW);
+        Intent fileLinkIntent = new Intent(Intent.ACTION_VIEW);// 뷰형태
         fileLinkIntent.addCategory(Intent.CATEGORY_DEFAULT);
-//        File file = new File(filePath+fileName);
-//        fileLinkIntent.setDataAndType(Uri.fromFile(file), "*/*");
-//        return fileLinkIntent;
+        File file = new File(new File(Environment.getExternalStorageDirectory(),"XMobileDownLoad"),fileName); // 파일 불러옴 여기가 널이면 처리하면될듯  if (file.exists()) 파일유무 확인
+
         fileLinkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         fileLinkIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad",fileName);
-        Log.e("asd", filePath+ fileName);
-        Log.e("asd", Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad");
-        Uri uri = Uri.fromFile(new File(filePath+fileName));//FileProvider.getUriForFile(this,"com.example.hp.xmoblie.provider", file);
+        Uri uri = FileProvider.getUriForFile(this,"com.example.hp.xmoblie.provider", file);
         //확장자 구하기
         String fileExtend = getExtension(file.getAbsolutePath());
         // 파일 확장자 별로 mime type 지정해 준다.

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
+import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.sdsmdg.harjot.crollerTest.Croller;
 import com.sdsmdg.harjot.crollerTest.OnCrollerChangeListener;
 
@@ -410,6 +411,7 @@ public class SettingActivity extends Activity {
             editor.putInt("startMinute", startMinute);
             editor.putInt("endMinute", endMinute);
             editor.putInt("dProgress", pg);
+            ServiceControlCenter.getInstance().setLimitData(pg);
             editor.commit();
         } else {
 

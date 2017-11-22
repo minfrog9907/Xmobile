@@ -109,6 +109,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private ArrayList<FileItem> historyList = new ArrayList<FileItem>();
     private DBHelper dbHelper;
     private String token = "";
+    private Context thisContext = null;
 
 
     private static final MediaType JSON = MediaType.parse("text/plain");
@@ -128,11 +129,11 @@ public class FileManagerActivity extends AppCompatActivity {
 
         @Override
         public int compare(FileItem o, FileItem t1) {
-            if(o.getLastWriteDate().before(t1.getLastWriteDate())){
+            if (o.getLastWriteDate().before(t1.getLastWriteDate())) {
                 return 1;
-            }else if(o.getLastWriteDate().after(t1.getLastWriteDate())){
-                return  -1;
-            }else{
+            } else if (o.getLastWriteDate().after(t1.getLastWriteDate())) {
+                return -1;
+            } else {
                 return 0;
             }
         }
@@ -162,6 +163,7 @@ public class FileManagerActivity extends AppCompatActivity {
         uploadFileBtn = (FloatingActionButton) findViewById(R.id.uploadFileBtn);
         makeFolderBtn = (FloatingActionButton) findViewById(R.id.makeFolderBtn);
         token = ServiceControlCenter.getInstance().getToken();
+        thisContext = this;
         dbHelper = new DBHelper(this, "HISTORY", null, 1);
         if (getIntent().getStringExtra("path") != null) {
             searchData = getIntent().getStringExtra("path");
@@ -226,8 +228,8 @@ public class FileManagerActivity extends AppCompatActivity {
                     FileItem fileItem = (FileItem) fileItemHolder.realFileItem;
 
                     if (fileItemHolder.fileIcon.getTag().equals("file")) {
-                        Toast.makeText(FileManagerActivity.this, "Open File", Toast.LENGTH_SHORT).show();
                         HistorySharedPreferenceManager.getInstance().addHistroy(searchData, fileItemHolder.realFileItem);
+                        FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext);
                     } else {
                         FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
                         searchData = checkRoot() + parants.getFilename();
@@ -365,7 +367,7 @@ public class FileManagerActivity extends AppCompatActivity {
 //                if (searchData == "\\") {
 //                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
 //                } else {
-                    createDialog("mkdir");
+                createDialog("mkdir");
 //                }
             }
         });
@@ -752,11 +754,11 @@ public class FileManagerActivity extends AppCompatActivity {
     private void sortData() {
         Comparator<FileItem> comparate = comparator;
 
-        switch(sortData){
-            case 0 :
+        switch (sortData) {
+            case 0:
                 comparate = comparator;
                 break;
-            case 1 :
+            case 1:
                 comparate = comparatorD;
                 break;
 
@@ -945,9 +947,7 @@ public class FileManagerActivity extends AppCompatActivity {
             if (!checkedItems.isEmpty()) {
                 switch (view.getId()) {
                     case R.id.downloadFile:
-
-                            FilemanagerService.getInstance().downloadFileStart(checkedItems);
-
+                        FilemanagerService.getInstance().downloadFileStart(checkedItems, thisContext);
                         break;
                     case R.id.shareFile:
                         FilemanagerService.getInstance().shareFileStart();

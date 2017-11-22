@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -19,21 +20,24 @@ public class FileItem {
     String rname;
     long size;
     String userid;
-    int ggid,gid;
-    String createDate;
-    String lastWriteDate;
+    int ggid, gid;
+    String CreateDate;
+    String LastWriteDate;
     String vDir;
     String rDir;
     int type;
     int status;
     String del;
     boolean isShortCut;
+    ArrayList<String> tags;
 
     public int getGgid() {
+        System.out.println(ggid);
         return ggid;
     }
 
     public int getGid() {
+        System.out.println(gid);
         return gid;
     }
 
@@ -45,70 +49,99 @@ public class FileItem {
         return size;
     }
 
-    public Date getCreateDate() throws ParseException {
-        createDate.replace("T"," ");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA);
-        Date now = formatter.parse(createDate);
-        return now;
+    public Date getCreateDate() {
+        if (CreateDate != null) {
+            String date = CreateDate.replace("T", " ");
+
+            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+            try {
+                Date now = dateFormatGmt.parse(date);
+                return now;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
-    public String getParseCreateDate(){
-        String date = createDate.replace("T"," ");
+    public String getParseCreateDate() {
+        if (CreateDate != null) {
+            String date = CreateDate.replace("T", " ");
 
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
-        try{
-            Date gmttime = dateFormatGmt.parse(date);
-            String formatterd = formatter.format(gmttime);
+            try {
+                Date gmttime = dateFormatGmt.parse(date);
+                String formatterd = formatter.format(gmttime);
 
-            return formatterd;
-        }catch (ParseException e){
-            e.printStackTrace();
-            return "";
+                return formatterd;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+        return "";
     }
 
     public String getFilename() {
         return filename;
     }
 
-    public Date getLastWriteDate() throws ParseException {
-        lastWriteDate.replace("T"," ");
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.KOREA);
-        Date now = formatter.parse(lastWriteDate);
-        return now;
+    public Date getLastWriteDate() {
+        if (LastWriteDate != null) {
+            String date = LastWriteDate.replace("T", " ");
+
+            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+            try {
+                Date now = dateFormatGmt.parse(date);
+                return now;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
-    public String getParseLastWriteDate(){
-        String date = lastWriteDate.replace("T"," ");
+    public String getParseLastWriteDate() {
+        if (LastWriteDate != null) {
+            String date = LastWriteDate.replace("T", " ");
 
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+            SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            formatter.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
-        try{
-            Date gmttime = dateFormatGmt.parse(date);
-            String formatterd = formatter.format(gmttime);
+            try {
+                Date gmttime = dateFormatGmt.parse(date);
+                String formatterd = formatter.format(gmttime);
 
-            return formatterd;
-        }catch (ParseException e){
-            e.printStackTrace();
-            return "";
+                return formatterd;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
+        return "";
     }
 
     public String getUserid() {
         return userid;
     }
 
-    public boolean getIsShortCut(){
+    public boolean getIsShortCut() {
         return isShortCut;
     }
 
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.hp.xmoblie.Adapter.FileTagListAdapter;
 import com.example.hp.xmoblie.Adapter.LogListAdapter;
 import com.example.hp.xmoblie.Items.FileItem;
 import com.example.hp.xmoblie.Items.RollbackItem;
@@ -33,6 +34,8 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
     private FileItem fileItem;
     private TextView tvFileName, tvFileSize, tvFileUploader, tvCID, tvGID, tvUploadTime, tvLastUpdate;
     private ListView lvTags;
+    private ApiClient apiClient;
+    private String token;
 
     public static FileInfoDiralogFragment newInstance(FileItem fileItem, Context context) {
 
@@ -60,6 +63,8 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         tvGID = view.findViewById(R.id.fileInfo_fileGID);
         tvUploadTime = view.findViewById(R.id.fileInfo_fileUploadTime);
         tvLastUpdate = view.findViewById(R.id.fileInfo_fileLastUpdate);
+        lvTags = view.findViewById(R.id.tagList);
+        apiClient = ApiClient.service;
 
         String fileName = fileItem.getFilename() != null ? fileItem.getFilename() : "";
         long fileSize = fileItem.getSize() != 0 ? fileItem.getSize() : 0;
@@ -77,10 +82,19 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         tvUploadTime.setText(fileUploadTime);
         tvLastUpdate.setText(fileLastUpdate);
 
+        if(fileItem.getTags() != null) {
+            createTagList(fileItem.getTags());
+        }
         view.findViewById(R.id.editdata_commit).setOnClickListener(this);
         builder.setView(view);
         return builder.create();
     }
+
+    private void createTagList(ArrayList<String> tags){
+        FileTagListAdapter fileTagListAdapter = new FileTagListAdapter(context, tags);
+        lvTags.setAdapter(fileTagListAdapter);
+    }
+
 
     @Override
     public void onClick(View v) {

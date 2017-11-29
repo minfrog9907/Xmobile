@@ -202,6 +202,17 @@ public class UploadMotherThread extends Thread {
         Log.e("Upload","recall");
         uploadThreads.get(id).run();
     }
+    public void freeForChild(){
+        for (int i =0; i< uploadThreads.size();++i){
+            if(uploadThreads.get(i).isAlive())
+                uploadThreads.get(i).interrupt();
+        }
+        this.interrupt();
+    }
+
+    public String getFilename() {
+        return filename;
+    }
 
     private void sendServerToState(final int type) {
         Log.e("Upload", "업로드 send");

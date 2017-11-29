@@ -947,10 +947,10 @@ public class FileManagerActivity extends AppCompatActivity {
             if (!checkedItems.isEmpty()) {
                 switch (view.getId()) {
                     case R.id.downloadFile:
-                        FilemanagerService.getInstance().downloadFileStart(checkedItems, thisContext);
+                        FilemanagerService.getInstance().downloadFileStart(checkedItems, thisContext,searchData);
                         break;
                     case R.id.shareFile:
-                        FilemanagerService.getInstance().shareFileStart();
+                        FilemanagerService.getInstance().shareFile(searchData);
                         break;
                     case R.id.fileLog:
                         showFilelog();

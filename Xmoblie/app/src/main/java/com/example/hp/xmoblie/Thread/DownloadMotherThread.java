@@ -33,8 +33,11 @@ public class DownloadMotherThread extends Thread {
     private int thCnt = 0;
     private int nowRunning = 0;
     private String filename;
+    private String root;
     private DownloadManagerService dm;
     private NotificationHandler handler;
+    private FileOutputStream out;
+    private File file;
 
     private ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
     private ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
@@ -49,6 +52,16 @@ public class DownloadMotherThread extends Thread {
         handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         handler.setName(filename);
 
+        root = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad/";
+        File myDir = new File(root);
+        myDir.mkdirs();
+
+        String fname = filename;
+
+        file = new File(myDir, fname);
+        out = new FileOutputStream(file);
+
+        if (file.exists()) file.delete();
 
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
@@ -96,21 +109,8 @@ public class DownloadMotherThread extends Thread {
     }
 
     private void saveImage() {
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad/";
-        File myDir = new File(root);
-        myDir.mkdirs();
-
-        String fname = filename;
-
-        File file = new File(myDir, fname);
-
-        if (file.exists()) file.delete();
 
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            for (int i = 0; i < repResponseBodies.size(); ++i) {
-                out.write(repResponseBodies.get(i).bytes());
-            }
             out.flush();
             out.close();
             Log.e("finish","finish");
@@ -137,7 +137,7 @@ public class DownloadMotherThread extends Thread {
     }
 
     public synchronized void setResponseBody(ResponseBody responseBody,int id) throws IOException {
-        repResponseBodies.set(id, responseBody);
+       out.write(responseBody.bytes());
     }
 
     public synchronized void reportDead(int id) throws IOException {
@@ -166,6 +166,17 @@ public class DownloadMotherThread extends Thread {
         message.what =333;
         message.arg1=run;
         handler.sendMessage(message);
+    }
+    public void freeForChild(){
+        for (int i =0; i< downloadThreads.size();++i){
+            if(downloadThreads.get(i).isAlive())
+                downloadThreads.get(i).interrupt();
+        }
+        this.interrupt();
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public void recall(int id){

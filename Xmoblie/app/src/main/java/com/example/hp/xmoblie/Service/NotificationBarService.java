@@ -28,6 +28,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.Activity.FileManagerActivity;
+import com.example.hp.xmoblie.Dialog.DownloadUploadCancelDialog;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Utill.NotificationHandler;
 
@@ -148,11 +149,14 @@ public class NotificationBarService extends Service {
     }
 
     public void makeNotification(String title, String content, int process, int max, boolean loading) {
+        Intent fileLinkIntent = new Intent(NotificationBarService.this, DownloadUploadCancelDialog.class).putExtra("filename",content);
+        PendingIntent pending = PendingIntent.getActivity(this, 1, fileLinkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             notification = new Notification.Builder(getApplicationContext())
                     .setProgress(max, process, loading)
                     .setContentTitle(title)
                     .setContentText(content)
+                    .setContentIntent(pending)
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setChannelId("my_channel_01")
@@ -164,6 +168,7 @@ public class NotificationBarService extends Service {
                     .setProgress(max, process, true)
                     .setContentTitle(title)
                     .setContentText(content)
+                    .setContentIntent(pending)
                     .setWhen(System.currentTimeMillis())
                     .setSmallIcon(R.drawable.ic_launcher)
                     .build();
@@ -198,8 +203,9 @@ public class NotificationBarService extends Service {
         // 파일 확장자 별로 mime type 지정해 준다.
         if (fileExtend.equalsIgnoreCase("mp3")) {
             fileLinkIntent.setDataAndType(uri, "audio/*");
-        } else if (fileExtend.equalsIgnoreCase("mp4")) {
-            fileLinkIntent.setDataAndType(uri, "vidio/*");
+        } else if (fileExtend.equalsIgnoreCase("mp4")
+                ||fileExtend.equalsIgnoreCase("mkv")) {
+            fileLinkIntent.setDataAndType(uri, "video/*");
         } else if (fileExtend.equalsIgnoreCase("jpg")
                 || fileExtend.equalsIgnoreCase("jpeg")
                 || fileExtend.equalsIgnoreCase("gif")

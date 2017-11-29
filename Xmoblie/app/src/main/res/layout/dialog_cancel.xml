@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:layout_height="100dp"
+    android:weightSum="10"
+    android:background="#1B1B1B">
+
+    <TextView
+        android:id="@+id/cancel_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:padding="10dp"
+        android:scrollbars="vertical"
+        android:textColor="#73f1e2"
+        android:text="취소하시겠습니까?"
+        android:textSize="14dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:weightSum="2"
+        android:layout_marginTop="10dp">
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/cancel_no"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:symbol="@drawable/cancle"
+            app:text="취소"
+            ></com.example.hp.xmoblie.Custom.SideStick_BTN>
+        <com.example.hp.xmoblie.Custom.SideStick_BTN
+            android:id="@+id/cancel_yes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:symbol="@drawable/checked_light"
+            app:text="확인"
+            app:stick="false"
+
+            ></com.example.hp.xmoblie.Custom.SideStick_BTN>
+    </LinearLayout>
+</LinearLayout>

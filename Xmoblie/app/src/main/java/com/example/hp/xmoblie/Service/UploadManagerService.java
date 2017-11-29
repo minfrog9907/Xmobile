@@ -129,6 +129,12 @@ public class UploadManagerService extends Service {
         }
         ServiceControlCenter.getInstance().uploadFinish();
     }
+
+    public void cancelUpload(String filename){
+        if(uploadMotherThread.getFilename().equals(filename))
+            uploadMotherThread.freeForChild();
+    }
+
     public class LocalBinder extends Binder {
         public UploadManagerService getServerInstance() {
             return UploadManagerService.this;

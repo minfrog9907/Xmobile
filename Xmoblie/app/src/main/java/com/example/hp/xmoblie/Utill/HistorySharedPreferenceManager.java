@@ -25,7 +25,8 @@ public class HistorySharedPreferenceManager {
     public HistorySharedPreferenceManager() {
         history = ServiceControlCenter.getInstance().getContext().getSharedPreferences("historyTest", Activity.MODE_PRIVATE);
         editor = history.edit();
-
+//        editor.clear();
+//        editor.commit();
         if (history.getInt("cnt", -1) == -1) {
             editor.putInt("cnt", 0);
             for (int i = 0; i < 10; ++i)

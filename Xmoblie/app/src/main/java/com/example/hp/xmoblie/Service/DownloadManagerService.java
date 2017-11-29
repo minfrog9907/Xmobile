@@ -85,6 +85,11 @@ public class DownloadManagerService extends Service {
         FilemanagerService.getInstance().downloadFinish();
     }
 
+    public void cancelDownload(String filename){
+        if(dlm.getFilename().equals(filename))
+            dlm.freeForChild();
+    }
+
     public class LocalBinder extends Binder {
         public DownloadManagerService getServerInstance() {
             return DownloadManagerService.this;

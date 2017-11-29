@@ -26,6 +26,7 @@ import com.example.hp.xmoblie.Service.NotificationBarService;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Service.UploadManagerService;
 import com.example.hp.xmoblie.Utill.DoubleCloseHandler;
+import com.example.hp.xmoblie.Utill.SessionCall;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 
 import java.text.DateFormat;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         apiClient = ApiClient.service;
         shortcutlist = (ListView) findViewById(R.id.shortcutlist);
 
+        new SessionCall().SessionCall();
 
         ServiceControlCenter.getInstance().setLimitData(setting.getInt("dProgress",0));
 

@@ -2,7 +2,9 @@ package com.example.hp.xmoblie.Thread;
 
 import android.util.Log;
 
+import com.example.hp.xmoblie.Items.PacketType;
 import com.example.hp.xmoblie.Service.ApiClient;
+import com.example.hp.xmoblie.Utill.SessionCall;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,17 +36,18 @@ public class DownloadThread extends Thread {
 
     private DownloadMotherThread dm;
     private ApiClient apiClient= ApiClient.severService;
-
     public void run() {
 
         byte[] euckrStringBuffer;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
-            outputStream.write(reverse(intToByteArray(type)));
-            outputStream.write((filename + "\0" + path + "\0" + token + "\0").getBytes(Charset.forName("euc-kr")));
+
+            outputStream.write(reverse(intToByteArray(PacketType.PT_FileDownload.ordinal())));//reverse(intToByteArray(type)));
+            outputStream.write((filename + "\0" + path + "\0").getBytes(Charset.forName("euc-kr")));
             outputStream.write(reverse(longToBytes(offset)));
             outputStream.write(reverse(intToByteArray(length)));
+            Log.e("all",PacketType.PT_FileDownload.ordinal()+" "+filename+" "+path+" "+offset+" "+length);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,6 +59,9 @@ public class DownloadThread extends Thread {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.code()==401){
+                    new SessionCall().SessionRecall();
+                }
                 try {
                     dm.setResponseBody(response.body(),id);
                     dm.reportDead(id);
@@ -69,6 +75,7 @@ public class DownloadThread extends Thread {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("downloadsss",t.getMessage());
+
                 if(recallTime++!=4){
                     dm.recall(id);
                 }

@@ -40,6 +40,7 @@ public class FilemanagerService {
     private int cnt = 0;
     private Context fcontext;
     private FragmentManager fragmentManager;
+    private String path;
 
     public static FilemanagerService getInstance() {
         if (instance == null)
@@ -53,10 +54,11 @@ public class FilemanagerService {
 
 
     /* 파일 다운로드 */
-    public void downloadFileStart(ArrayList<FileItem> fileItemList, Context context) {
+    public void downloadFileStart(ArrayList<FileItem> fileItemList, Context context, String path) {
         cnt = 0;
         this.fileItemList = fileItemList;
         this.fcontext = context;
+        this.path = path;
         try {
             ckdownloadFile(fileItemList.get(cnt));
         } catch (IndexOutOfBoundsException e) {
@@ -100,8 +102,8 @@ public class FilemanagerService {
             int fileSize = (int) fileItem.getSize();
             if(ServiceControlCenter.getInstance().getLimitData() != 0 && fileSize >= ServiceControlCenter.getInstance().getLimitData()){
                 confirmDialog("제한 파일 크기를 초과하는 파일 입니다.\n" +
-                        "다운로드 하시겠습니까?\n\n" +
-                        "파일 크기 : " + FileUtils.byteCountToDisplaySize(fileSize) ,
+                                "다운로드 하시겠습니까?\n\n" +
+                                "파일 크기 : " + FileUtils.byteCountToDisplaySize(fileSize) ,
                         fileName,
                         fileSize).show();
             }else{
@@ -116,7 +118,7 @@ public class FilemanagerService {
             ServiceControlCenter
                     .getInstance()
                     .getDownloadManagerService()
-                    .downloadFile(new DownloadRequestItem(1, fileName, "", 0, fileSize));
+                    .downloadFile(new DownloadRequestItem(3, fileName, path, 0, fileSize));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -126,18 +128,16 @@ public class FilemanagerService {
         cnt++;
         try {
             ckdownloadFile(fileItemList.get(cnt));
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
             System.out.println("다운로드 끝");
         }
     }
 
     /* 파일 공유 */
-    public void shareFileStart() {
-        Log.d("clicked button", "share");
-    }
-
-    private void shareFile(FileItem fileItem) {
-
+    public void shareFile(String path) {
+        String rpath = path.replace("\\", "\\\\");
+        UploadManagerService uploadManagerService = new UploadManagerService();
+        uploadManagerService.shareURL(rpath);
     }
 
     /* 파일 정보 */

@@ -8,9 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 
 import android.os.Bundle;
@@ -81,6 +86,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class FileManagerActivity extends AppCompatActivity {
 
@@ -229,7 +236,9 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     if (fileItemHolder.fileIcon.getTag().equals("file")) {
                         HistorySharedPreferenceManager.getInstance().addHistroy(searchData, fileItemHolder.realFileItem);
-                        FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext);
+                        if(viewFile(fileItem) != null){
+                            startActivity(viewFile(fileItem));
+                        }
                     } else {
                         FileItem parants = (FileItem) expListView.getAdapter().getItem(i);
                         searchData = checkRoot() + parants.getFilename();
@@ -1226,6 +1235,70 @@ public class FileManagerActivity extends AppCompatActivity {
                     }
                 });
         return builder.create();
+    }
+
+    private Intent viewFile(FileItem fileItem) {
+        String fileName = fileItem.getFilename();
+
+        Context ctx = this;
+        Intent fileLinkIntent = new Intent(Intent.ACTION_VIEW);// 뷰형태
+        fileLinkIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        File file = new File(new File(Environment.getExternalStorageDirectory(), "XMobileDownLoad"), fileName); // 파일 불러옴 여기가 널이면 처리하면될듯  if (file.exists()) 파일유무 확인
+
+        if (!file.exists()) {
+            Toast.makeText(ctx, "파일을 다운로드 합니다.", Toast.LENGTH_SHORT).show();
+            FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext);
+        }else{
+            Toast.makeText(ctx, "파일을 엽니다.", Toast.LENGTH_SHORT).show();
+
+            fileLinkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            fileLinkIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            Uri uri = FileProvider.getUriForFile(this, "com.example.hp.xmoblie.provider", file);
+            //확장자 구하기
+            String fileExtend = getExtension(file.getAbsolutePath());
+            // 파일 확장자 별로 mime type 지정해 준다.
+            if (fileExtend.equalsIgnoreCase("mp3")) {
+                fileLinkIntent.setDataAndType(uri, "audio/*");
+            } else if (fileExtend.equalsIgnoreCase("mp4")) {
+                fileLinkIntent.setDataAndType(uri, "video/*");
+            } else if (fileExtend.equalsIgnoreCase("jpg")
+                    || fileExtend.equalsIgnoreCase("jpeg")
+                    || fileExtend.equalsIgnoreCase("gif")
+                    || fileExtend.equalsIgnoreCase("png")
+                    || fileExtend.equalsIgnoreCase("bmp")) {
+                fileLinkIntent.setDataAndType(uri, "image/*");
+            } else if (fileExtend.equalsIgnoreCase("txt")) {
+                fileLinkIntent.setDataAndType(uri, "text/*");
+            } else if (fileExtend.equalsIgnoreCase("doc")
+                    || fileExtend.equalsIgnoreCase("docx")) {
+                fileLinkIntent.setDataAndType(uri, "application/msword");
+            } else if (fileExtend.equalsIgnoreCase("xls")
+                    || fileExtend.equalsIgnoreCase("xlsx")) {
+                fileLinkIntent.setDataAndType(uri,
+                        "application/vnd.ms-excel");
+            } else if (fileExtend.equalsIgnoreCase("ppt")
+                    || fileExtend.equalsIgnoreCase("pptx")) {
+                fileLinkIntent.setDataAndType(uri,
+                        "application/vnd.ms-powerpoint");
+            } else if (fileExtend.equalsIgnoreCase("pdf")) {
+                fileLinkIntent.setDataAndType(uri, "application/pdf");
+            } else if (fileExtend.equalsIgnoreCase("hwp")) {
+                fileLinkIntent.setDataAndType(uri,
+                        "application/haansofthwp");
+            }
+            PackageManager pm = ctx.getPackageManager();
+            List<ResolveInfo> list = pm.queryIntentActivities(fileLinkIntent,
+                    PackageManager.GET_META_DATA);
+            if (list.size() == 0) {
+                Toast.makeText(ctx, fileName + "을 확인할 수 있는 앱이 설치되지 않았습니다.",
+                        Toast.LENGTH_SHORT).show();
+                return null;
+            } else {
+                return fileLinkIntent;
+            }
+        }
+        return null;
     }
 
     /* 디바이스 버튼 클릭 이벤트 */

@@ -15,6 +15,7 @@ import com.example.hp.xmoblie.Dialog.FileInfoDiralogFragment;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 
+import com.example.hp.xmoblie.Items.PacketType;
 import com.example.hp.xmoblie.Items.RollbackItem;
 import com.example.hp.xmoblie.R;
 
@@ -118,7 +119,7 @@ public class FilemanagerService {
             ServiceControlCenter
                     .getInstance()
                     .getDownloadManagerService()
-                    .downloadFile(new DownloadRequestItem(3, fileName, path, 0, fileSize));
+                    .downloadFile(new DownloadRequestItem(PacketType.PT_FileDownload.ordinal(), fileName, path, 0, fileSize));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,16 +4,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
@@ -87,6 +92,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.yalantis.ucrop.util.FileUtils.getDataColumn;
+import static com.yalantis.ucrop.util.FileUtils.isDownloadsDocument;
+import static com.yalantis.ucrop.util.FileUtils.isExternalStorageDocument;
+import static com.yalantis.ucrop.util.FileUtils.isMediaDocument;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class FileManagerActivity extends AppCompatActivity {
@@ -236,7 +245,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
                     if (fileItemHolder.fileIcon.getTag().equals("file")) {
                         HistorySharedPreferenceManager.getInstance().addHistroy(searchData, fileItemHolder.realFileItem);
-                        if(viewFile(fileItem) != null){
+                        if (viewFile(fileItem) != null) {
                             startActivity(viewFile(fileItem));
                         }
                     } else {
@@ -956,7 +965,7 @@ public class FileManagerActivity extends AppCompatActivity {
             if (!checkedItems.isEmpty()) {
                 switch (view.getId()) {
                     case R.id.downloadFile:
-                        FilemanagerService.getInstance().downloadFileStart(checkedItems, thisContext,searchData);
+                        FilemanagerService.getInstance().downloadFileStart(checkedItems, thisContext, searchData);
                         break;
                     case R.id.shareFile:
                         FilemanagerService.getInstance().shareFile(searchData);
@@ -1130,19 +1139,21 @@ public class FileManagerActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Fix no activity available
+        super.onActivityResult(requestCode, resultCode, data);
         if (data == null)
             return;
         switch (requestCode) {
             case 1000:
                 if (resultCode == RESULT_OK) {
-                    String FilePath = data.getData().getPath();
-                    File file = new File(FilePath);
-                    int file_size = Integer.parseInt(String.valueOf(file.length() / 1024));
+                    String filePath =getPathFromURI(this,data.getData());
+                    File file = new File(filePath);
+                    filePath=filePath.replace("/"+file.getName(),"");
+                    long file_size = file.length();
                     try {
-                        ServiceControlCenter.getInstance().getUploadManagerService().uploadFile(FilePath, file.getName(), searchData, 0);
+                        ServiceControlCenter.getInstance().getUploadManagerService().uploadFile(searchData, file.getName(), filePath, file_size);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -1248,7 +1259,7 @@ public class FileManagerActivity extends AppCompatActivity {
         if (!file.exists()) {
             Toast.makeText(ctx, "파일을 다운로드 합니다.", Toast.LENGTH_SHORT).show();
             FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext);
-        }else{
+        } else {
             Toast.makeText(ctx, "파일을 엽니다.", Toast.LENGTH_SHORT).show();
 
             fileLinkIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -1360,6 +1371,66 @@ public class FileManagerActivity extends AppCompatActivity {
             return true;
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public String getPathFromURI(final Context context, final Uri uri) {
+
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            // ExternalStorageProvider
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+                }
+            }
+            // DownloadsProvider
+            else if (isDownloadsDocument(uri)) {
+
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+                return getDataColumn(context, contentUri, null, null);
+            }
+            // MediaProvider
+            else if (isMediaDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+
+                final String selection = "_id=?";
+                final String[] selectionArgs = new String[] {
+                        split[1]
+                };
+
+                return getDataColumn(context, contentUri, selection, selectionArgs);
+            }
+        }
+        // MediaStore (and general)
+        else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            return getDataColumn(context, uri, null, null);
+        }
+        // File
+        else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
+        }
+
+        return null;
+    }
+
 
 }
 

@@ -59,19 +59,15 @@ public class UploadManagerService extends Service {
         super.onDestroy();
     }
 
-    public void uploadFile(String path, String filename, String target,long size) throws IOException {
-        Log.e("offset len",size+"");
+    public void uploadFile(String target, String filename,String path , long size) throws IOException {
+        Log.e("offset len", size + "");
 
         if (!ServiceControlCenter.getInstance().isUploadNow()) {
-            if (size > 20971520) {
-                Log.e("upload","start");
-                uploadMotherThread = new UploadMotherThread();
-                uploadMotherThread.run(filename,target,path,size);
-                ServiceControlCenter.getInstance().uploadStart();
-            } else if (size <= 20971520) {
-                ServiceControlCenter.getInstance().uploadStart();
-                uploadFile_under20MB(path, filename, target);
-            }
+            Log.e("upload", "start");
+            uploadMotherThread = new UploadMotherThread();
+            uploadMotherThread.run(filename, target, path, size);
+            ServiceControlCenter.getInstance().uploadStart();
+
         }
     }
 
@@ -80,7 +76,7 @@ public class UploadManagerService extends Service {
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
-        Log.e("path", (path) + "/"+filename);
+        Log.e("path", (path) + "/" + filename);
         File file = new File(path + "/" + filename);
 
         // create RequestBody instance from file
@@ -117,21 +113,22 @@ public class UploadManagerService extends Service {
     }
 
     public void shareURL(String path) {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) ServiceControlCenter.getInstance().getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Copied Text", "https://xmobile.lfconfig.xyz/share?path=" + path);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getApplicationContext(), "공유링크가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show();
     }
+
     public void dead() {
         if (uploadMotherThread != null && uploadMotherThread.isAlive()) {
             uploadMotherThread.interrupt();
-            Log.e("kill","kill UT");
+            Log.e("kill", "kill UT");
         }
         ServiceControlCenter.getInstance().uploadFinish();
     }
 
-    public void cancelUpload(String filename){
-        if(uploadMotherThread.getFilename().equals(filename))
+    public void cancelUpload(String filename) {
+        if (uploadMotherThread.getFilename().equals(filename))
             uploadMotherThread.freeForChild();
     }
 

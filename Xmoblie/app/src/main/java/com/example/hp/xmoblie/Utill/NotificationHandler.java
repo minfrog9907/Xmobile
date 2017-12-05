@@ -35,6 +35,10 @@ public class NotificationHandler extends Handler {
                 ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 실패");
                 ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
+            case 3333://취소
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"다운로드 취소");
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
+                break;
 
             case 900:
                 ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"업로드중",0,msg.arg1,true);

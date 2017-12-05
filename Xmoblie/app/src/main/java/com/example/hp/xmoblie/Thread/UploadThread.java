@@ -33,7 +33,7 @@ public class UploadThread extends Thread{
     @Override
     public void interrupt() {
         super.interrupt();
-        Log.e("kill","kill UT");
+        Log.e("Upload","kill UT");
     }
     private void startUpload(){
         Call<ResponseBody> call = apiClient.repoUpload(requestBody);

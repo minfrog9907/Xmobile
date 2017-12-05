@@ -149,7 +149,8 @@ public class NotificationBarService extends Service {
     }
 
     public void makeNotification(String title, String content, int process, int max, boolean loading) {
-        Intent fileLinkIntent = new Intent(NotificationBarService.this, DownloadUploadCancelDialog.class).putExtra("filename",content);
+        Log.e("ntFilename",content);
+        Intent fileLinkIntent = new Intent(NotificationBarService.this, DownloadUploadCancelDialog.class).putExtra("filename",title);
         PendingIntent pending = PendingIntent.getActivity(this, 1, fileLinkIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (android.os.Build.VERSION.SDK_INT >= 26) {
             notification = new Notification.Builder(getApplicationContext())
@@ -203,12 +204,8 @@ public class NotificationBarService extends Service {
         // 파일 확장자 별로 mime type 지정해 준다.
         if (fileExtend.equalsIgnoreCase("mp3")) {
             fileLinkIntent.setDataAndType(uri, "audio/*");
-<<<<<<< HEAD
         } else if (fileExtend.equalsIgnoreCase("mp4")
                 ||fileExtend.equalsIgnoreCase("mkv")) {
-=======
-        } else if (fileExtend.equalsIgnoreCase("mp4")) {
->>>>>>> f2dbe2b84c5772251bf671f733ef6c0c5b5b6702
             fileLinkIntent.setDataAndType(uri, "video/*");
         } else if (fileExtend.equalsIgnoreCase("jpg")
                 || fileExtend.equalsIgnoreCase("jpeg")

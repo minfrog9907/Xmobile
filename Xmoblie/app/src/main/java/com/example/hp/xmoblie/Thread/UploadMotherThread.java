@@ -3,6 +3,7 @@ package com.example.hp.xmoblie.Thread;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.hp.xmoblie.Items.PacketType;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Service.UploadManagerService;
@@ -55,12 +56,11 @@ public class UploadMotherThread extends Thread {
         left = size;
         filebyte = fileToByte(realPath);
 
-        sendServerToState(8);
 
         handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         handler.setName(filename);
 
-
+        Log.e("Upload",size+"");
         while (left > 0) {
             UploadThread ut = new UploadThread();
 
@@ -72,6 +72,9 @@ public class UploadMotherThread extends Thread {
 
             thCnt++;
         }
+        Log.e("Upload",thCnt+"");
+        sendServerToState( PacketType.PT_CreateFile.ordinal());
+
 
         Message message = handler.obtainMessage();
         message.what = 900;
@@ -103,7 +106,7 @@ public class UploadMotherThread extends Thread {
 
         File file = new File(realPath+"/"+filename);
 
-        length =file.length()/1024;
+        length =file.length();
 
         bytesArray = new byte[(int) file.length()];
 
@@ -125,7 +128,7 @@ public class UploadMotherThread extends Thread {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
-            outputStream.write(reverse(intToByteArray(5)));
+            outputStream.write(reverse(intToByteArray(PacketType.PT_UploadFile.ordinal())));
             outputStream.write((filename + "\0" + path + "\0").getBytes(Charset.forName("euc-kr")));
             outputStream.write(reverse(longToBytes(offset)));
             outputStream.write(reverse(intToByteArray((int)length)));
@@ -167,6 +170,7 @@ public class UploadMotherThread extends Thread {
         return array;
     }
     public synchronized void reportDead(int id) throws IOException {
+        Log.e("Upload","Report Dead");
         nowRunning--;
         uploadThreads.get(id).interrupt();
         Message message = handler.obtainMessage();
@@ -177,7 +181,7 @@ public class UploadMotherThread extends Thread {
 
 
         if (run == thCnt&&nowRunning==0) {
-            sendServerToState(10);
+            sendServerToState(PacketType.PT_UploadDone.ordinal());
             ServiceControlCenter.getInstance().getUploadManagerService().dead();
             message = handler.obtainMessage();
             message.what =9999;
@@ -216,13 +220,13 @@ public class UploadMotherThread extends Thread {
 
     private void sendServerToState(final int type) {
         Log.e("Upload", "업로드 send");
-        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), stringToByte(type, filename        + "\0" + path + "\0"));
+        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), stringToByte(type, filename + "\0" + path + "\0"));
 
         Call<ResponseBody> call = apiClient.repoUploadService(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (type == 8) {
+                if (type == PacketType.PT_CreateFile.ordinal()) {
                     Log.e("Upload", "업로드 시작");
                     Log.e("Uploading", "start");
                     for (int i = nowRunning; i < MAXTHREAD; ++i) {
@@ -232,7 +236,7 @@ public class UploadMotherThread extends Thread {
                         }
                     }
                 }
-                if (type == 10)
+                if (type == PacketType.PT_UploadDone.ordinal())
                     Log.e("Upload", "업로드 종료");
             }
 

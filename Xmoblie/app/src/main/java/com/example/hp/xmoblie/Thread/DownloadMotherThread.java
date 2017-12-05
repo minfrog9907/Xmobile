@@ -6,63 +6,82 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.hp.xmoblie.Items.PacketType;
+import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.DownloadManagerService;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 import com.example.hp.xmoblie.Utill.NotificationHandler;
+import com.example.hp.xmoblie.Utill.SessionCall;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okio.BufferedSource;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by HP on 2017-10-31.
  */
 
 public class DownloadMotherThread extends Thread {
-    private int LENGTH =37268;
-    private int MAXTHREAD=1;
+    private int LENGTH = 1048576;
+    private int MAXTHREAD = 1;
     private int len;
     private int left;
     private int run = 0;
     private int thCnt = 0;
     private int nowRunning = 0;
+    private boolean deadCall=false;
     private String filename;
     private String root;
     private DownloadManagerService dm;
     private NotificationHandler handler;
-    private FileOutputStream out;
-    private File file;
+
+    private ApiClient apiClient;
 
     private ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
     private ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
 
-    public void run(int type, String filename, String path, String token, long offset, int length, DownloadManagerService dm) throws IOException {
+    public void run(final int type, String filename, final String path, final String token, final long offset, final int length, DownloadManagerService dm) throws IOException {
+        apiClient = ApiClient.severService;
+
         this.filename = filename;
-        this.dm =dm;
-        LENGTH  =length;
+        this.dm = dm;
         len = length;
         left = length;
 
         handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
         handler.setName(filename);
 
-        root = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/XmobileDownLoad/";
-        File myDir = new File(root);
-        myDir.mkdirs();
 
-        String fname = filename;
 
-        file = new File(myDir, fname);
-        out = new FileOutputStream(file);
 
-        if (file.exists()) file.delete();
+        Call<ResponseBody> call = apiClient.repoInitDownload(getByte(PacketType.PT_InitDownload.ordinal(), filename, path));
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                downloadStart(type, length, path, token, offset);
+            }
 
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            }
+        });
+
+    }
+
+    private void downloadStart(int type, int length, String path, String token, long offset) {
         while (left > 0) {
             DownloadThread dt = new DownloadThread();
 
@@ -93,30 +112,44 @@ public class DownloadMotherThread extends Thread {
         }
 
         Message message = handler.obtainMessage();
-        message.what =200;
-        message.arg1=thCnt;
+        message.what = 200;
+        message.arg1 = thCnt;
         handler.sendMessage(message);
 
 
-        Log.e("downloadind","start");
+        Log.e("downloadind", "start");
         for (int i = nowRunning; i < MAXTHREAD; ++i) {
             if (run < thCnt) {
                 downloadThreads.get(run++).run();
                 nowRunning++;
             }
         }
-
     }
 
     private void saveImage() {
+        FileOutputStream out;
+        File file;
+        root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/XmobileDownLoad/";
 
+        File myDir = new File(root);
+        myDir.mkdirs();
+
+        String fname = filename;
+
+        file = new File(myDir, fname);
+
+        if (file.exists()) file.delete();
         try {
+            out = new FileOutputStream(file);
+            for(int i=0; i<repResponseBodies.size(); ++i){
+                out.write(repResponseBodies.get(i).bytes());
+            }
             out.flush();
             out.close();
-            Log.e("finish","finish");
+            Log.e("finish", "finish");
 
             Message message = handler.obtainMessage();
-            message.what =222;
+            message.what = 222;
             handler.setPath(root);
             handler.setName(filename);
             handler.sendMessage(message);
@@ -125,10 +158,10 @@ public class DownloadMotherThread extends Thread {
             return;
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("IO","IOex");
+            Log.e("IO", "IOex");
             return;
         }
-        for (int i=0; i<downloadThreads.size(); ++i){
+        for (int i = 0; i < downloadThreads.size(); ++i) {
             if (downloadThreads.get(i) != null && downloadThreads.get(i).isAlive())
                 downloadThreads.get(i).stop();
         }
@@ -136,42 +169,39 @@ public class DownloadMotherThread extends Thread {
 
     }
 
-    public synchronized void setResponseBody(ResponseBody responseBody,int id) throws IOException {
-       out.write(responseBody.bytes());
+    public synchronized void setResponseBody(ResponseBody responseBody, int id) throws IOException {
+        repResponseBodies.set(id,responseBody);
     }
 
     public synchronized void reportDead(int id) throws IOException {
         nowRunning--;
         downloadThreads.get(id).interrupt();
-        Message message = handler.obtainMessage();
-        message.what =100;
-        message.arg1=thCnt;
-        message.arg2=run;
-        handler.sendMessage(message);
-
-
-        if (run == thCnt&&nowRunning==0) {
+        messageDownloadCall();
+        if (run == thCnt && nowRunning == 0) {
             saveImage();
-        } else if(run<thCnt){
+        } else if (run < thCnt) {
             downloadThreads.get(run++).run();
             nowRunning++;
         }
 
     }
-    public synchronized void badRepoDie(int id){
+
+    public synchronized void badRepoDie(int id) {
         downloadThreads.get(id).interrupt();
         dm.dead();
         ServiceControlCenter.getInstance().downloadFinish();
-        Message message = handler.obtainMessage();
-        message.what =333;
-        message.arg1=run;
-        handler.sendMessage(message);
+        messageFailCall();
     }
-    public void freeForChild(){
-        for (int i =0; i< downloadThreads.size();++i){
-            if(downloadThreads.get(i).isAlive())
+
+    public void freeForChild() {
+        for (int i = 0; i < downloadThreads.size(); ++i) {
                 downloadThreads.get(i).interrupt();
         }
+        thCnt=0;
+
+        deleteNowFile();
+        messageCancelCall();
+        ServiceControlCenter.getInstance().downloadFinish();
         this.interrupt();
     }
 
@@ -179,9 +209,87 @@ public class DownloadMotherThread extends Thread {
         return filename;
     }
 
-    public void recall(int id){
-        Log.e("recall","recall");
+    public void recall(int id) {
+        Log.e("recall", "recall");
         downloadThreads.get(id).run();
     }
 
+    private RequestBody getByte(int type, String filename, String path) {
+        byte[] euckrStringBuffer;
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+
+            outputStream.write(reverse(intToByteArray(type)));//reverse(intToByteArray(type)));
+            outputStream.write((filename + "\0" + path + "\0").getBytes(Charset.forName("euc-kr")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        euckrStringBuffer = outputStream.toByteArray();
+        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), euckrStringBuffer);
+        return body;
+    }
+
+    private byte[] intToByteArray(final int integer) {
+        ByteBuffer buff = ByteBuffer.allocate(Integer.BYTES);
+        buff.putInt(integer);
+        return buff.array();
+    }
+
+    private byte[] reverse(byte[] array) {
+        if (array == null) {
+            return array;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        byte tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+        return array;
+    }
+    @Override
+    public void interrupt() {
+        super.interrupt();
+        Log.e("kill","kill DMT");
+    }
+    private void deleteNowFile(){
+        root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/XmobileDownLoad/";
+
+        File myDir = new File(root);
+        myDir.mkdirs();
+
+        String fname = filename;
+
+        File file = new File(myDir, fname);
+
+        if (file.exists()) file.delete();
+    }
+    private void messageCancelCall(){
+        deadCall=true;
+        Message message = handler.obtainMessage();
+        message.what = 3333;
+        handler.sendMessage(message);
+    }
+    private void messageFailCall(){
+        Message message = handler.obtainMessage();
+        message.what = 333;
+        message.arg1 = run;
+        handler.sendMessage(message);
+    }
+
+    private void messageDownloadCall(){
+        if(!deadCall) {
+            Message message = handler.obtainMessage();
+            message.what = 100;
+            message.arg1 = thCnt;
+            message.arg2 = run;
+            handler.sendMessage(message);
+        }
+    }
 }

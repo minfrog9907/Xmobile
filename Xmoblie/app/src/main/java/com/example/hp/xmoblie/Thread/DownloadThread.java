@@ -43,11 +43,10 @@ public class DownloadThread extends Thread {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         try {
 
-            outputStream.write(reverse(intToByteArray(PacketType.PT_FileDownload.ordinal())));//reverse(intToByteArray(type)));
+            outputStream.write(reverse(intToByteArray(PacketType.PT_RequestDownload.ordinal())));//reverse(intToByteArray(type)));
             outputStream.write((filename + "\0" + path + "\0").getBytes(Charset.forName("euc-kr")));
             outputStream.write(reverse(longToBytes(offset)));
             outputStream.write(reverse(intToByteArray(length)));
-            Log.e("all",PacketType.PT_FileDownload.ordinal()+" "+filename+" "+path+" "+offset+" "+length);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -40,8 +40,8 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            //.baseUrl("http://10.1.21.228")
-            .baseUrl("http://xmobile.lfconfig.xyz")
+            .baseUrl("http://10.1.21.228")
+           // .baseUrl("http://xmobile.lfconfig.xyz")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -49,8 +49,8 @@ public interface ApiClient {
 
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://xstream.lfconfig.xyz")
-            //.baseUrl("https://10.1.21.228")
+            .baseUrl("http://10.1.21.228:8080")
+            //.baseUrl("http://xstream.lfconfig.xyz")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 
@@ -95,7 +95,6 @@ public interface ApiClient {
             @Header("token") String token,
             @Field("path") String path,
             @Field("dirname") String filename
-
     );
 
     @FormUrlEncoded
@@ -227,6 +226,10 @@ public interface ApiClient {
     @POST("/")
     Call<ResponseBody> repoSession(
         @Body RequestBody bytes
+    );
+    @POST("/")
+    Call<ResponseBody>repoInitDownload(
+            @Body RequestBody bytes
     );
 
 }

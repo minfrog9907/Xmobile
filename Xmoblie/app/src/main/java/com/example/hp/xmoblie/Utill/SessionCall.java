@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.hp.xmoblie.Activity.MainActivity;
 import com.example.hp.xmoblie.Items.LoginItem;
+import com.example.hp.xmoblie.Items.PacketType;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
 
@@ -40,6 +41,7 @@ public class SessionCall {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
+            outputStream.write(reverse(intToByteArray(PacketType.PT_ValidToken.ordinal())));
             outputStream.write((ServiceControlCenter.getInstance().getToken()+"\0").getBytes(Charset.forName("euc-kr")));
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,16 +50,21 @@ public class SessionCall {
         euckrStringBuffer = outputStream.toByteArray();
         RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), euckrStringBuffer);
 
-        Call<ResponseBody> call = apiClient.repoDownload(body);
+        Call<ResponseBody> call = apiClient.repoSession(body);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e("Success", "SuccessSession");
+                if(response.code()==200)
+                     Log.e("Success", "SuccessSession");
+                else if (response.code()==401){
+                    SessionCall();
+                    Log.e("Success", "RetrySession");
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("Success", "FailedSession");
+                Log.e("Success", "FailedSession "+ t.toString()  );
             }
         });
 
@@ -111,4 +118,26 @@ public class SessionCall {
 
     }
 
+    private byte[] intToByteArray(final int integer) {
+        ByteBuffer buff = ByteBuffer.allocate(Integer.BYTES);
+        buff.putInt(integer);
+        return buff.array();
+    }
+
+    private byte[] reverse(byte[] array) {
+        if (array == null) {
+            return array;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        byte tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+        return array;
+    }
 }

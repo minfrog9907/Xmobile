@@ -3,6 +3,7 @@ package com.example.hp.xmoblie.Service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 
 import android.util.Log;
@@ -31,7 +32,7 @@ public class DownloadManagerService extends Service {
     DownloadMotherThread dlm;
 
     IBinder mBinder = new DownloadManagerService.LocalBinder();
-
+//    Handler handler = ServiceControlCenter.getInstance().getNotificationBarService().addService();
 
     @org.jetbrains.annotations.Nullable
     @Override
@@ -86,8 +87,12 @@ public class DownloadManagerService extends Service {
     }
 
     public void cancelDownload(String filename){
-        if(dlm.getFilename().equals(filename))
+        Log.e("ntFilename",filename+" 1 "+dlm.getFilename());
+
+        if(dlm.getFilename().equals(filename)) {
+            Log.e("ntFilename","same");
             dlm.freeForChild();
+        }
     }
 
     public class LocalBinder extends Binder {
@@ -96,4 +101,5 @@ public class DownloadManagerService extends Service {
 
         }
     }
+
 }

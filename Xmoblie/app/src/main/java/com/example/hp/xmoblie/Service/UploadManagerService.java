@@ -116,7 +116,7 @@ public class UploadManagerService extends Service {
         ClipboardManager clipboard = (ClipboardManager) ServiceControlCenter.getInstance().getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("Copied Text", "https://xmobile.lfconfig.xyz/share?path=" + path);
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(getApplicationContext(), "공유링크가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ServiceControlCenter.getInstance().getContext(), "공유링크가 클립보드에 복사되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
     public void dead() {

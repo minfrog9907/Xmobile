@@ -56,6 +56,10 @@ public class NotificationHandler extends Handler {
                 ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"업로드 성공");
                 ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
                 break;
+            case 99999:
+                ServiceControlCenter.getInstance().getNotificationBarService().makeNotification(filename,"업로드 취소");
+                ServiceControlCenter.getInstance().getNotificationBarService().pushNotification(1);
+                break;
         }
     }
     public void setName(String name){

@@ -17,6 +17,7 @@ import java.util.TimeZone;
 public class FileItem {
     int idx;
     String filename;
+    String displayName;
     String rname;
     long size;
     String userid;
@@ -63,6 +64,10 @@ public class FileItem {
             }
         }
         return null;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getParseCreateDate() {

@@ -38,6 +38,7 @@ public class UploadMotherThread extends Thread {
     private int thCnt = 0;
     private int nowRunning = 0;
     private long length;
+    private boolean deadCall=false;
 
     private byte[] filebyte;
     private String path;
@@ -75,12 +76,7 @@ public class UploadMotherThread extends Thread {
         Log.e("Upload",thCnt+"");
         sendServerToState( PacketType.PT_CreateFile.ordinal());
 
-
-        Message message = handler.obtainMessage();
-        message.what = 900;
-        message.arg1 = thCnt;
-        handler.sendMessage(message);
-
+        messageUploadCall();
 
 
     }
@@ -173,17 +169,13 @@ public class UploadMotherThread extends Thread {
         Log.e("Upload","Report Dead");
         nowRunning--;
         uploadThreads.get(id).interrupt();
-        Message message = handler.obtainMessage();
-        message.what =990;
-        message.arg1=thCnt;
-        message.arg2=run;
-        handler.sendMessage(message);
+        messageUploadCall();
 
 
         if (run == thCnt&&nowRunning==0) {
             sendServerToState(PacketType.PT_UploadDone.ordinal());
             ServiceControlCenter.getInstance().getUploadManagerService().dead();
-            message = handler.obtainMessage();
+            Message message = handler.obtainMessage();
             message.what =9999;
             handler.sendMessage(message);
         } else if(run<thCnt){
@@ -195,22 +187,21 @@ public class UploadMotherThread extends Thread {
     public synchronized void badRepoDie(int id){
         uploadThreads.get(id).interrupt();
         um.dead();
-        ServiceControlCenter.getInstance().downloadFinish();
-        Message message = handler.obtainMessage();
-        message.what =999;
-        message.arg1=run;
-        handler.sendMessage(message);
+       messageFailCall();
     }
 
     public void recall(int id){
         Log.e("Upload","recall");
         uploadThreads.get(id).run();
     }
-    public void freeForChild(){
-        for (int i =0; i< uploadThreads.size();++i){
-            if(uploadThreads.get(i).isAlive())
-                uploadThreads.get(i).interrupt();
+    public void freeForChild() {
+        for (int i = 0; i < uploadThreads.size(); ++i) {
+            uploadThreads.get(i).interrupt();
         }
+        thCnt=0;
+
+        messageCancelCall();
+        ServiceControlCenter.getInstance().uploadFinish();
         this.interrupt();
     }
 
@@ -248,5 +239,27 @@ public class UploadMotherThread extends Thread {
         });
     }
 
+    private void messageCancelCall(){
+        deadCall=true;
+        Message message = handler.obtainMessage();
+        message.what = 99999;
+        handler.sendMessage(message);
+    }
+    private void messageFailCall(){
+        ServiceControlCenter.getInstance().uploadFinish();
+        Message message = handler.obtainMessage();
+        message.what =999;
+        message.arg1=run;
+        handler.sendMessage(message);
+    }
 
+    private void messageUploadCall(){
+        if(!deadCall) {
+            Message message = handler.obtainMessage();
+            message.what =990;
+            message.arg1=thCnt;
+            message.arg2=run;
+            handler.sendMessage(message);
+        }
+    }
 }

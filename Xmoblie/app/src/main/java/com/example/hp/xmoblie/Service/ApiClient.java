@@ -40,8 +40,10 @@ import retrofit2.http.Query;
  */
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://10.1.21.228")
-           // .baseUrl("http://xmobile.lfconfig.xyz")
+            //.baseUrl("http://10.1.21.228")
+            .baseUrl("https://xmobile.lfconfig.xyz")
+            //.baseUrl("https://10.1.21.85:11001")
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 
@@ -49,8 +51,9 @@ public interface ApiClient {
 
 
     Retrofit filesever = new Retrofit.Builder()
-            .baseUrl("http://10.1.21.228:8080")
-            //.baseUrl("http://xstream.lfconfig.xyz")
+            //.baseUrl("http://10.1.21.228:8080")
+            .baseUrl("https://xstream.lfconfig.xyz")
+            //.baseUrl("https://10.1.21.85:1100")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .build();
 

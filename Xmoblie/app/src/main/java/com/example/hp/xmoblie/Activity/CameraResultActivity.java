@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
+import com.example.hp.xmoblie.Service.UploadManagerService;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -105,6 +106,7 @@ public class CameraResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera_result);
         ActionBar actionBar = getSupportActionBar();
 
+
         apiClient = ApiClient.service;
         preview = (ImageView) findViewById(R.id.cameraResult_Image);
         resultNode = (TextView) findViewById(R.id.cameraResult_node);
@@ -134,12 +136,6 @@ public class CameraResultActivity extends AppCompatActivity {
                 uploadBills(node);
             }
         });
-
-//                startService(new Intent(CameraResultActivity.this, UploadManagerService.class)
-//                        .putExtra("token", getIntent().getStringExtra("token"))
-//                        .putExtra("path", "/storage/emulated/0/Download/bills")
-//                        .putExtra("filename", "asdfasdf.jpg")
-//                        .putExtra("target", "\\"));
 
         share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,41 +239,44 @@ public class CameraResultActivity extends AppCompatActivity {
 
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
-        Log.e("path", Uri.parse(path) + "");
-        File file = new File(path);
+        if(name!=null) {
+            Log.e("path", Uri.parse(path) + "");
+            File file = new File(path);
 
-        // create RequestBody instance from file
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse(path),
-                        file
-                );
+            // create RequestBody instance from file
+            RequestBody requestFile =
+                    RequestBody.create(
+                            MediaType.parse(path),
+                            file
+                    );
 
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+            // MultipartBody.Part is used to send also the actual file name
+            MultipartBody.Part body =
+                    MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        // add another part within the multipart request
-        String descriptionString = "hello, this is description speaking";
-        RequestBody description =
-                RequestBody.create(
-                        okhttp3.MultipartBody.FORM, descriptionString);
+            // add another part within the multipart request
+            String descriptionString = "hello, this is description speaking";
+            RequestBody description =
+                    RequestBody.create(
+                            okhttp3.MultipartBody.FORM, descriptionString);
 
-        // finally, execute the request
-        Call<ResponseBody> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace("\n", "").replace(" ", "")));
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call,
-                                   Response<ResponseBody> response) {
-                Toast.makeText(getApplicationContext(), "Upload Success", Toast.LENGTH_SHORT).show();
-            }
+            // finally, execute the request
+            Call<ResponseBody> call = apiClient.repoUploadBills(getIntent().getStringExtra("token"), description, body, name, Integer.parseInt(price.replace(",", "").replace("원", "").replace("\n", "").replace(" ", "")));
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call,
+                                       Response<ResponseBody> response) {
+                    Toast.makeText(getApplicationContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Upload Fail", Toast.LENGTH_SHORT).show();
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Upload Fail", Toast.LENGTH_SHORT).show();
 
-            }
-        });
+                }
+            });
+        }
+
     }
 
 

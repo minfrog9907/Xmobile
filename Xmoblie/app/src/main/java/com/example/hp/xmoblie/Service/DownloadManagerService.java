@@ -87,10 +87,7 @@ public class DownloadManagerService extends Service {
     }
 
     public void cancelDownload(String filename){
-        Log.e("ntFilename",filename+" 1 "+dlm.getFilename());
-
         if(dlm.getFilename().equals(filename)) {
-            Log.e("ntFilename","same");
             dlm.freeForChild();
         }
     }

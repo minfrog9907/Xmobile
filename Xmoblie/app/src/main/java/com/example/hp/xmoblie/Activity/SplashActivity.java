@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ServiceControlCenter;
@@ -53,12 +54,11 @@ public class SplashActivity extends BaseActivity {
         int readStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
         int pravitePemissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.PACKAGE_USAGE_STATS);
 
-
+    //   Toast.makeText(getApplicationContext(),internetPermissionCheck+" "+storagePermissionCheck+" "+cameraPermissionCheck+" "+readStatePermissionCheck+" "+pravitePemissionCheck,Toast.LENGTH_SHORT).show();
         if (internetPermissionCheck == PackageManager.PERMISSION_DENIED
                 || storagePermissionCheck == PackageManager.PERMISSION_DENIED
                 || cameraPermissionCheck == PackageManager.PERMISSION_DENIED
-                || readStatePermissionCheck == PackageManager.PERMISSION_DENIED
-                || pravitePemissionCheck == PackageManager.PERMISSION_DENIED) {
+                || readStatePermissionCheck == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PACKAGE_USAGE_STATS},
                     MY_PERMISSIONS_REQUEST_READ_CONTACTS);
@@ -70,8 +70,7 @@ public class SplashActivity extends BaseActivity {
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.PACKAGE_USAGE_STATS) != PackageManager.PERMISSION_DENIED) {
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_DENIED) {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

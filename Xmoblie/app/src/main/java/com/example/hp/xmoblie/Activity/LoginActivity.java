@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 id = idEditText.getText().toString();
                 pw = pwEditText.getText().toString();
-                if (id != null && pw != null)
+                if (id.equals(null) || pw.equals(null))
                     loginSystem(id, pw);
                 //  loginProcess(id, pw);
             }

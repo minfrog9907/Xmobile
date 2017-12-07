@@ -652,6 +652,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
         private void renameFileProtocol(String newName, String oldName) {
             final Call<ResponseBody> call = apiClient.repoRename(token, oldName, psearchData, newName);
+            Log.e("rename",oldName+ psearchData+ newName);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1106,6 +1107,7 @@ public class FileManagerActivity extends AppCompatActivity {
             case "renameFile":
                 if (checkFileFormat(str1)) {
                     protocol.setProtocol("renameFileProtocol");
+                    protocol.setSearchData(searchData);
                     protocol.setNewName(str1);
                     protocol.setOldName(str2);
                     protocol.activateProtocol();
@@ -1115,6 +1117,7 @@ public class FileManagerActivity extends AppCompatActivity {
             case "addTag":
                 if (checkFileFormat(str1)) {
                     protocol.setProtocol("addTagProtocol");
+                    protocol.setSearchData(searchData);
                     protocol.setNewTag(str1);
                     protocol.setFileName(str2);
                     protocol.activateProtocol();
@@ -1192,11 +1195,11 @@ public class FileManagerActivity extends AppCompatActivity {
                 dialog = ShowLogDialogFragment.newInstance(checkedItems, searchData, token, this);
                 break;
             case "renameFile":
-                final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
+                final String oldName = checkedItems != null ? checkedItems.get(0).getDisplayName() : "";
                 inputListener = new InputListener() {
                     @Override
                     public boolean onInputComplete(String newDir) {
-                        return FileManagement(newDir, oldName, "renameFile");
+                        return FileManagement(newDir, checkedItems.get(0).getFilename(), "renameFile");
                     }
                 };
                 dialog = RenameDialogFragment.newInstance(inputListener, oldName);
@@ -1204,7 +1207,7 @@ public class FileManagerActivity extends AppCompatActivity {
 
             case "addTag":
                 if (checkedItems.get(0).getType() == 128) {
-                    final String fileName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
+                    final String fileName = checkedItems != null ? checkedItems.get(0).getDisplayName() : "";
                     inputListener = new InputListener() {
                         @Override
                         public boolean onInputComplete(String name) {
@@ -1257,8 +1260,8 @@ public class FileManagerActivity extends AppCompatActivity {
         File file = new File(new File(Environment.getExternalStorageDirectory(), "XMobileDownLoad"), fileName); // 파일 불러옴 여기가 널이면 처리하면될듯  if (file.exists()) 파일유무 확인
 
         if (!file.exists()) {
-            Toast.makeText(ctx, "파일을 다운로드 합니다.", Toast.LENGTH_SHORT).show();
-            FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext);
+            Toast.makeText(ctx, "파일을 다운로드 합니다." , Toast.LENGTH_SHORT).show();
+            FilemanagerService.getInstance().downloadFileStart(fileItem, thisContext,searchData);
         } else {
             Toast.makeText(ctx, "파일을 엽니다.", Toast.LENGTH_SHORT).show();
 

@@ -66,9 +66,10 @@ public class FilemanagerService {
         }
     }
 
-    public void downloadFileStart(FileItem ffileItem, Context context) {
+    public void downloadFileStart(FileItem ffileItem, Context context,String path) {
         cnt = 0;
         this.fcontext = context;
+        this.path=path;
         try {
             ckdownloadFile(ffileItem);
         } catch (IndexOutOfBoundsException e) {
@@ -116,6 +117,7 @@ public class FilemanagerService {
     private void downloadFile(String fileName, int fileSize){
         System.out.println("나 다운로드 해오 : " + fileName);
         try {
+            Log.e("downloadItems",PacketType.PT_FileDownload.ordinal()+" "+ fileName+" "+ path+" "+      fileSize);
             ServiceControlCenter
                     .getInstance()
                     .getDownloadManagerService()

@@ -266,7 +266,7 @@ public class CameraResultActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call,
                                        Response<ResponseBody> response) {
-                    Toast.makeText(getApplicationContext(), "Upload Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Upload Success "+ response.code(), Toast.LENGTH_SHORT).show();
                 }
 
                 @Override

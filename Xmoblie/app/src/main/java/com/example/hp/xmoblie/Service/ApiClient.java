@@ -42,7 +42,7 @@ import retrofit2.http.Query;
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
             //.baseUrl("http://10.1.21.228")
-            .baseUrl("http://xmobile.lfconfig.xyz")
+            .baseUrl("https://xmobile.lfconfig.xyz")
 //            .baseUrl("https://10.1.21.85:11001")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())

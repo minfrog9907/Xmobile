@@ -142,7 +142,11 @@ public class DownloadMotherThread extends Thread {
         try {
             out = new FileOutputStream(file);
             for(int i=0; i<repResponseBodies.size(); ++i){
-                out.write(repResponseBodies.get(i).bytes());
+                try {
+                    out.write(repResponseBodies.get(i).bytes());
+                }catch (Exception e){
+
+                }
             }
             out.flush();
             out.close();

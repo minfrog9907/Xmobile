@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/CustomFilemanagerBtnGroup"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:background="#1B1B1B"
-    android:paddingTop="10dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="right">
+        <ImageView
+            android:id="@+id/addStar"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="right"
+            android:src="@drawable/empty_star"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/CustomFilemanagerBtnGroup"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:background="#1B1B1B"
+        android:paddingTop="10dp"
+        android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -100,5 +115,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/trash" />
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

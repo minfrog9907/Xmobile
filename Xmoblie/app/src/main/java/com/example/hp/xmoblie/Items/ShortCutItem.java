@@ -4,11 +4,14 @@ package com.example.hp.xmoblie.Items;
  * Created by HP on 2017-10-30.
  */
 
-public class ShortCutItem {
+public class
+ShortCutItem {
     String filename;
     String path;
     long size;
     String userid;
+    String displayName;
+    short type;
 
     public long getSize() {
         return size;
@@ -24,5 +27,13 @@ public class ShortCutItem {
 
     public String getUserid() {
         return userid;
+    }
+
+    public short getType() {
+        return type;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

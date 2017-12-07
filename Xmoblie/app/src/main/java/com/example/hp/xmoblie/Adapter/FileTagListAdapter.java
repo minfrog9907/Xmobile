@@ -54,7 +54,6 @@ public class FileTagListAdapter extends BaseAdapter {
     }
 
     public void mackView() {
-        System.out.println(tags);
         for (String tag : tags) {
             TagItemHolder tagItemHolder = new TagItemHolder();
 

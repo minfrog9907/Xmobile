@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -66,7 +67,7 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         lvTags = view.findViewById(R.id.tagList);
         apiClient = ApiClient.service;
 
-        String fileName = fileItem.getFilename() != null ? fileItem.getFilename() : "";
+        String displayfileName = fileItem.getDisplayName() != null ? fileItem.getDisplayName() : "";
         long fileSize = fileItem.getSize() != 0 ? fileItem.getSize() : 0;
         String fileUploader = fileItem.getUserid() != null ? fileItem.getUserid() : "";
         int fileCID = fileItem.getGgid() != 0 ? fileItem.getGgid() : 0;
@@ -74,11 +75,11 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         String fileUploadTime = fileItem.getParseCreateDate() != null ? fileItem.getParseCreateDate() : "";
         String fileLastUpdate = fileItem.getParseLastWriteDate() != null ? fileItem.getParseLastWriteDate() : "";
 
-        tvFileName.setText(fileName);
+        tvFileName.setText(displayfileName);
         tvFileSize.setText(FileUtils.byteCountToDisplaySize(fileSize));
         tvFileUploader.setText(fileUploader);
-        tvCID.setText(Integer.toString(fileItem.getGgid()) );
-        tvGID.setText(Integer.toString(fileItem.getGid()) );
+        tvCID.setText(Integer.toString(fileCID) );
+        tvGID.setText(Integer.toString(fileGID) );
         tvUploadTime.setText(fileUploadTime);
         tvLastUpdate.setText(fileLastUpdate);
 
@@ -87,6 +88,14 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         }
         view.findViewById(R.id.editdata_commit).setOnClickListener(this);
         builder.setView(view);
+
+        lvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
+
         return builder.create();
     }
 
@@ -94,7 +103,6 @@ public class FileInfoDiralogFragment extends CreateDialogFragment {
         FileTagListAdapter fileTagListAdapter = new FileTagListAdapter(context, tags);
         lvTags.setAdapter(fileTagListAdapter);
     }
-
 
     @Override
     public void onClick(View v) {

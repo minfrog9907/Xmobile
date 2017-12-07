@@ -24,12 +24,12 @@ public class FileItem {
     int ggid, gid;
     String CreateDate;
     String LastWriteDate;
+    int isShortcut;
     String vDir;
     String rDir;
     int type;
     int status;
     String del;
-    boolean isShortCut;
     ArrayList<String> tags;
 
     public int getGgid() {
@@ -73,7 +73,6 @@ public class FileItem {
     public String getParseCreateDate() {
         if (CreateDate != null) {
             String date = CreateDate.replace("T", " ");
-
             SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 
@@ -138,15 +137,15 @@ public class FileItem {
         return userid;
     }
 
-    public boolean getIsShortCut() {
-        return isShortCut;
-    }
-
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 
     public ArrayList<String> getTags() {
         return tags;
+    }
+
+    public int getIsShortcut() {
+        return isShortcut;
     }
 }

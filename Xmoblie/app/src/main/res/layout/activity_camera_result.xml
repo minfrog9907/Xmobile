@@ -59,37 +59,20 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/cameraResult_Tag"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="15dp"
-            android:layout_weight="1.5"
-            android:text="한글"
-            android:textColor="#73F1E2"
-            android:textSize="11dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.2"
-        android:weightSum="3"
+        android:weightSum="2"
         android:layout_marginLeft="-15dp"
         android:layout_marginRight="-15dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="-15dp"
         android:orientation="horizontal">
 
-        <com.example.hp.xmoblie.Custom.SideStick_BTN
-            android:id="@+id/cameraResult_TagEdit"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:symbol="@drawable/tag"
-            app:text="태그 수정">
 
-        </com.example.hp.xmoblie.Custom.SideStick_BTN>
 
         <com.example.hp.xmoblie.Custom.SideStick_BTN
             android:id="@+id/cameraResult_Upload"

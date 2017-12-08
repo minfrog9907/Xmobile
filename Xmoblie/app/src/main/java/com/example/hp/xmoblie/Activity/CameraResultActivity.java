@@ -126,7 +126,6 @@ public class CameraResultActivity extends AppCompatActivity {
 
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
-        LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
 
 
 

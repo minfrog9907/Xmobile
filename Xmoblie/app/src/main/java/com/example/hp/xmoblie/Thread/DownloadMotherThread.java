@@ -161,23 +161,7 @@ public class DownloadMotherThread extends Thread {
 
     public synchronized void setResponseBody(ResponseBody responseBody, int id) throws IOException {
         try {
-<<<<<<< HEAD
             out.write(responseBody.bytes());
-
-=======
-            out = new FileOutputStream(file);
-            for(int i=0; i<repResponseBodies.size(); ++i){
-                try {
-                    out.write(repResponseBodies.get(i).bytes());
-                }catch (Exception e){
-
-                }
-            }
-            out.flush();
-            out.close();
-            Log.e("finish", "finish");
->>>>>>> 1f7fc9ee522a4e864b5dc741e47f6dbd7055aed3
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;

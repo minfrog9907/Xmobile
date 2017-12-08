@@ -13,11 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.hp.xmoblie.Adapter.ShortCutListAdapter;
 import com.example.hp.xmoblie.Custom.Main_BTN;
+import com.example.hp.xmoblie.Holder.ShortCutItemHolder;
 import com.example.hp.xmoblie.Items.ShortCutItem;
 import com.example.hp.xmoblie.R;
 import com.example.hp.xmoblie.Service.ApiClient;
@@ -33,6 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -169,6 +172,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        shortcutlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ShortCutItemHolder shortCutItemHolder = (ShortCutItemHolder)view.getTag();
+                ShortCutItem shortCutItem = shortCutItemHolder.realShortCutItem;
+                String path = "\\";
+                if(shortCutItem.getType() == 16){
+                    if(shortCutItem.getPath().equals("\\")){
+                        path = shortCutItem.getPath() + "\\" + shortCutItem.getFilename();
+                    }else{
+                        path = shortCutItem.getPath();
+                    }
+                }else{
+                    path = shortCutItem.getPath();
+                }
+                startActivity(new Intent(MainActivity.this,FileManagerActivity.class).putExtra("path",path));
+            }
+        });
+
         offWorkProgressClass();
         bindService(new Intent(MainActivity.this,UploadManagerService.class),mUploadConnection,BIND_AUTO_CREATE);
         bindService(new Intent(MainActivity.this, NotificationBarService.class),mConnection,BIND_AUTO_CREATE);
@@ -227,6 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < response.body().size(); ++i) {
                         listDataHeader.add(response.body().get(i));
                     }
+                    Collections.reverse(listDataHeader);
                     makeShortCut(listDataHeader);
                 }
             }

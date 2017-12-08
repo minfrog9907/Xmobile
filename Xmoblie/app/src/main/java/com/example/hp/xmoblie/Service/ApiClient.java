@@ -23,6 +23,7 @@ import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -41,8 +42,8 @@ import retrofit2.http.Query;
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
             //.baseUrl("http://10.1.21.228")
-            .baseUrl("http://xmobile.lfconfig.xyz")
-            //.baseUrl("https://10.1.21.85:11001")
+            .baseUrl("https://xmobile.lfconfig.xyz")
+//            .baseUrl("https://10.1.21.85:11001")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build();
@@ -161,6 +162,22 @@ public interface ApiClient {
             @Part("file") RequestBody file,
             @Part MultipartBody.Part body,
             @Query("path") String path
+    );
+
+    @FormUrlEncoded
+    @POST("/shortcut")
+    Call<ResponseBody> repoAddShortCut(
+            @Header("token") String token,
+            @Field("path") String path ,
+            @Field("filename") String filename
+    );
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/shortcut", hasBody = true)
+    Call<ResponseBody> repoDelShortCut(
+            @Header("token") String token,
+            @Field("path") String path ,
+            @Field("filename") String filename
     );
 
     @GET("/shortcut")

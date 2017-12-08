@@ -20,6 +20,7 @@ import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 
@@ -109,6 +110,7 @@ public class FileManagerActivity extends AppCompatActivity {
     private HashMap<FileItem, List<FileItem>> listDataChild;
     private int orderData = 0, sortData = 0, orderCheck = 0, sortCheck = 0;
     private String searchData = "\\";
+    private String displaySearchData = "/";
     private boolean selectMode = false, startFileProtocol = false;
     private CustomFilemanagerBtnGroup cfbg;
     private int cfbgHeight;
@@ -270,6 +272,7 @@ public class FileManagerActivity extends AppCompatActivity {
                     changeSelectMode();
                     selectItem(fileItemHolder);
                     adapterView.setSelection(i);
+                    cfbg.isStared(fileItem.getIsShortcut());
 
                     ImageView imageView = view.findViewById(R.id.fileIcon);
 
@@ -355,7 +358,6 @@ public class FileManagerActivity extends AppCompatActivity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String searchTxt = searchEdit.getText().toString();
                 setSearchHistory(searchTxt);
                 searchEdit.clearFocus();
@@ -382,11 +384,11 @@ public class FileManagerActivity extends AppCompatActivity {
         makeFolderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (searchData == "\\") {
-//                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
-//                } else {
-                createDialog("mkdir");
-//                }
+                if (searchData == "\\") {
+                    Toast.makeText(FileManagerActivity.this, "루트 디렉토리에는 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    createDialog("mkdir");
+                }
             }
         });
 
@@ -403,6 +405,7 @@ public class FileManagerActivity extends AppCompatActivity {
         private String newDir = null;
         private String fileName = null;
         private String newTag = null;
+        private int isStar = 2;
 
         void setDeleteItemList(ArrayList<DeleteItem> deleteItemList) {
             this.deleteItemList = deleteItemList;
@@ -507,6 +510,28 @@ public class FileManagerActivity extends AppCompatActivity {
                             }
                         } else {
                             Log.e("Protocol", "you need setFileName");
+                        }
+                        break;
+                    case "addStarProtocol" :
+                        if (psearchData != null) {
+                            if (fileName != null) {
+                                    fileAddStarProtocol();
+                            } else {
+                                Log.e("Protocol", "you need setFileName");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
+                        }
+                        break;
+                    case "delStarProtocol" :
+                        if (psearchData != null) {
+                            if (fileName != null) {
+                                    fileDelStarProtocol();
+                            } else {
+                                Log.e("Protocol", "you need setFileName");
+                            }
+                        } else {
+                            Log.e("Protocol", "you need setSearchData");
                         }
                         break;
                     default:
@@ -716,6 +741,47 @@ public class FileManagerActivity extends AppCompatActivity {
             });
         }
 
+        private void fileAddStarProtocol() {
+            final Call<ResponseBody> call = apiClient.repoAddShortCut(token, psearchData, fileName);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call,
+                                       Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        Toast.makeText(FileManagerActivity.this, "즐겨찾기에 추가하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    changeListMode();
+                    searchFile(searchData);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        private void fileDelStarProtocol(){
+            final Call<ResponseBody> call = apiClient.repoDelShortCut(token, psearchData, fileName);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call,
+                                       Response<ResponseBody> response) {
+                    if (response.body() != null) {
+                        Toast.makeText(FileManagerActivity.this, "즐겨찾기에서 삭제하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    changeListMode();
+                    searchFile(searchData);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(FileManagerActivity.this, "통신에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
     }
 
@@ -986,6 +1052,9 @@ public class FileManagerActivity extends AppCompatActivity {
                     case R.id.deleteFileBtn:
                         removeFile();
                         break;
+                    case R.id.addStar:
+                        addStar();
+                        break;
                 }
             } else {
                 Toast.makeText(FileManagerActivity.this, "해당 작업을 할 파일을 선택해주세요.", Toast.LENGTH_SHORT).show();
@@ -1047,6 +1116,21 @@ public class FileManagerActivity extends AppCompatActivity {
         FilemanagerService.getInstance().fileInfoStart(token, searchData, fileItem, this, getSupportFragmentManager());
     }
 
+    private void addStar(){
+        FileItem fileItem = (FileItem) checkedItems.get(0);
+        Protocol protocol = new Protocol();
+        if(fileItem.getIsShortcut() == 0){
+            System.out.println("asdfasd");
+            protocol.setProtocol("addStarProtocol");
+            protocol.setSearchData(searchData);
+            protocol.setFileName(fileItem.getFilename());
+        }else if(fileItem.getIsShortcut() == 1){
+            protocol.setProtocol("delStarProtocol");
+            protocol.setSearchData(searchData);
+            protocol.setFileName(fileItem.getFilename());
+        }
+        protocol.activateProtocol();
+    }
     /* 파일 관리 메소드 */
 
     private boolean checkFileFormat(String newDir) {
@@ -1187,27 +1271,27 @@ public class FileManagerActivity extends AppCompatActivity {
                 };
                 dialog = MkdirDialogFragment.newInstance(inputListener, searchData.replace("\\", "/"));
                 break;
-            case "shareFile":
-
-                break;
-
             case "fileLog":
                 dialog = ShowLogDialogFragment.newInstance(checkedItems, searchData, token, this);
                 break;
             case "renameFile":
-                final String oldName = checkedItems != null ? checkedItems.get(0).getDisplayName() : "";
-                inputListener = new InputListener() {
-                    @Override
-                    public boolean onInputComplete(String newDir) {
-                        return FileManagement(newDir, checkedItems.get(0).getFilename(), "renameFile");
-                    }
-                };
-                dialog = RenameDialogFragment.newInstance(inputListener, oldName);
+                if (checkedItems.get(0).getType() == 128) {
+                    final String oldName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
+                    inputListener = new InputListener() {
+                        @Override
+                        public boolean onInputComplete(String newDir) {
+                            return FileManagement(newDir, checkedItems.get(0).getDisplayName(), "renameFile");
+                        }
+                    };
+                    dialog = RenameDialogFragment.newInstance(inputListener, oldName);
+                }else{
+                    Toast.makeText(thisContext, "폴더명은 변경 불가능 합니다.", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case "addTag":
                 if (checkedItems.get(0).getType() == 128) {
-                    final String fileName = checkedItems != null ? checkedItems.get(0).getDisplayName() : "";
+                    final String fileName = checkedItems != null ? checkedItems.get(0).getFilename() : "";
                     inputListener = new InputListener() {
                         @Override
                         public boolean onInputComplete(String name) {
@@ -1226,8 +1310,6 @@ public class FileManagerActivity extends AppCompatActivity {
         }
         if (dialog != null) {
             dialog.show(getSupportFragmentManager(), "addDialog");
-        } else {
-            Toast.makeText(this, "잘못된 요청 입니다.", Toast.LENGTH_SHORT).show();
         }
     }
 

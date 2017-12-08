@@ -75,6 +75,8 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     private void setMultiMod(){
         LinearLayout customFilemanagerBtnGroup = (LinearLayout)v.findViewById(R.id.CustomFilemanagerBtnGroup);
+        ImageView addStar = (ImageView)v.findViewById(R.id.addStar);
+        addStar.setVisibility(GONE);
         customFilemanagerBtnGroup.getLayoutParams().height = (int) (120 * scale + 5.0f);
         int childCount = customFilemanagerBtnGroup.getChildCount();
         for(int i = 0; i < childCount; i++){
@@ -97,6 +99,8 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     private void setSingleMod(){
         LinearLayout customFilemanagerBtnGroup = (LinearLayout)v.findViewById(R.id.CustomFilemanagerBtnGroup);
+        ImageView addStar = (ImageView)v.findViewById(R.id.addStar);
+        addStar.setVisibility(VISIBLE);
         customFilemanagerBtnGroup.getLayoutParams().height = (int) (180 * scale + 5.0f);
         int childCount = customFilemanagerBtnGroup.getChildCount();
         for(int i = 0; i < childCount; i++){
@@ -122,6 +126,7 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
 
     public List<View> getBtns(){
         List<View> viewList = new ArrayList<>();
+        viewList.add((ImageView)this.findViewById(R.id.addStar));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.downloadFile));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.shareFile));
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.fileLog));
@@ -130,5 +135,18 @@ public class CustomFilemanagerBtnGroup extends LinearLayout{
         viewList.add((CustomFilemanagerBtn)this.findViewById(R.id.fileInfo));
         viewList.add((LinearLayout)this.findViewById(R.id.deleteFileBtn));
         return viewList;
+    }
+
+    public void isStared(int isStared){
+        ImageView addStar = (ImageView)v.findViewById(R.id.addStar);
+        if(isStared == 0){
+            addStar.setImageDrawable(getResources().getDrawable(R.drawable.empty_star));
+        }else{
+            addStar.setImageDrawable(getResources().getDrawable(R.drawable.star));
+        }
+    }
+
+    public void isFolder(){
+
     }
 }

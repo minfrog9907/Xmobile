@@ -52,8 +52,22 @@ public class DownloadMotherThread extends Thread {
 
     private ArrayList<DownloadThread> downloadThreads = new ArrayList<DownloadThread>();
     private ArrayList<ResponseBody> repResponseBodies = new ArrayList<ResponseBody>();
+    FileOutputStream out;
+    File file;
 
     public void run(final int type, String filename, final String path, final String token, final long offset, final int length, DownloadManagerService dm) throws IOException {
+        root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/XmobileDownLoad/";
+
+        File myDir = new File(root);
+        myDir.mkdirs();
+
+        String fname = filename;
+
+        file = new File(myDir, fname);
+
+        if (file.exists()) file.delete();
+        out = new FileOutputStream(file);
+
         apiClient = ApiClient.severService;
 
         this.filename = filename;
@@ -126,41 +140,17 @@ public class DownloadMotherThread extends Thread {
         }
     }
 
-    private void saveImage() {
-        FileOutputStream out;
-        File file;
-        root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/XmobileDownLoad/";
+    private void saveImage() throws IOException {
+        Log.e("finish", "finish");
+        out.flush();
+        out.close();
 
-        File myDir = new File(root);
-        myDir.mkdirs();
+        Message message = handler.obtainMessage();
+        message.what = 222;
+        handler.setPath(root);
+        handler.setName(filename);
+        handler.sendMessage(message);
 
-        String fname = filename;
-
-        file = new File(myDir, fname);
-
-        if (file.exists()) file.delete();
-        try {
-            out = new FileOutputStream(file);
-            for(int i=0; i<repResponseBodies.size(); ++i){
-                out.write(repResponseBodies.get(i).bytes());
-            }
-            out.flush();
-            out.close();
-            Log.e("finish", "finish");
-
-            Message message = handler.obtainMessage();
-            message.what = 222;
-            handler.setPath(root);
-            handler.setName(filename);
-            handler.sendMessage(message);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("IO", "IOex");
-            return;
-        }
         for (int i = 0; i < downloadThreads.size(); ++i) {
             if (downloadThreads.get(i) != null && downloadThreads.get(i).isAlive())
                 downloadThreads.get(i).stop();
@@ -170,7 +160,18 @@ public class DownloadMotherThread extends Thread {
     }
 
     public synchronized void setResponseBody(ResponseBody responseBody, int id) throws IOException {
-        repResponseBodies.set(id,responseBody);
+        try {
+            out.write(responseBody.bytes());
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("IO", "IOex");
+            return;
+        }
     }
 
     public synchronized void reportDead(int id) throws IOException {

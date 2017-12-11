@@ -12,7 +12,6 @@ public class ResizeAnimation extends Animation {
     private View view;
 
     public ResizeAnimation (View v) {
-        System.out.println("ResizeAnimation");
         this.view = v;
     }
 

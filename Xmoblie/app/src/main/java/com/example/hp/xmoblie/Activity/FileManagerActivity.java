@@ -815,7 +815,7 @@ public class FileManagerActivity extends AppCompatActivity {
         searchFile(path);
     }
 
-    private void moveDirwithoutHistory(String path) {
+    public void moveDirwithoutHistory(String path) {
         searchFile(path);
     }
 
@@ -1120,7 +1120,6 @@ public class FileManagerActivity extends AppCompatActivity {
         FileItem fileItem = (FileItem) checkedItems.get(0);
         Protocol protocol = new Protocol();
         if(fileItem.getIsShortcut() == 0){
-            System.out.println("asdfasd");
             protocol.setProtocol("addStarProtocol");
             protocol.setSearchData(searchData);
             protocol.setFileName(fileItem.getFilename());
@@ -1516,6 +1515,10 @@ public class FileManagerActivity extends AppCompatActivity {
         return null;
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        moveDirwithoutHistory(searchData);
+    }
 }
 

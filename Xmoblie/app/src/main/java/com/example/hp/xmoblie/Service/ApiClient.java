@@ -42,7 +42,7 @@ import retrofit2.http.Query;
 public interface ApiClient {
     Retrofit retrofit = new Retrofit.Builder()
             //.baseUrl("http://10.1.21.228")
-            .baseUrl("https://xmobile.lfconfig.xyz")
+            .baseUrl("http://xmobile.lfconfig.xyz")
 //            .baseUrl("https://10.1.21.85:11001")
             .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
@@ -231,6 +231,15 @@ public interface ApiClient {
     Call<List<FileItem>>repoFindTag(
             @Header("token")String token,
             @Query("tag")String tag
+    );
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "/file/tag", hasBody = true)
+    Call<ResponseBody>repoDelTag(
+            @Header("token")String token,
+            @Field("tag")String tag,
+            @Field("filename")String filename,
+            @Field("path")String path
     );
 
     @POST("/")

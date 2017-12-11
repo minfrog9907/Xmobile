@@ -126,7 +126,6 @@ public class CameraResultActivity extends AppCompatActivity {
 
         LinearLayout share = (LinearLayout) findViewById(R.id.cameraResult_Share);
         LinearLayout upload = (LinearLayout) findViewById(R.id.cameraResult_Upload);
-        LinearLayout tagEdit = (LinearLayout) findViewById(R.id.cameraResult_TagEdit);
 
 
 
@@ -180,13 +179,13 @@ public class CameraResultActivity extends AppCompatActivity {
 
     private void read_image_file() {
         node = getIntent().getStringExtra("node");
-        //copyFile(node);
-        copyFile("/Download/bills/asdfasdf.jpg");
+        copyFile(node);
+        //copyFile("/Download/bills/asdfasdf.jpg");
         img_input = new Mat();
         img_output = new Mat();
 
-        //loadImage(node, img_input.getNativeObjAddr());
-        loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
+        loadImage(node, img_input.getNativeObjAddr());
+        //loadImage("/Download/bills/asdfasdf.jpg", img_input.getNativeObjAddr());
     }
 
     private void saveImage(Bitmap finalBitmap, String image_name) {

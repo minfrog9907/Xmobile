@@ -114,7 +114,7 @@ public class ImageDataSetActivity extends AppCompatActivity {
         btnMode[3] = 0;
 
         fulldata[1] = "";
-        fulldata[2] = "";
+        fulldata[2] = "0";
         fulldata[3] = "";
 
         apiClient = ApiClient.service;

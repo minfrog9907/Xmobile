@@ -40,37 +40,49 @@ public class SplashActivity extends BaseActivity {
         intent = new Intent(SplashActivity.this, LoginActivity.class);
 
         Uri data = getIntent().getData();
-        if (data !=null &&data.getQueryParameter("path") != null) {
+        if (data != null && data.getQueryParameter("path") != null) {
             intent.putExtra("path", data.getQueryParameter("path"));
             intent.putExtra("pb", true);
         } else {
             intent.putExtra("pb", false);
         }
 
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
 
-        int internetPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
-        int storagePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int cameraPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        int readStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
-        int pravitePemissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.PACKAGE_USAGE_STATS);
+            int internetPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+            int storagePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int cameraPermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+            int readStatePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+            int pravitePemissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.PACKAGE_USAGE_STATS);
 
-    //   Toast.makeText(getApplicationContext(),internetPermissionCheck+" "+storagePermissionCheck+" "+cameraPermissionCheck+" "+readStatePermissionCheck+" "+pravitePemissionCheck,Toast.LENGTH_SHORT).show();
-        if (internetPermissionCheck == PackageManager.PERMISSION_DENIED
-                || storagePermissionCheck == PackageManager.PERMISSION_DENIED
-                || cameraPermissionCheck == PackageManager.PERMISSION_DENIED
-                || readStatePermissionCheck == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PACKAGE_USAGE_STATS},
-                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+            //   Toast.makeText(getApplicationContext(),internetPermissionCheck+" "+storagePermissionCheck+" "+cameraPermissionCheck+" "+readStatePermissionCheck+" "+pravitePemissionCheck,Toast.LENGTH_SHORT).show();
+            if (internetPermissionCheck == PackageManager.PERMISSION_DENIED
+                    || storagePermissionCheck == PackageManager.PERMISSION_DENIED
+                    || cameraPermissionCheck == PackageManager.PERMISSION_DENIED
+                    || readStatePermissionCheck == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET, Manifest.permission.READ_PHONE_STATE, Manifest.permission.PACKAGE_USAGE_STATS},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
 
-        }
+            }
 
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_DENIED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_DENIED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_DENIED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_DENIED) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(intent);
+                        finish();
+                    }
+                }, SPLASH_DISPLAY_LENGTH);
+
+            }
+            firstSetting();
+        } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -80,18 +92,16 @@ public class SplashActivity extends BaseActivity {
             }, SPLASH_DISPLAY_LENGTH);
 
         }
-        firstSetting();
-
-
     }
-    private void firstSetting(){
+
+    private void firstSetting() {
         SharedPreferences saveText = getSharedPreferences("setting", MODE_PRIVATE);
         SharedPreferences.Editor editor = saveText.edit();
-        if(saveText.getInt("startHour",-1)==-1&&
-                saveText.getInt("endHour",-1)==-1&&
-                saveText.getInt("startMinute",-1)==-1&&
-                saveText.getInt("endMinute",-1)==-1&&
-                saveText.getInt("dProgress",-1)==-1){
+        if (saveText.getInt("startHour", -1) == -1 &&
+                saveText.getInt("endHour", -1) == -1 &&
+                saveText.getInt("startMinute", -1) == -1 &&
+                saveText.getInt("endMinute", -1) == -1 &&
+                saveText.getInt("dProgress", -1) == -1) {
             editor.putInt("startHour", 8);
             editor.putInt("endHour", 17);
             editor.putInt("startMinute", 0);
@@ -101,8 +111,10 @@ public class SplashActivity extends BaseActivity {
         editor.commit();
 
     }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {

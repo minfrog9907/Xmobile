@@ -1,7 +1,11 @@
 {
     "logs": [
         {
+<<<<<<< HEAD
+            "outputFile": "C:\\Users\\HP\\AndroidStudioProjects\\Xmoblie\\openCVLibrary330\\build\\intermediates\\res\\merged\\androidTest\\debug\\values_values.arsc.flat",
+=======
             "outputFile": "C:\\Users\\HP\\Desktop\\Xmoblie\\Xmoblie\\openCVLibrary330\\build\\intermediates\\res\\merged\\androidTest\\debug\\values_values.arsc.flat",
+>>>>>>> aaec3aaf7fb2d78ade99e3182a21bce0d536d27e
             "map": []
         }
     ]

@@ -39,7 +39,6 @@ public class LogListAdapter extends BaseAdapter {
     public LogListAdapter(Context context, List<RollbackItem> listDataHeader) {
         this._context = context;
         this._listDataHeader = listDataHeader;
-        System.out.println(_listDataHeader);
         mackView();
     }
 
@@ -75,8 +74,6 @@ public class LogListAdapter extends BaseAdapter {
             String headerTitle = (String) getItem(i).getRname();
             String fsize = (String) getItem(i).getReadAbleSize();
             String fDate = (String) getItem(i).getPastDate();
-
-            System.out.println(headerTitle + "     " + fsize + "        " + fDate);
 
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

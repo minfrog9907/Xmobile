@@ -33,12 +33,10 @@ public class FileItem {
     ArrayList<String> tags;
 
     public int getGgid() {
-        System.out.println(ggid);
         return ggid;
     }
 
     public int getGid() {
-        System.out.println(gid);
         return gid;
     }
 
@@ -73,6 +71,7 @@ public class FileItem {
     public String getParseCreateDate() {
         if (CreateDate != null) {
             String date = CreateDate.replace("T", " ");
+
             SimpleDateFormat dateFormatGmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
 

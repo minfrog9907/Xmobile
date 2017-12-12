@@ -10,8 +10,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.hp.xmoblie.Activity.FileManagerActivity;
+import com.example.hp.xmoblie.Dialog.AddTagDialogFragment;
 import com.example.hp.xmoblie.Dialog.CreateDialogFragment;
 import com.example.hp.xmoblie.Dialog.FileInfoDiralogFragment;
+import com.example.hp.xmoblie.Dialog.InputListener;
 import com.example.hp.xmoblie.Items.DownloadRequestItem;
 import com.example.hp.xmoblie.Items.FileItem;
 
@@ -172,7 +174,7 @@ public class FilemanagerService {
         });
     }
 
-    private void fileTagsProtocol(String token, String path, String fileName, final FileItem fileItem){
+    private void fileTagsProtocol(final String token, final String path, String fileName, final FileItem fileItem){
         final ArrayList<String> tags = new ArrayList<String>();
         final Call<ArrayList<String>> call = apiClient.repoFileTags(token, path, fileName);
         call.enqueue(new Callback<ArrayList<String>>() {
@@ -184,7 +186,7 @@ public class FilemanagerService {
                         tags.add(response.body().get(i));
                         fileItem.setTags(tags);
                     }
-                    CreateDialogFragment dialog = FileInfoDiralogFragment.newInstance(fileItem,fcontext);
+                    CreateDialogFragment dialog = FileInfoDiralogFragment.newInstance(fileItem,fcontext, token, path);
                     dialog.show(fragmentManager, "fileInfo");
                 }
             }
